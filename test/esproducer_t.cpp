@@ -78,7 +78,7 @@ BOOST_AUTO_UNIT_TEST( get_from_test )
    for( int iTime=1; iTime != 6; ++iTime) {
       pFinder->setInterval( edm::ValidityInterval(iTime,iTime) );
       const edm::EventSetup& eventSetup = provider.eventSetupForInstance( edm::Timestamp(iTime) );
-      Handle<DummyData> pDummy;
+      ESHandle<DummyData> pDummy;
       eventSetup.get<DummyRecord>().get(pDummy);
       BOOST_CHECK(0 != &(*pDummy) );
       std::cout <<pDummy->value_ << std::endl;
@@ -99,7 +99,7 @@ BOOST_AUTO_UNIT_TEST( get_from_share_test )
    for( int iTime=1; iTime != 6; ++iTime) {
       pFinder->setInterval( edm::ValidityInterval(iTime,iTime) );
       const edm::EventSetup& eventSetup = provider.eventSetupForInstance( edm::Timestamp(iTime) );
-      Handle<DummyData> pDummy;
+      ESHandle<DummyData> pDummy;
       eventSetup.get<DummyRecord>().get(pDummy);
       BOOST_CHECK(0 != &(*pDummy) );
       std::cout <<pDummy->value_ << std::endl;
