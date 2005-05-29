@@ -71,17 +71,19 @@
   </library>
 
   <bin file=esproducer_t.cpp name=core_eventsetup_producer_t.exe>
-    <lib name=edmeventsetupproducer_test_dummy_stuff>
+    <lib name=edmeventsetup_test_dummy_stuff>
   </bin>
 
   <bin file=proxyfactoryproducer_t.cpp name=core_eventsetup_proxyfactoryproducer_t.exe>
-    <lib name=edmeventsetupproducer_test_dummy_stuff>
+    <lib name=edmeventsetup_test_dummy_stuff>
   </bin>
 
   <bin file=callback_t.cpp name=core_eventsetup_callback_t.exe>
+    <lib name=boost_unit_test_framework-gcc-mt>
   </bin>
 
   <bin file=esproducts_t.cpp name=core_eventsetup_products_t.exe>
+    <lib name=boost_unit_test_framework-gcc-mt>
   </bin>
 
   <bin file=eventsetup_t.cpp>
