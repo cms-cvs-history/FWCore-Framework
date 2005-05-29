@@ -1,0 +1,122 @@
+<environment>
+  <use name=FWCore/CoreFramework>
+  <use name=Framework/SealKernel>
+  <use name=Dictionary/ReflectionBuilder>
+  <use name=boost>
+  <use name=seal>
+
+#Had to hard code in the -gcc-mt because I could find no
+# option in scram to tell it just to use boost_unit_test_framework
+
+  <library file=stubs/TestMod.cc name=TestMod>
+   <flags SEAL_PLUGIN_NAME="TestMod">
+  </library>
+
+  <library file=stubs/ToyModules.cc name=ToyModules>
+   <flags SEAL_PLUGIN_NAME="ToyModules">
+  </library>
+
+#  <Export>
+#    <Lib name=TestMod>
+#  </Export>
+
+  <bin file=TypeID_t.cpp>
+    <lib name=boost_unit_test_framework-gcc-mt>
+  </bin>
+
+  <bin file=EventPrincipal_t.cpp>
+  </bin>
+
+  <bin file=maker2_t.cpp>
+  </bin>
+
+  <bin file=maker_t.cpp>
+  </bin>
+
+
+  <library file=stubs/TestSchedulerModule1.cc name=TestSchedulerModule1 >
+   <flags SEAL_PLUGIN_NAME="TestSchedulerModule1">
+  </library>	
+
+  <library file=stubs/TestSchedulerModule2.cc name=TestSchedulerModule2>
+   <flags SEAL_PLUGIN_NAME="TestSchedulerModule2">
+  </library> 
+
+
+  <bin file=EventProcessor_t.cpp>
+  </bin>
+
+  <bin file=EventProcessor2_t.cpp>
+  </bin>
+
+  <bin file=Mange.cpp>
+  </bin>
+
+ <bin file=ScheduleExecutorFromPSet_t.cpp>
+    <use name = FWCore/FWCoreServices>
+ </bin>
+
+  <library file=stubs/eventsetup_dummy_stuff.cc name=edmeventsetupproducer_test_dummy_stuff>
+    <lib name=boost_unit_test_framework-gcc-mt>
+  </library>
+
+  <library file=stubs/LoadableDummyFinder.cc name=LoadableDummyFinder>
+    <flags SEAL_PLUGIN_NAME="LoadableDummyFinder">
+    <lib name=edmeventsetup_test_dummy_stuff>
+  </library>
+
+  <library file=stubs/LoadableDummyProvider.cc name=LoadableDummyProvider>
+    <flags SEAL_PLUGIN_NAME="LoadableDummyProvider">
+    <lib name=edmeventsetup_test_dummy_stuff>
+  </library>
+
+  <bin file=esproducer_t.cpp name=core_eventsetup_producer_t.exe>
+    <lib name=edmeventsetupproducer_test_dummy_stuff>
+  </bin>
+
+  <bin file=proxyfactoryproducer_t.cpp name=core_eventsetup_proxyfactoryproducer_t.exe>
+    <lib name=edmeventsetupproducer_test_dummy_stuff>
+  </bin>
+
+  <bin file=callback_t.cpp name=core_eventsetup_callback_t.exe>
+  </bin>
+
+  <bin file=esproducts_t.cpp name=core_eventsetup_products_t.exe>
+  </bin>
+
+  <bin file=eventsetup_t.cpp>
+    <lib name=boost_unit_test_framework-gcc-mt>
+    <lib name=edmeventsetup_test_dummy_stuff>
+  </bin>
+
+  <bin file=eventsetuprecord_t.cpp>
+    <lib name=boost_unit_test_framework-gcc-mt>
+    <lib name=edmeventsetup_test_dummy_stuff>
+  </bin>
+
+  <bin file=dependentrecord_t.cpp>
+    <lib name=boost_unit_test_framework-gcc-mt>
+    <lib name=edmeventsetup_test_dummy_stuff>
+  </bin>
+
+  <bin file=interval_t.cpp>
+    <lib name=boost_unit_test_framework-gcc-mt>
+    <lib name=edmeventsetup_test_dummy_stuff>
+  </bin>
+
+  <bin file=datakey_t.cpp>
+    <lib name=boost_unit_test_framework-gcc-mt>
+    <lib name=edmeventsetup_test_dummy_stuff>
+  </bin>
+
+  <bin file=full_chain_t.cpp>
+    <lib name=boost_unit_test_framework-gcc-mt>
+    <lib name=edmeventsetup_test_dummy_stuff>
+  </bin>
+
+  <bin file=eventsetup_plugin_t.cpp>
+    <lib name=boost_unit_test_framework-gcc-mt>
+    <lib name=edmeventsetup_test_dummy_stuff>
+  </bin>
+
+</environment>
