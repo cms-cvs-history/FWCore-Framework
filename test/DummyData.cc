@@ -1,6 +1,5 @@
 /*
  *  DummyData.cc
- *  EDMProto
  *
  *  Created by Chris Jones on 4/4/05.
  *
