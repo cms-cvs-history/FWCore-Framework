@@ -1,5 +1,0 @@
-<lcgdict>
- <class name="edmtest::DummyProduct"/>
- <class name="edmtest::IntProduct"/>
- <class name="edmtest::DoubleProduct"/>
-</lcgdict>
