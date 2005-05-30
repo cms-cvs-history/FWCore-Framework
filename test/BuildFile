@@ -8,7 +8,7 @@
 #Had to hard code in the -gcc-mt because I could find no
 # option in scram to tell it just to use boost_unit_test_framework
 
-  <library file=stubs/eventsetup_dummy_stuff.cc name=edmeventsetup_test_dummy_stuff>
+  <library file="DummyData.cc,DummyRecord.cc" name=EventSetupTestDummyStuff>
   </library>
 
   <library file=stubs/TestMod.cc name=TestMod>
@@ -61,22 +61,22 @@
 
   <library file=stubs/LoadableDummyFinder.cc name=LoadableDummyFinder>
     <flags SEAL_PLUGIN_NAME="LoadableDummyFinder">
-    <lib name=edmeventsetup_test_dummy_stuff>
+    <lib name=EventSetupTestDummyStuff>
   </library>
 
   <library file=stubs/LoadableDummyProvider.cc name=LoadableDummyProvider>
     <flags SEAL_PLUGIN_NAME="LoadableDummyProvider">
-    <lib name=edmeventsetup_test_dummy_stuff>
+    <lib name=EventSetupTestDummyStuff>
   </library>
 
   <bin file=esproducer_t.cpp name=core_eventsetup_producer_t.exe>
     <lib name=boost_unit_test_framework-gcc-mt>
-    <lib name=edmeventsetup_test_dummy_stuff>
+    <lib name=EventSetupTestDummyStuff>
   </bin>
 
   <bin file=proxyfactoryproducer_t.cpp name=core_eventsetup_proxyfactoryproducer_t.exe>
     <lib name=boost_unit_test_framework-gcc-mt>
-    <lib name=edmeventsetup_test_dummy_stuff>
+    <lib name=EventSetupTestDummyStuff>
   </bin>
 
   <bin file=callback_t.cpp name=core_eventsetup_callback_t.exe>
@@ -89,37 +89,37 @@
 
   <bin file=eventsetup_t.cpp>
     <lib name=boost_unit_test_framework-gcc-mt>
-    <lib name=edmeventsetup_test_dummy_stuff>
+    <lib name=EventSetupTestDummyStuff>
   </bin>
 
   <bin file=eventsetuprecord_t.cpp>
     <lib name=boost_unit_test_framework-gcc-mt>
-    <lib name=edmeventsetup_test_dummy_stuff>
+    <lib name=EventSetupTestDummyStuff>
   </bin>
 
   <bin file=dependentrecord_t.cpp>
     <lib name=boost_unit_test_framework-gcc-mt>
-    <lib name=edmeventsetup_test_dummy_stuff>
+    <lib name=EventSetupTestDummyStuff>
   </bin>
 
   <bin file=interval_t.cpp>
     <lib name=boost_unit_test_framework-gcc-mt>
-    <lib name=edmeventsetup_test_dummy_stuff>
+    <lib name=EventSetupTestDummyStuff>
   </bin>
 
   <bin file=datakey_t.cpp>
     <lib name=boost_unit_test_framework-gcc-mt>
-    <lib name=edmeventsetup_test_dummy_stuff>
+    <lib name=EventSetupTestDummyStuff>
   </bin>
 
   <bin file=full_chain_t.cpp>
     <lib name=boost_unit_test_framework-gcc-mt>
-    <lib name=edmeventsetup_test_dummy_stuff>
+    <lib name=EventSetupTestDummyStuff>
   </bin>
 
   <bin file=eventsetup_plugin_t.cpp>
     <lib name=boost_unit_test_framework-gcc-mt>
-    <lib name=edmeventsetup_test_dummy_stuff>
+    <lib name=EventSetupTestDummyStuff>
   </bin>
 
 </environment>
