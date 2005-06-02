@@ -2,7 +2,7 @@
 
 Test of the EventProcessor class.
 
-$Id: EventProcessor_t.cpp,v 1.5 2005/05/28 05:53:03 wmtan Exp $
+$Id: EventProcessor_t.cpp,v 1.1 2005/05/29 02:29:54 wmtan Exp $
 
 ----------------------------------------------------------------------*/  
 #include <exception>
@@ -14,7 +14,7 @@ $Id: EventProcessor_t.cpp,v 1.5 2005/05/28 05:53:03 wmtan Exp $
 void work()
 {
   std::string configuration("process p = {\n"
-			    "source = EmptyInputService { int32 MaxEvents=5 }\n"
+			    "source = EmptyInputService { untracked int32 maxEvents = 5 }\n"
 			    "module m1 = TestMod { int32 ivalue = 10 }\n"
 			    "module m2 = TestMod { int32 ivalue = -3 }\n"
                             "path p1 = { m1,m2 }\n"

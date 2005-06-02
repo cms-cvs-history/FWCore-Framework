@@ -3,11 +3,11 @@
    test for ScheduleExecutor
 
    \author Stefano ARGIRO
-   \version $Id: ScheduleExecutorFromPSet_t.cc,v 1.7 2005/05/28 06:04:36 wmtan Exp $
+   \version $Id: ScheduleExecutorFromPSet_t.cpp,v 1.1 2005/05/29 02:29:54 wmtan Exp $
    \date 18 May 2005
 */
 
-static const char CVSId[] = "$Id: ScheduleExecutorFromPSet_t.cc,v 1.7 2005/05/28 06:04:36 wmtan Exp $";
+static const char CVSId[] = "$Id: ScheduleExecutorFromPSet_t.cpp,v 1.1 2005/05/29 02:29:54 wmtan Exp $";
 
 #include "FWCore/CoreFramework/interface/EDProducer.h"
 #include "FWCore/CoreFramework/interface/ScheduleExecutor.h"
@@ -86,7 +86,7 @@ int main(){
   cp.add( boost::shared_ptr<eventsetup::DataProxyProvider>(pRetriever) );
   cp.add( boost::shared_ptr<eventsetup::EventSetupRecordIntervalFinder>(pRetriever));
 
-  std::string param1("int32 MaxEvents=5");
+  std::string param1("untracked int32 maxEvents = 5");
   boost::shared_ptr<ParameterSet> input_service_pset = makePSet( *edm::pset::parse(param1.c_str() ) );
   const InputServiceDescription desc("test",1);
 
