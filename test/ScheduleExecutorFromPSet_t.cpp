@@ -3,18 +3,16 @@
    test for ScheduleExecutor
 
    \author Stefano ARGIRO
-   \version $Id: ScheduleExecutorFromPSet_t.cpp,v 1.1 2005/05/29 02:29:54 wmtan Exp $
+   \version $Id: ScheduleExecutorFromPSet_t.cpp,v 1.2 2005/06/02 20:20:00 wmtan Exp $
    \date 18 May 2005
 */
 
-static const char CVSId[] = "$Id: ScheduleExecutorFromPSet_t.cpp,v 1.1 2005/05/29 02:29:54 wmtan Exp $";
+static const char CVSId[] = "$Id: ScheduleExecutorFromPSet_t.cpp,v 1.2 2005/06/02 20:20:00 wmtan Exp $";
 
 #include "FWCore/CoreFramework/interface/EDProducer.h"
 #include "FWCore/CoreFramework/interface/ScheduleExecutor.h"
-
 #include "FWCore/CoreFramework/interface/ScheduleBuilder.h"
-#include "FWCore/ParameterSet/interface/Nodes.h"
-#include "FWCore/ParameterSet/interface/ProcessDesc.h"
+#include "FWCore/CoreFramework/interface/UnknownModuleException.h"
 
 
 #include "FWCore/CoreFramework/interface/EventSetup.h"
@@ -35,73 +33,126 @@ static const char CVSId[] = "$Id: ScheduleExecutorFromPSet_t.cpp,v 1.1 2005/05/2
 #include <exception>
 #include "PluginManager/PluginManager.h"
 
+#include "boost/test/unit_test.hpp"
+
 using namespace edm;
 using namespace edm::pset;
 using namespace std;
+using namespace boost::unit_test_framework;
 
+auto_ptr<InputService> setupDummyInputService(){
 
-
-
-int main(){
-
-  seal::PluginManager::get ()->initialise ();
-
-
-
-
-  int length;
-  char * buffer;
-
-  ifstream is;
-  is.open ("testScheduler.txt");
-
-  // get length of file:
-  is.seekg (0, ios::end);
-  length = is.tellg();
-  is.seekg (0, ios::beg);
-
-  // allocate memory:
-  buffer = new char [length];
-
-  // read data as a block:
-  is.read (buffer,length);
-  is.close();
-
-  cout << buffer << endl;
-
-  string bufferStr(buffer);
+  std::string param1("int32 maxEvents=5");
+  boost::shared_ptr<ParameterSet> input_service_pset = 
+    makePSet( *edm::pset::parse(param1.c_str() ) );
+  const InputServiceDescription desc("test",1);
+  auto_ptr<InputService> 
+    input(new EmptyInputService(*input_service_pset,desc));
   
+  return input;  
+}
 
-  boost::shared_ptr<edm::ParameterSet> processPSet= makeProcessPSet(bufferStr);
-  
-  // actual test of schedule executor
-
-  ScheduleBuilder builder(*processPSet);
-
-  ScheduleExecutor executor(builder.getPathList());
+const EventSetup& setupDummyEventSetup(){
 
   edm::eventsetup::EventSetupProvider cp;
   boost::shared_ptr<DummyEventSetupRecordRetriever> 
     pRetriever( new DummyEventSetupRecordRetriever );
   cp.add( boost::shared_ptr<eventsetup::DataProxyProvider>(pRetriever) );
-  cp.add( boost::shared_ptr<eventsetup::EventSetupRecordIntervalFinder>(pRetriever));
-
-  std::string param1("untracked int32 maxEvents = 5");
-  boost::shared_ptr<ParameterSet> input_service_pset = makePSet( *edm::pset::parse(param1.c_str() ) );
-  const InputServiceDescription desc("test",1);
-
-  auto_ptr<InputService> input(new EmptyInputService(*input_service_pset,desc));
-  auto_ptr<EventPrincipal> pep = input->readEvent();
-
+  cp.add( boost::shared_ptr<eventsetup::EventSetupRecordIntervalFinder>(pRetriever)); 
   edm::Timestamp ts(123);
-  EventSetup const& c = cp.eventSetupForInstance(ts);
+  return cp.eventSetupForInstance(ts);
+}
 
+void test_one_path_with_sequence(){
 
-  int ret = executor.runOneEvent(*pep,c);
-  cout << "Result " << ret << endl;  
+  const char * conf =   "process test ={ \n"                  
+  "module a = TestSchedulerModule1 { uint32 a=1}\n"
+  "module b = TestSchedulerModule2 { uint32 a=2}\n"
+  "module c = TestSchedulerModule1 { uint32 a=3}\n"
+  "module d = TestSchedulerModule2 { uint32 a=4}\n"
+  "module e = TestSchedulerModule1 { uint32 a=5}\n" 
+  "sequence s1 = { a,b}\n"
+  "sequence s2 = { c,d}\n"
+  "path p = { s1,s2,e}\n" 
+  "}\n";
 
-  ret = executor.runOneEvent(*pep,c);
-  cout << "Result " << ret << endl;  
+    
+  boost::shared_ptr<edm::ParameterSet> processPSet= makeProcessPSet(conf);
+  
+  // actual test of schedule executor
+  
+  ScheduleBuilder builder(*processPSet);
+  
+  ScheduleExecutor executor(builder.getPathList());
+  
+  auto_ptr<InputService> input = setupDummyInputService();
+  auto_ptr<EventPrincipal> pep = input->readEvent();
+  const EventSetup& c = setupDummyEventSetup();
+    
+  executor.runOneEvent(*pep,c);
+  
+}
 
+void test_multiple_path_with_sequence(){
 
+  const char * conf =   "process test ={ \n"                  
+  "module a = TestSchedulerModule1 { uint32 a=1}\n"
+  "module b = TestSchedulerModule2 { uint32 a=2}\n"
+  "module c = TestSchedulerModule1 { uint32 a=3}\n"
+  "module d = TestSchedulerModule2 { uint32 a=4}\n"
+  "module e = TestSchedulerModule1 { uint32 a=5}\n" 
+  "sequence s1 = { a,b}\n"
+  "sequence s2 = { c,d}\n"
+  "path p1 = { s1,e}\n"
+  "path p2 = { s2,e}\n"
+  "}\n";
+
+    
+  boost::shared_ptr<edm::ParameterSet> processPSet= makeProcessPSet(conf);
+  
+  // actual test of schedule executor
+  
+  ScheduleBuilder builder(*processPSet);
+  
+  ScheduleExecutor executor(builder.getPathList());
+  
+  auto_ptr<InputService> input = setupDummyInputService();
+  auto_ptr<EventPrincipal> pep = input->readEvent();
+  const EventSetup& c = setupDummyEventSetup();
+  
+  executor.runOneEvent(*pep,c);
+
+}
+void test_failing_toload_module(){
+
+  // register_exception_translator<UnknownModuleException>(&exception1_translator);
+
+const char * conf =   "process test ={ \n"                  
+  "module a = NonExistentTestSchedulerModule { uint32 a=1}\n"
+  "module b = TestSchedulerModule2 { uint32 a=2}\n"
+  "module c = TestSchedulerModule1 { uint32 a=3}\n"
+  "module d = TestSchedulerModule2 { uint32 a=4}\n"
+  "module e = TestSchedulerModule1 { uint32 a=5}\n" 
+  "sequence s1 = { a,b}\n"
+  "sequence s2 = { c,d}\n"
+  "path p = { s1,s2,e}\n" 
+  "}\n";
+
+    
+  boost::shared_ptr<edm::ParameterSet> processPSet= makeProcessPSet(conf);
+  
+  BOOST_CHECKPOINT("Going to instanciate a non-implemented module");
+  BOOST_CHECK_THROW(ScheduleBuilder builder(*processPSet),UnknownModuleException);
+
+}
+
+test_suite*
+init_unit_test_suite( int /*argc*/, char* /*argv*/[] ) {
+    test_suite* test = BOOST_TEST_SUITE("TestScheduler");
+
+    test->add( BOOST_TEST_CASE( &test_one_path_with_sequence ) );
+    test->add( BOOST_TEST_CASE( &test_multiple_path_with_sequence ) );
+    test->add( BOOST_TEST_CASE( &test_failing_toload_module ) );
+
+    return test;
 }
