@@ -2,7 +2,7 @@
 
 Test of the EventPrincipal class.
 
-$Id: EventPrincipal_t.cpp,v 1.9 2005/05/25 04:08:46 wmtan Exp $
+$Id: EventPrincipal_t.cpp,v 1.1 2005/05/29 02:29:54 wmtan Exp $
 
 ----------------------------------------------------------------------*/  
 #include <cassert>
@@ -30,9 +30,8 @@ void fail_get_by_id()
   ep.addToProcessHistory("PROD");
   try
     {
-      edm::TypeID tid(ep);   // sure not to match any product
       edm::EDP_ID id(1);
-      handle h = ep.get(tid, id);
+      handle h = ep.get(id);
       assert("Failed to throw required exception" == 0);
     }
   catch ( std::runtime_error& x)
@@ -131,7 +130,7 @@ void fail_get_by_invalid_id()
 
   try
     {
-      handle h = ep.get(dummytype, id-1);
+      handle h = ep.get(id-1);
       assert("Failed to throw required exception" == 0);      
     }
   catch ( std::runtime_error& x )
@@ -169,7 +168,7 @@ void get_by_id()
   
   try
     {
-      handle h = ep.get(dummytype, id);
+      handle h = ep.get(id);
       assert( h.isValid() );
       assert( h->ID() == id );
     }
