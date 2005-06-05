@@ -6,15 +6,15 @@
 #Had to hard code in the -gcc-mt because I could find no
 # option in scram to tell it just to use boost_unit_test_framework
 
-  <library file="DummyData.cc,DummyRecord.cc" name=EventSetupTestDummyStuff>
+  <library file="DummyData.cc,DummyRecord.cc" name=TestEventSetupDummyStuff>
   </library>
 
   <library file=stubs/TestMod.cc name=TestMod>
    <flags SEAL_PLUGIN_NAME="TestMod">
   </library>
 
-  <library file=stubs/ToyModules.cc name=ToyModules>
-   <flags SEAL_PLUGIN_NAME="ToyModules">
+  <library file=stubs/ToyModules.cc name=TestToyModules>
+   <flags SEAL_PLUGIN_NAME="TestToyModules">
   </library>
 
 #  <Export>
@@ -57,24 +57,24 @@
     <lib name=boost_unit_test_framework-gcc-mt> 
   </bin>
 
-  <library file=stubs/LoadableDummyFinder.cc name=LoadableDummyFinder>
-    <flags SEAL_PLUGIN_NAME="LoadableDummyFinder">
-    <lib name=EventSetupTestDummyStuff>
+  <library file=stubs/LoadableDummyFinder.cc name=TestLoadableDummyFinder>
+    <flags SEAL_PLUGIN_NAME="TestLoadableDummyFinder">
+    <lib name=TestEventSetupDummyStuff>
   </library>
 
-  <library file=stubs/LoadableDummyProvider.cc name=LoadableDummyProvider>
-    <flags SEAL_PLUGIN_NAME="LoadableDummyProvider">
-    <lib name=EventSetupTestDummyStuff>
+  <library file=stubs/LoadableDummyProvider.cc name=TestLoadableDummyProvider>
+    <flags SEAL_PLUGIN_NAME="TestLoadableDummyProvider">
+    <lib name=TestEventSetupDummyStuff>
   </library>
 
   <bin file=esproducer_t.cpp name=core_eventsetup_producer_t.exe>
     <lib name=boost_unit_test_framework-gcc-mt>
-    <lib name=EventSetupTestDummyStuff>
+    <lib name=TestEventSetupDummyStuff>
   </bin>
 
   <bin file=proxyfactoryproducer_t.cpp name=core_eventsetup_proxyfactoryproducer_t.exe>
     <lib name=boost_unit_test_framework-gcc-mt>
-    <lib name=EventSetupTestDummyStuff>
+    <lib name=TestEventSetupDummyStuff>
   </bin>
 
   <bin file=callback_t.cpp name=core_eventsetup_callback_t.exe>
@@ -87,37 +87,37 @@
 
   <bin file=eventsetup_t.cpp>
     <lib name=boost_unit_test_framework-gcc-mt>
-    <lib name=EventSetupTestDummyStuff>
+    <lib name=TestEventSetupDummyStuff>
   </bin>
 
   <bin file=eventsetuprecord_t.cpp>
     <lib name=boost_unit_test_framework-gcc-mt>
-    <lib name=EventSetupTestDummyStuff>
+    <lib name=TestEventSetupDummyStuff>
   </bin>
 
   <bin file=dependentrecord_t.cpp>
     <lib name=boost_unit_test_framework-gcc-mt>
-    <lib name=EventSetupTestDummyStuff>
+    <lib name=TestEventSetupDummyStuff>
   </bin>
 
   <bin file=interval_t.cpp>
     <lib name=boost_unit_test_framework-gcc-mt>
-    <lib name=EventSetupTestDummyStuff>
+    <lib name=TestEventSetupDummyStuff>
   </bin>
 
   <bin file=datakey_t.cpp>
     <lib name=boost_unit_test_framework-gcc-mt>
-    <lib name=EventSetupTestDummyStuff>
+    <lib name=TestEventSetupDummyStuff>
   </bin>
 
   <bin file=full_chain_t.cpp>
     <lib name=boost_unit_test_framework-gcc-mt>
-    <lib name=EventSetupTestDummyStuff>
+    <lib name=TestEventSetupDummyStuff>
   </bin>
 
   <bin file=eventsetup_plugin_t.cpp>
     <lib name=boost_unit_test_framework-gcc-mt>
-    <lib name=EventSetupTestDummyStuff>
+    <lib name=TestEventSetupDummyStuff>
   </bin>
 
 </environment>
