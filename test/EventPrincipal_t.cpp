@@ -2,7 +2,7 @@
 
 Test of the EventPrincipal class.
 
-$Id: EventPrincipal_t.cpp,v 1.1 2005/05/29 02:29:54 wmtan Exp $
+$Id: EventPrincipal_t.cpp,v 1.2 2005/06/03 04:04:47 wmtan Exp $
 
 ----------------------------------------------------------------------*/  
 #include <cassert>
@@ -122,6 +122,7 @@ void fail_get_by_invalid_id()
   edmtest::DummyProduct dp;
   edm::TypeID dummytype(dp);
   std::string className = dummytype.friendlyClassName();
+  pprov->full_product_type_name = dummytype.reflectionClassName();
   pprov->friendly_product_type_name = className;
   pprov->module.module_label = label;
   pprov->module.process_name = processName;
@@ -159,6 +160,7 @@ void get_by_id()
   edm::TypeID dummytype(dp);
   std::string className = dummytype.friendlyClassName();
 
+  pprov->full_product_type_name = dummytype.reflectionClassName();
   pprov->friendly_product_type_name = className;
   pprov->module.module_label = label;
   pprov->module.process_name = processName;
@@ -198,6 +200,7 @@ void get_by_label()
   edm::TypeID dummytype(dp);
   std::string className = dummytype.friendlyClassName();
 
+  pprov->full_product_type_name = dummytype.reflectionClassName();
   pprov->friendly_product_type_name = className;
 
 
@@ -242,6 +245,7 @@ void get_by_selector()
   edm::TypeID dummytype(dp);
   std::string className = dummytype.friendlyClassName();
 
+  pprov->full_product_type_name = dummytype.reflectionClassName();
   pprov->friendly_product_type_name = className;
 
   pprov->module.module_label = label;
