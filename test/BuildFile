@@ -34,10 +34,6 @@
   <bin file=maker_t.cpp>
   </bin>
 	
-  <library file="stubs/DummyProduct.cc" name=DummyProduct>
-  <use name=FWCore/CoreFramework>
-  </library>
-
   <library file=stubs/TestSchedulerModule1.cc name=TestSchedulerModule1 >   
    <flags SEAL_PLUGIN_NAME="TestSchedulerModule1"> 
   </library>	
