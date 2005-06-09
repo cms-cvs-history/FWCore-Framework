@@ -3,11 +3,11 @@
    test for ScheduleExecutor
 
    \author Stefano ARGIRO
-   \version $Id: ScheduleExecutorFromPSet_t.cpp,v 1.4 2005/06/08 18:36:12 wmtan Exp $
+   \version $Id: ScheduleExecutorFromPSet_t.cpp,v 1.5 2005/06/09 08:30:49 argiro Exp $
    \date 18 May 2005
 */
 
-static const char CVSId[] = "$Id: ScheduleExecutorFromPSet_t.cpp,v 1.4 2005/06/08 18:36:12 wmtan Exp $";
+static const char CVSId[] = "$Id: ScheduleExecutorFromPSet_t.cpp,v 1.5 2005/06/09 08:30:49 argiro Exp $";
 
 
 #include "FWCore/CoreFramework/interface/ScheduleExecutor.h"
@@ -30,18 +30,19 @@ static const char CVSId[] = "$Id: ScheduleExecutorFromPSet_t.cpp,v 1.4 2005/06/0
 
 #include "FWCore/CoreFramework/src/TypeID.h"
 
-#include "FWCore/CoreFramework/test/stubs/DummyProduct.h"
+#include "FWCore/CoreFramework/src/ToyProducts.h"
 
-#include <iostream>
+
+#include <sstream>
 #include <string>
 
 
-//#include "boost/test/unit_test.hpp"
+#include "boost/test/unit_test.hpp"
 
 using namespace edm;
 using namespace edm::pset;
 using namespace std;
-//using namespace boost::unit_test_framework;
+using namespace boost::unit_test_framework;
 
 auto_ptr<InputService> setupDummyInputService(){
 
@@ -64,6 +65,26 @@ const EventSetup& setupDummyEventSetup(){
   cp.add( boost::shared_ptr<eventsetup::EventSetupRecordIntervalFinder>(pRetriever)); 
   edm::Timestamp ts(123);
   return cp.eventSetupForInstance(ts);
+}
+
+// check that each module wrote its name
+void checkProducts(const std::string names, EventPrincipal& pep){
+
+ for (string::const_iterator namesIt = names.begin();
+       namesIt!=names.end(); ++namesIt){
+    
+    stringstream tmp;
+    tmp<< *namesIt;
+    // this is only for testing and should never be done by the user
+   
+    Handle<EDProduct> tmp1 = 
+      pep.getByLabel((TypeID(typeid(edmtest::StringProduct))),tmp.str());
+    Handle<edmtest::StringProduct> p;
+    convert_handle(tmp1,p);
+
+    BOOST_CHECK(p->name_==tmp.str());
+  }//for
+
 }
 
 void test_one_path_with_sequence(){
@@ -92,19 +113,11 @@ void test_one_path_with_sequence(){
 
   executor.runOneEvent(*pep,c);
 
-  // this is only for testing and should never be done by the user
-//   Handle<EDProduct> tmp1 = 
-//     pep->getByLabel((TypeID(typeid(edmtest::DummyProduct))),string("a"));
-//   Handle<edmtest::DummyProduct> p1;
-//   convert_handle( tmp1,p1);
-
-  //  BOOST_CHECK(p1->getName()=="a");
-//   BOOST_CHECK(gProductCollector[1]=="b");
-//   BOOST_CHECK(gProductCollector[2]=="c");
-//   BOOST_CHECK(gProductCollector[3]=="d");
-//   BOOST_CHECK(gProductCollector[4]=="e");
+  const string names("abcde");
+  checkProducts(names,*pep);
+ 
 }
-/*
+
 void test_multiple_path_with_sequence(){
 
   const char * conf =   "process test ={ \n"                  
@@ -116,7 +129,7 @@ void test_multiple_path_with_sequence(){
   "sequence s1 = { a,b}\n"
   "sequence s2 = { c,d}\n"
   "path p1 = { s1,e}\n"
-  "path p2 = { s2,e}\n"
+  "path p2 = { s2}\n"
   "}\n";
 
     
@@ -132,16 +145,11 @@ void test_multiple_path_with_sequence(){
   auto_ptr<EventPrincipal> pep = input->readEvent();
   const EventSetup& c = setupDummyEventSetup();
 
- //  gProductCollector.clear();
+  executor.runOneEvent(*pep,c);
 
-//   executor.runOneEvent(*pep,c); 
+  const string names("abecde");
+  checkProducts(names,*pep);
 
-//   BOOST_CHECK(gProductCollector[0]=="a"); 
-//   BOOST_CHECK(gProductCollector[1]=="b"); 
-//   BOOST_CHECK(gProductCollector[2]=="e");
-//   BOOST_CHECK(gProductCollector[3]=="c");
-//   BOOST_CHECK(gProductCollector[4]=="d");
-//   BOOST_CHECK(gProductCollector[5]=="e");
 }
 void test_failing_toload_module(){
 
@@ -162,23 +170,19 @@ const char * conf =   "process test ={ \n"
   boost::shared_ptr<edm::ParameterSet> processPSet= makeProcessPSet(conf);
   
   BOOST_CHECKPOINT("Going to instanciate a non-implemented module");
-  BOOST_CHECK_THROW(ScheduleBuilder builder(*processPSet),UnknownModuleException);
-
-}
-*/
-int main(){
-
-  test_one_path_with_sequence();
+  BOOST_CHECK_THROW(ScheduleBuilder builder(*processPSet),
+		    UnknownModuleException);
 
 }
 
-// test_suite*
-// init_unit_test_suite( int /*argc*/, char* /*argv*/[] ) {
-//     test_suite* test = BOOST_TEST_SUITE("TestScheduler");
 
-//     test->add( BOOST_TEST_CASE( &test_one_path_with_sequence ) );
-//     test->add( BOOST_TEST_CASE( &test_multiple_path_with_sequence ) );
-//     test->add( BOOST_TEST_CASE( &test_failing_toload_module ) );
-
-//     return test;
-// }
+test_suite*
+init_unit_test_suite( int /*argc*/, char* /*argv*/[] ) {
+  test_suite* test = BOOST_TEST_SUITE("TestScheduler");
+  
+  test->add( BOOST_TEST_CASE( &test_one_path_with_sequence ) );
+  test->add( BOOST_TEST_CASE( &test_multiple_path_with_sequence ) );
+  test->add( BOOST_TEST_CASE( &test_failing_toload_module ) );
+  
+  return test;
+}
