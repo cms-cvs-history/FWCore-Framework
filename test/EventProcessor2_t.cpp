@@ -2,7 +2,7 @@
 
 Test of the EventProcessor class.
 
-$Id: EventProcessor2_t.cpp,v 1.2 2005/06/02 20:20:00 wmtan Exp $
+$Id: EventProcessor2_t.cpp,v 1.3 2005/06/08 21:15:55 wmtan Exp $
 
 ----------------------------------------------------------------------*/  
 #include <exception>
@@ -17,7 +17,7 @@ void work()
 		    "source = EmptyInputService { untracked int32 maxEvents = 5 }\n"
 		    "module m1 = IntProducer { int32 ivalue = 10 }\n"
 		    "module m2 = DoubleProducer { double dvalue = 3.3 }\n"
-		    "module out = AsciiOutputModule { untracked bool keepOnlySpecifiedProducts = false untracked vstring skipProducts = {} }\n"
+		    "module out = AsciiOutputModule { }\n"
                     "path p1 = { m1,m2,out }\n"
 		    "}\n");
   edm::EventProcessor proc(configuration);
