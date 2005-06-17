@@ -73,7 +73,7 @@ const char answer[] =
   "---- InfiniteLoop BEGIN\n"
   "In func2\n"
   "---- DataCorrupt BEGIN\n"
-  "This is just a test:\n" 
+  "This is just a test: \n" 
   "double: 1.11111\n"
   "float:  2.22222\n"
   "ulong:  4294967295\n"
@@ -104,17 +104,17 @@ int main()
     }
   catch (Exception& e)
     {
-      cerr << "*** main caught Exception, output is ***(\n"
-	   << e.what()
-	   << "\n)*** After exception output ***"
+      cerr << "*** main caught Exception, output is ***\n"
+	   << "(" << e.what() << ")"
+	   << "*** After exception output ***"
 	   << endl;
 
       cerr << "\nCategory name list:\n";
 
-#if 0
+#if 1
       if(e.what() != answer)
 	{
-	  cerr << "not right answer(\n" << answer << "\n)"
+	  cerr << "not right answer\n(" << answer << ")\n"
 	       << endl;
 	  abort();
 	}
