@@ -3,11 +3,11 @@
    test for ScheduleExecutor
 
    \author Stefano ARGIRO
-   \version $Id: ScheduleExecutorFromPSet_t.cpp,v 1.5 2005/06/09 08:30:49 argiro Exp $
+   \version $Id: ScheduleExecutorFromPSet_t.cpp,v 1.6 2005/06/09 15:59:17 argiro Exp $
    \date 18 May 2005
 */
 
-static const char CVSId[] = "$Id: ScheduleExecutorFromPSet_t.cpp,v 1.5 2005/06/09 08:30:49 argiro Exp $";
+static const char CVSId[] = "$Id: ScheduleExecutorFromPSet_t.cpp,v 1.6 2005/06/09 15:59:17 argiro Exp $";
 
 
 #include "FWCore/CoreFramework/interface/ScheduleExecutor.h"
@@ -24,9 +24,9 @@ static const char CVSId[] = "$Id: ScheduleExecutorFromPSet_t.cpp,v 1.5 2005/06/0
 #include "FWCore/CoreFramework/test/DummyEventSetupRecordRetriever.h"
 #include "FWCore/FWCoreServices/src/EmptyInputService.h"
 
-#include "FWCore/ParameterSet/interface/parse.h"
-#include "FWCore/ParameterSet/interface/Makers.h"
-#include "FWCore/ParameterSet/interface/MakeProcessPSet.h"
+#include <FWCore/ParameterSet/interface/ProcessPSetBuilder.h>
+#include <FWCore/ParameterSet/interface/Makers.h>
+#include <FWCore/ParameterSet/interface/parse.h>
 
 #include "FWCore/CoreFramework/src/TypeID.h"
 
@@ -95,14 +95,15 @@ void test_one_path_with_sequence(){
   "module c = TestSchedulerModule1 { string module_name = \"c\" }\n"
   "module d = TestSchedulerModule2 { string module_name = \"d\" }\n"
   "module e = TestSchedulerModule1 { string module_name = \"e\" }\n" 
-  "sequence s1 = { a,b}\n"
-  "sequence s2 = { c,d}\n"
+  "sequence s1 = { a,b,c}\n"
+  "sequence s2 = { d}\n"
   "path p = { s1,s2,e}\n" 
   "}\n";
 
     
-  boost::shared_ptr<edm::ParameterSet> processPSet= makeProcessPSet(conf);
-  
+  ProcessPSetBuilder b(conf);
+  boost::shared_ptr<ParameterSet> processPSet = b.getProcessPSet();
+
   ScheduleBuilder builder(*processPSet);
   
   ScheduleExecutor executor(builder.getPathList());
@@ -132,9 +133,9 @@ void test_multiple_path_with_sequence(){
   "path p2 = { s2}\n"
   "}\n";
 
-    
-  boost::shared_ptr<edm::ParameterSet> processPSet= makeProcessPSet(conf);
-  
+  ProcessPSetBuilder b(conf);
+  boost::shared_ptr<ParameterSet> processPSet = b.getProcessPSet();
+   
   // actual test of schedule executor
   
   ScheduleBuilder builder(*processPSet);
@@ -166,12 +167,12 @@ const char * conf =   "process test ={ \n"
   "path p = { s1,s2,e}\n" 
   "}\n";
 
-    
-  boost::shared_ptr<edm::ParameterSet> processPSet= makeProcessPSet(conf);
-  
-  BOOST_CHECKPOINT("Going to instanciate a non-implemented module");
-  BOOST_CHECK_THROW(ScheduleBuilder builder(*processPSet),
-		    UnknownModuleException);
+ ProcessPSetBuilder b(conf);
+ boost::shared_ptr<ParameterSet> processPSet = b.getProcessPSet(); 
+ 
+ BOOST_CHECKPOINT("Going to instanciate a non-implemented module");
+ BOOST_CHECK_THROW(ScheduleBuilder builder(*processPSet),
+		   UnknownModuleException);
 
 }
 
