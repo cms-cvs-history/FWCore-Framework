@@ -3,11 +3,11 @@
    test for ScheduleExecutor
 
    \author Stefano ARGIRO
-   \version $Id: ScheduleExecutorFromPSet_t.cpp,v 1.6 2005/06/09 15:59:17 argiro Exp $
+   \version $Id: ScheduleExecutorFromPSet_t.cpp,v 1.7 2005/06/20 15:18:56 argiro Exp $
    \date 18 May 2005
 */
 
-static const char CVSId[] = "$Id: ScheduleExecutorFromPSet_t.cpp,v 1.6 2005/06/09 15:59:17 argiro Exp $";
+static const char CVSId[] = "$Id: ScheduleExecutorFromPSet_t.cpp,v 1.7 2005/06/20 15:18:56 argiro Exp $";
 
 
 #include "FWCore/CoreFramework/interface/ScheduleExecutor.h"
@@ -85,6 +85,30 @@ void checkProducts(const std::string names, EventPrincipal& pep){
     BOOST_CHECK(p->name_==tmp.str());
   }//for
 
+}
+
+void test_trivial_path(){
+
+  const char * conf =   "process test ={ \n"                  
+    "module a = TestSchedulerModule1 { string module_name = \"a\" }\n"
+    "path p = { a}\n";
+  
+  ProcessPSetBuilder b(conf);
+  boost::shared_ptr<ParameterSet> processPSet = b.getProcessPSet();
+  
+  ScheduleBuilder builder(*processPSet);
+  
+  ScheduleExecutor executor(builder.getPathList());
+  
+  auto_ptr<InputService> input = setupDummyInputService();
+  auto_ptr<EventPrincipal> pep = input->readEvent();
+  const EventSetup& c = setupDummyEventSetup();
+  
+  executor.runOneEvent(*pep,c);
+  
+  const string names("a");
+  checkProducts(names,*pep);
+  
 }
 
 void test_one_path_with_sequence(){
