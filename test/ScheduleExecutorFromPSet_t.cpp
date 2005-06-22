@@ -3,11 +3,11 @@
    test for ScheduleExecutor
 
    \author Stefano ARGIRO
-   \version $Id: ScheduleExecutorFromPSet_t.cpp,v 1.7 2005/06/20 15:18:56 argiro Exp $
+   \version $Id: ScheduleExecutorFromPSet_t.cpp,v 1.8 2005/06/22 07:18:50 argiro Exp $
    \date 18 May 2005
 */
 
-static const char CVSId[] = "$Id: ScheduleExecutorFromPSet_t.cpp,v 1.7 2005/06/20 15:18:56 argiro Exp $";
+static const char CVSId[] = "$Id: ScheduleExecutorFromPSet_t.cpp,v 1.8 2005/06/22 07:18:50 argiro Exp $";
 
 
 #include "FWCore/CoreFramework/interface/ScheduleExecutor.h"
@@ -90,9 +90,10 @@ void checkProducts(const std::string names, EventPrincipal& pep){
 void test_trivial_path(){
 
   const char * conf =   "process test ={ \n"                  
-    "module a = TestSchedulerModule1 { string module_name = \"a\" }\n"
-    "path p = { a}\n";
-  
+  "module a = TestSchedulerModule1 { string module_name = \"a\" }\n"
+  "path p = { a}\n" 
+  "}\n";
+
   ProcessPSetBuilder b(conf);
   boost::shared_ptr<ParameterSet> processPSet = b.getProcessPSet();
   
@@ -204,7 +205,8 @@ const char * conf =   "process test ={ \n"
 test_suite*
 init_unit_test_suite( int /*argc*/, char* /*argv*/[] ) {
   test_suite* test = BOOST_TEST_SUITE("TestScheduler");
-  
+
+  test->add( BOOST_TEST_CASE( &test_trivial_path ) );
   test->add( BOOST_TEST_CASE( &test_one_path_with_sequence ) );
   test->add( BOOST_TEST_CASE( &test_multiple_path_with_sequence ) );
   test->add( BOOST_TEST_CASE( &test_failing_toload_module ) );
