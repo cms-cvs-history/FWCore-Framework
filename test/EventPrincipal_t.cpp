@@ -2,7 +2,7 @@
 
 Test of the EventPrincipal class.
 
-$Id: EventPrincipal_t.cpp,v 1.2 2005/06/03 04:04:47 wmtan Exp $
+$Id: EventPrincipal_t.cpp,v 1.3 2005/06/07 22:42:45 wmtan Exp $
 
 ----------------------------------------------------------------------*/  
 #include <cassert>
@@ -172,7 +172,7 @@ void get_by_id()
     {
       handle h = ep.get(id);
       assert( h.isValid() );
-      assert( h->ID() == id );
+      assert( h->id() == id );
     }
   catch ( std::runtime_error& x )
     {
