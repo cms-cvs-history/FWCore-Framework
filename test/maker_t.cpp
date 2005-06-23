@@ -44,8 +44,8 @@ int main()
     //cout << (*ib)->name() << endl;
     // }
 
-    boost::shared_ptr<ParameterSet> p1 = makePSet( *edm::pset::parse(param1.c_str() ) );;
-    boost::shared_ptr<ParameterSet> p2 = makePSet( *edm::pset::parse(param2.c_str() ) );;
+    boost::shared_ptr<ParameterSet> p1 = makePSet(*edm::pset::parse(param1.c_str()));;
+    boost::shared_ptr<ParameterSet> p2 = makePSet(*edm::pset::parse(param2.c_str()));;
 
     cerr << p1->getParameter<std::string>("module_type");
     auto_ptr<Worker> w1 = f->makeWorker(*p1,"PROD",0,0);

@@ -2,7 +2,7 @@
 
 Test of the EventProcessor class.
 
-$Id: EventProcessor2_t.cpp,v 1.3 2005/06/08 21:15:55 wmtan Exp $
+$Id: EventProcessor2_t.cpp,v 1.4 2005/06/10 05:33:42 wmtan Exp $
 
 ----------------------------------------------------------------------*/  
 #include <exception>
@@ -29,12 +29,12 @@ int main()
 {
   int rc = -1;                // we should never return this value!
   try { work(); rc = 0;}
-  catch ( std::exception& e )
+  catch (std::exception& e)
     {
       std::cerr << "Exception caught: " << e.what() << std::endl;
       rc = 1;
     }
-  catch ( ... )
+  catch (...)
     {
       std::cerr << "Unknown exception caught" << std::endl;
       rc = 2;

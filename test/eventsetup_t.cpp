@@ -32,27 +32,27 @@ edm::eventsetup::heterocontainer::HCTypeTagTemplate<DummyRecord, edm::eventsetup
 using namespace edm;
 
 
-BOOST_AUTO_UNIT_TEST( construct_test )
+BOOST_AUTO_UNIT_TEST(construct_test)
 {
    eventsetup::EventSetupProvider provider;
    const Timestamp timestamp = 1;
-   EventSetup const& eventSetup = provider.eventSetupForInstance( timestamp );
-   BOOST_CHECK(&eventSetup != 0 );
-   BOOST_CHECK( eventSetup.timestamp() == timestamp );
+   EventSetup const& eventSetup = provider.eventSetupForInstance(timestamp);
+   BOOST_CHECK(&eventSetup != 0);
+   BOOST_CHECK(eventSetup.timestamp() == timestamp);
 }
 
-BOOST_AUTO_UNIT_TEST( get_test )
+BOOST_AUTO_UNIT_TEST(get_test)
 {
    eventsetup::EventSetupProvider provider;
-   EventSetup const& eventSetup = provider.eventSetupForInstance( Timestamp::invalidTimestamp() );
-   BOOST_CHECK(&eventSetup != 0 );
-   BOOST_CHECK_THROW(eventSetup.get<DummyRecord>(), edm::eventsetup::NoRecordException<DummyRecord> );
+   EventSetup const& eventSetup = provider.eventSetupForInstance(Timestamp::invalidTimestamp());
+   BOOST_CHECK(&eventSetup != 0);
+   BOOST_CHECK_THROW(eventSetup.get<DummyRecord>(), edm::eventsetup::NoRecordException<DummyRecord>);
    
    DummyRecord dummyRecord;
    provider.addRecordToEventSetup(dummyRecord);
    const DummyRecord& gottenRecord = eventSetup.get<DummyRecord>();
-   BOOST_CHECK( 0 != &gottenRecord );
-   BOOST_CHECK( &dummyRecord == &gottenRecord );
+   BOOST_CHECK(0 != &gottenRecord);
+   BOOST_CHECK(&dummyRecord == &gottenRecord);
 }
 
 #include "FWCore/CoreFramework/interface/EventSetupRecordProviderTemplate.h"
@@ -60,16 +60,16 @@ BOOST_AUTO_UNIT_TEST( get_test )
 class DummyEventSetupProvider : public edm::eventsetup::EventSetupProvider {
 public:
    template<class T>
-   void insert(std::auto_ptr<T> iRecord ) {
-      edm::eventsetup::EventSetupProvider::insert( iRecord );
+   void insert(std::auto_ptr<T> iRecord) {
+      edm::eventsetup::EventSetupProvider::insert(iRecord);
    }
 };
 
-BOOST_AUTO_UNIT_TEST( record_provider_test )
+BOOST_AUTO_UNIT_TEST(record_provider_test)
 {
    DummyEventSetupProvider provider;
    typedef eventsetup::EventSetupRecordProviderTemplate<DummyRecord> DummyRecordProvider;
-   std::auto_ptr<DummyRecordProvider > dummyRecordProvider( new DummyRecordProvider() );
+   std::auto_ptr<DummyRecordProvider > dummyRecordProvider(new DummyRecordProvider());
    
    provider.insert(dummyRecordProvider);
    
@@ -78,9 +78,9 @@ BOOST_AUTO_UNIT_TEST( record_provider_test )
    //       Since the EventSetup::get<> will only retrieve a Record if its
    //       interval of validity is 'valid' for the present 'instance'
    //       this is a 'hack' to have the 'get' succeed
-   EventSetup const& eventSetup = provider.eventSetupForInstance( Timestamp::invalidTimestamp() );
+   EventSetup const& eventSetup = provider.eventSetupForInstance(Timestamp::invalidTimestamp());
    const DummyRecord& gottenRecord = eventSetup.get<DummyRecord>();
-   BOOST_CHECK( 0 != &gottenRecord );
+   BOOST_CHECK(0 != &gottenRecord);
 }
 
 #include "FWCore/CoreFramework/interface/EventSetupRecordIntervalFinder.h"
@@ -91,14 +91,14 @@ public:
       this->findingRecord<DummyRecord>();
    }
 
-   void setInterval( const ValidityInterval& iInterval ) {
+   void setInterval(const ValidityInterval& iInterval) {
       interval_ = iInterval;
    }
 protected:
-   virtual void setIntervalFor( const eventsetup::EventSetupRecordKey&,
+   virtual void setIntervalFor(const eventsetup::EventSetupRecordKey&,
                                 const Timestamp& iTime, 
                                 ValidityInterval& iInterval) {
-      if( interval_.validFor( iTime ) ) {
+      if(interval_.validFor(iTime)) {
          iInterval = interval_;
       } else {
          iInterval = ValidityInterval();
@@ -109,34 +109,34 @@ private:
 };
 
 
-BOOST_AUTO_UNIT_TEST( record_validity_test )
+BOOST_AUTO_UNIT_TEST(record_validity_test)
 {
    DummyEventSetupProvider provider;
    typedef eventsetup::EventSetupRecordProviderTemplate<DummyRecord> DummyRecordProvider;
-   std::auto_ptr<DummyRecordProvider > dummyRecordProvider( new DummyRecordProvider() );
+   std::auto_ptr<DummyRecordProvider > dummyRecordProvider(new DummyRecordProvider());
 
-   boost::shared_ptr<DummyFinder> finder( new DummyFinder );
-   dummyRecordProvider->addFinder( finder );
+   boost::shared_ptr<DummyFinder> finder(new DummyFinder);
+   dummyRecordProvider->addFinder(finder);
    
    provider.insert(dummyRecordProvider);
    
    {
-      EventSetup const& eventSetup = provider.eventSetupForInstance( Timestamp(1) );
-      BOOST_CHECK_THROW(eventSetup.get<DummyRecord>(), edm::eventsetup::NoRecordException<DummyRecord> );
+      EventSetup const& eventSetup = provider.eventSetupForInstance(Timestamp(1));
+      BOOST_CHECK_THROW(eventSetup.get<DummyRecord>(), edm::eventsetup::NoRecordException<DummyRecord>);
    }
 
-   finder->setInterval( ValidityInterval( Timestamp(2), Timestamp(3) ) );
+   finder->setInterval(ValidityInterval(Timestamp(2), Timestamp(3)));
    {
-      EventSetup const& eventSetup = provider.eventSetupForInstance( Timestamp(2) );
+      EventSetup const& eventSetup = provider.eventSetupForInstance(Timestamp(2));
       eventSetup.get<DummyRecord>();
    }
    {
-      EventSetup const& eventSetup = provider.eventSetupForInstance( Timestamp(3) );
+      EventSetup const& eventSetup = provider.eventSetupForInstance(Timestamp(3));
       eventSetup.get<DummyRecord>();
    }
    {
-      EventSetup const& eventSetup = provider.eventSetupForInstance( Timestamp(4) );
-      BOOST_CHECK_THROW(eventSetup.get<DummyRecord>(), edm::eventsetup::NoRecordException<DummyRecord> );
+      EventSetup const& eventSetup = provider.eventSetupForInstance(Timestamp(4));
+      BOOST_CHECK_THROW(eventSetup.get<DummyRecord>(), edm::eventsetup::NoRecordException<DummyRecord>);
    }
    
    
@@ -149,12 +149,12 @@ public:
    DummyProxyProvider() {
       usingRecord<DummyRecord>();
    }
-   void newInterval( const eventsetup::EventSetupRecordKey& iRecordType,
-                     const ValidityInterval& iInterval ) {
+   void newInterval(const eventsetup::EventSetupRecordKey& iRecordType,
+                     const ValidityInterval& iInterval) {
       //do nothing
    }
 protected:
-   void registerProxies( const eventsetup::EventSetupRecordKey&, KeyedProxies& iHolder) {
+   void registerProxies(const eventsetup::EventSetupRecordKey&, KeyedProxies& iHolder) {
    }
 
 };
@@ -163,13 +163,13 @@ protected:
 //create an instance of the factory
 static eventsetup::EventSetupRecordProviderFactoryTemplate<DummyRecord> s_factory;
 
-BOOST_AUTO_UNIT_TEST( proxy_provider_test )
+BOOST_AUTO_UNIT_TEST(proxy_provider_test)
 {
    eventsetup::EventSetupProvider provider;
-   boost::shared_ptr<eventsetup::DataProxyProvider> dummyProv( new DummyProxyProvider() );
-   provider.add( dummyProv );
+   boost::shared_ptr<eventsetup::DataProxyProvider> dummyProv(new DummyProxyProvider());
+   provider.add(dummyProv);
    
-   EventSetup const& eventSetup = provider.eventSetupForInstance( Timestamp::invalidTimestamp() );
+   EventSetup const& eventSetup = provider.eventSetupForInstance(Timestamp::invalidTimestamp());
    const DummyRecord& gottenRecord = eventSetup.get<DummyRecord>();
-   BOOST_CHECK( 0 != &gottenRecord );
+   BOOST_CHECK(0 != &gottenRecord);
 }

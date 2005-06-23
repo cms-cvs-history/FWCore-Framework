@@ -3,11 +3,11 @@
    test for ScheduleExecutor
 
    \author Stefano ARGIRO
-   \version $Id: ScheduleExecutorFromPSet_t.cpp,v 1.8 2005/06/22 07:18:50 argiro Exp $
+   \version $Id: ScheduleExecutorFromPSet_t.cpp,v 1.9 2005/06/22 08:28:42 argiro Exp $
    \date 18 May 2005
 */
 
-static const char CVSId[] = "$Id: ScheduleExecutorFromPSet_t.cpp,v 1.8 2005/06/22 07:18:50 argiro Exp $";
+static const char CVSId[] = "$Id: ScheduleExecutorFromPSet_t.cpp,v 1.9 2005/06/22 08:28:42 argiro Exp $";
 
 
 #include "FWCore/CoreFramework/interface/ScheduleExecutor.h"
@@ -48,7 +48,7 @@ auto_ptr<InputService> setupDummyInputService(){
 
   std::string param1("int32 maxEvents=5");
   boost::shared_ptr<ParameterSet> input_service_pset = 
-    makePSet( *edm::pset::parse(param1.c_str() ) );
+    makePSet(*edm::pset::parse(param1.c_str()));
   const InputServiceDescription desc("test",1);
   auto_ptr<InputService> 
     input(new EmptyInputService(*input_service_pset,desc));
@@ -60,9 +60,9 @@ const EventSetup& setupDummyEventSetup(){
 
   edm::eventsetup::EventSetupProvider cp;
   boost::shared_ptr<DummyEventSetupRecordRetriever> 
-    pRetriever( new DummyEventSetupRecordRetriever );
-  cp.add( boost::shared_ptr<eventsetup::DataProxyProvider>(pRetriever) );
-  cp.add( boost::shared_ptr<eventsetup::EventSetupRecordIntervalFinder>(pRetriever)); 
+    pRetriever(new DummyEventSetupRecordRetriever);
+  cp.add(boost::shared_ptr<eventsetup::DataProxyProvider>(pRetriever));
+  cp.add(boost::shared_ptr<eventsetup::EventSetupRecordIntervalFinder>(pRetriever)); 
   edm::Timestamp ts(123);
   return cp.eventSetupForInstance(ts);
 }
@@ -203,13 +203,13 @@ const char * conf =   "process test ={ \n"
 
 
 test_suite*
-init_unit_test_suite( int /*argc*/, char* /*argv*/[] ) {
+init_unit_test_suite(int /*argc*/, char* /*argv*/[]) {
   test_suite* test = BOOST_TEST_SUITE("TestScheduler");
 
-  test->add( BOOST_TEST_CASE( &test_trivial_path ) );
-  test->add( BOOST_TEST_CASE( &test_one_path_with_sequence ) );
-  test->add( BOOST_TEST_CASE( &test_multiple_path_with_sequence ) );
-  test->add( BOOST_TEST_CASE( &test_failing_toload_module ) );
+  test->add(BOOST_TEST_CASE(&test_trivial_path));
+  test->add(BOOST_TEST_CASE(&test_one_path_with_sequence));
+  test->add(BOOST_TEST_CASE(&test_multiple_path_with_sequence));
+  test->add(BOOST_TEST_CASE(&test_failing_toload_module));
   
   return test;
 }

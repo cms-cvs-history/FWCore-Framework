@@ -2,7 +2,7 @@
 
 Test of the EventPrincipal class.
 
-$Id: EventPrincipal_t.cpp,v 1.3 2005/06/07 22:42:45 wmtan Exp $
+$Id: EventPrincipal_t.cpp,v 1.4 2005/06/23 04:33:54 wmtan Exp $
 
 ----------------------------------------------------------------------*/  
 #include <cassert>
@@ -34,11 +34,11 @@ void fail_get_by_id()
       handle h = ep.get(id);
       assert("Failed to throw required exception" == 0);
     }
-  catch ( std::runtime_error& x)
+  catch (std::runtime_error& x)
     {
       // nothing to do
     }
-  catch ( ... )
+  catch (...)
     {
       assert("Threw wrong kind of exception" == 0);
     }
@@ -55,11 +55,11 @@ void fail_get_by_selector()
       handle h = ep.getBySelector(tid, sel);
       assert("Failed to throw required exception" == 0);      
     }
-  catch ( std::runtime_error& x)
+  catch (std::runtime_error& x)
     {
       // nothing to do
     }
-  catch ( ... )
+  catch (...)
     {
       assert("Threw wrong kind of exception" == 0);
     }
@@ -76,11 +76,11 @@ void fail_get_by_label()
       handle h = ep.getByLabel(tid, label);
       assert("Failed to throw required exception" == 0);      
     }
-  catch ( std::runtime_error& x)
+  catch (std::runtime_error& x)
     {
       // nothing to do
     }
-  catch ( ... )
+  catch (...)
     {
       assert("Threw wrong kind of exception" == 0);
     }
@@ -98,11 +98,11 @@ void fail_get_many()
       ep.getMany(tid, sel, handles);
       assert("Failed to throw required exception" == 0);      
     }
-  catch ( std::runtime_error& x)
+  catch (std::runtime_error& x)
     {
       // nothing to do
     }
-  catch ( ... )
+  catch (...)
     {
       assert("Threw wrong kind of exception" == 0);
     }
@@ -134,11 +134,11 @@ void fail_get_by_invalid_id()
       handle h = ep.get(id-1);
       assert("Failed to throw required exception" == 0);      
     }
-  catch ( std::runtime_error& x )
+  catch (std::runtime_error& x)
     {
       // nothing to do
     }
-  catch ( ... )
+  catch (...)
     {
       assert("Threw wrong kind of exception" == 0);
     }
@@ -171,15 +171,15 @@ void get_by_id()
   try
     {
       handle h = ep.get(id);
-      assert( h.isValid() );
-      assert( h->id() == id );
+      assert(h.isValid());
+      assert(h->id() == id);
     }
-  catch ( std::runtime_error& x )
+  catch (std::runtime_error& x)
     {
       std::cerr << x.what()<< std::endl;
       assert("Threw exception unexpectedly" == 0);
     }
-  catch ( ... )
+  catch (...)
     {
       std::cerr << "Unknown exception type\n";
       assert("Threw exception unexpectedly" == 0);
@@ -214,15 +214,15 @@ void get_by_label()
       edm::TypeID tid(example);
 
       handle h = ep.getByLabel(tid, label);
-      assert( h.isValid() );
-      assert( h.provenance()->module.module_label == label);
+      assert(h.isValid());
+      assert(h.provenance()->module.module_label == label);
     }
-  catch ( std::runtime_error& x )
+  catch (std::runtime_error& x)
     {
       std::cerr << x.what()<< std::endl;
       assert("Threw exception unexpectedly" == 0);
     }
-  catch ( ... )
+  catch (...)
     {
       std::cerr << "Unknown exception type\n";
       assert("Threw exception unexpectedly" == 0);
@@ -259,15 +259,15 @@ void get_by_selector()
       edm::ProcessNameSelector pnsel(processName);
 
       handle h = ep.getBySelector(tid, pnsel);
-      assert( h.isValid() );
-      assert( h.provenance()->module.module_label == label);
+      assert(h.isValid());
+      assert(h.provenance()->module.module_label == label);
     }
-  catch ( std::runtime_error& x)
+  catch (std::runtime_error& x)
     {
       std::cerr << x.what()<< std::endl;
       assert("Threw exception unexpectedly" == 0);
     }
-  catch ( ... )
+  catch (...)
     {
       std::cerr << "Unknown exception type\n";
       assert("Threw exception unexpectedly" == 0);

@@ -32,13 +32,13 @@ edm::eventsetup::heterocontainer::HCTypeTagTemplate<DummyRecord, edm::eventsetup
 //create an instance of the factory
 static eventsetup::EventSetupRecordProviderFactoryTemplate<DummyRecord> s_factory;
 
-BOOST_AUTO_UNIT_TEST( factory_test )
+BOOST_AUTO_UNIT_TEST(factory_test)
 {
    std::auto_ptr<EventSetupRecordProvider> dummyProvider =
    EventSetupRecordProviderFactoryManager::instance().makeRecordProvider(
-                              EventSetupRecordKey::makeKey<DummyRecord>() );
+                              EventSetupRecordKey::makeKey<DummyRecord>());
    
-   BOOST_CHECK( 0 != dynamic_cast<EventSetupRecordProviderTemplate<DummyRecord>*>( &(*dummyProvider) ) );
+   BOOST_CHECK(0 != dynamic_cast<EventSetupRecordProviderTemplate<DummyRecord>*>(&(*dummyProvider)));
 
 }   
 
@@ -57,7 +57,7 @@ edm::eventsetup::heterocontainer::HCTypeTagTemplate<Dummy, edm::eventsetup::Data
 
 class FailingDummyProxy : public eventsetup::DataProxyTemplate<DummyRecord, Dummy> {
 protected:
-   const value_type* make( const record_type&, const DataKey&) {
+   const value_type* make(const record_type&, const DataKey&) {
       return 0 ;
    }
    void invalidateCache() {
@@ -66,11 +66,11 @@ protected:
 
 class WorkingDummyProxy : public eventsetup::DataProxyTemplate<DummyRecord, Dummy> {
 public:
-   WorkingDummyProxy( const Dummy* iDummy ) : data_(iDummy) {}
+   WorkingDummyProxy(const Dummy* iDummy) : data_(iDummy) {}
 
 protected:
    
-   const value_type* make( const record_type&, const DataKey&) {
+   const value_type* make(const record_type&, const DataKey&) {
       return data_ ;
    }
    void invalidateCache() {
@@ -79,7 +79,7 @@ private:
    const Dummy* data_;
 };
 
-BOOST_AUTO_UNIT_TEST( proxy_test )
+BOOST_AUTO_UNIT_TEST(proxy_test)
 {
    DummyRecord dummyRecord;
    FailingDummyProxy dummyProxy;
@@ -87,25 +87,25 @@ BOOST_AUTO_UNIT_TEST( proxy_test )
    const DataKey dummyDataKey(DataKey::makeTypeTag<FailingDummyProxy::value_type>(),
                               "");
    
-   BOOST_CHECK( 0 == dummyRecord.find(dummyDataKey ) );
-   //BOOST_CHECK_THROW(dummyRecord.get(dummyPtr), edm::eventsetup::MakeDataException<DummyRecord,Dummy> );
+   BOOST_CHECK(0 == dummyRecord.find(dummyDataKey));
+   //BOOST_CHECK_THROW(dummyRecord.get(dummyPtr), edm::eventsetup::MakeDataException<DummyRecord,Dummy>);
 
    
-   dummyRecord.add( dummyDataKey,
-                    &dummyProxy );
+   dummyRecord.add(dummyDataKey,
+                    &dummyProxy);
    
-   BOOST_CHECK( &dummyProxy == dummyRecord.find(dummyDataKey) );
+   BOOST_CHECK(&dummyProxy == dummyRecord.find(dummyDataKey));
 
    const DataKey dummyFredDataKey(DataKey::makeTypeTag<FailingDummyProxy::value_type>(),
                                   "fred");
-   BOOST_CHECK( 0 == dummyRecord.find(dummyFredDataKey ) );
+   BOOST_CHECK(0 == dummyRecord.find(dummyFredDataKey));
 
 }
 
 #include "FWCore/CoreFramework/interface/ESHandle.h"
 #include "FWCore/CoreFramework/interface/recordGetImplementation.icc"
 
-BOOST_AUTO_UNIT_TEST( get_test )
+BOOST_AUTO_UNIT_TEST(get_test)
 {
    DummyRecord dummyRecord;
    FailingDummyProxy dummyProxy;
@@ -117,29 +117,29 @@ BOOST_AUTO_UNIT_TEST( get_test )
    typedef edm::eventsetup::NoDataException<Dummy> NoDataExceptionType;
    BOOST_CHECK_THROW(dummyRecord.get(dummyPtr), NoDataExceptionType) ;
    
-   dummyRecord.add( dummyDataKey,
-                    &dummyProxy );
+   dummyRecord.add(dummyDataKey,
+                    &dummyProxy);
 
    typedef edm::eventsetup::MakeDataException<DummyRecord,Dummy> ExceptionType;
-   BOOST_CHECK_THROW(dummyRecord.get(dummyPtr), ExceptionType );
+   BOOST_CHECK_THROW(dummyRecord.get(dummyPtr), ExceptionType);
 
    Dummy myDummy;
-   WorkingDummyProxy workingProxy( &myDummy);
+   WorkingDummyProxy workingProxy(&myDummy);
    
    const DataKey workingDataKey(DataKey::makeTypeTag<WorkingDummyProxy::value_type>(),
                               "working");
 
-   dummyRecord.add( workingDataKey,
-                    &workingProxy );
+   dummyRecord.add(workingDataKey,
+                    &workingProxy);
 
    dummyRecord.get(dummyPtr, "working");
    
-   BOOST_CHECK( &(*dummyPtr) == &myDummy);
+   BOOST_CHECK(&(*dummyPtr) == &myDummy);
 
    const std::string workingString("working");
    
-   dummyRecord.get(dummyPtr, workingString );
-   BOOST_CHECK( &(*dummyPtr) == &myDummy);
+   dummyRecord.get(dummyPtr, workingString);
+   BOOST_CHECK(&(*dummyPtr) == &myDummy);
    
 }
 

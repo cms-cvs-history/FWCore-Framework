@@ -43,8 +43,8 @@ int main()
 
   auto_ptr<Maker> f(new WorkerMaker<TestMod>);
 
-  boost::shared_ptr<ParameterSet> p1 = makePSet( *edm::pset::parse(param1.c_str() ) );
-  boost::shared_ptr<ParameterSet> p2 = makePSet( *edm::pset::parse(param2.c_str() ) );
+  boost::shared_ptr<ParameterSet> p1 = makePSet(*edm::pset::parse(param1.c_str()));
+  boost::shared_ptr<ParameterSet> p2 = makePSet(*edm::pset::parse(param2.c_str()));
 
   if(p1==0) cerr << "failed to make p1" << endl;
   if(p2==0) cerr << "failed to make p2" << endl;

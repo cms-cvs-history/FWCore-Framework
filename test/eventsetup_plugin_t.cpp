@@ -8,7 +8,7 @@
 //
 // Author:      Chris Jones
 // Created:     Thu May 26 11:01:19 EDT 2005
-// $Id: eventsetup_plugin_t.cpp,v 1.1 2005/05/26 20:58:38 chrjones Exp $
+// $Id: eventsetup_plugin_t.cpp,v 1.1 2005/05/29 02:29:54 wmtan Exp $
 //
 
 // system include files
@@ -28,27 +28,27 @@
 //
 static void doInit() {
    static bool firstTime=true;
-   if( firstTime ) {
+   if(firstTime) {
       seal::PluginManager::get ()->initialise ();
       firstTime = false;
    }
 }
 using namespace edm::eventsetup;
 
-BOOST_AUTO_UNIT_TEST(finder_test )
+BOOST_AUTO_UNIT_TEST(finder_test)
 {
    doInit();
    
    EventSetupProvider provider;
    
    edm::ParameterSet dummyFinderPSet;
-   dummyFinderPSet.insert( true, "module_type", edm::Entry(std::string("LoadableDummyFinder"), true) );
-   dummyFinderPSet.insert( true, "module_label", edm::Entry(std::string(""), true) );
-   SourceFactory::get()->addTo( provider, dummyFinderPSet, "RECO", 1, 1);
+   dummyFinderPSet.insert(true, "module_type", edm::Entry(std::string("LoadableDummyFinder"), true));
+   dummyFinderPSet.insert(true, "module_label", edm::Entry(std::string(""), true));
+   SourceFactory::get()->addTo(provider, dummyFinderPSet, "RECO", 1, 1);
    
    edm::ParameterSet dummyProviderPSet;
-   dummyProviderPSet.insert( true, "module_type", edm::Entry(std::string("LoadableDummyProvider"), true) );
-   dummyProviderPSet.insert( true, "module_label", edm::Entry(std::string(""), true) );
-   ModuleFactory::get()->addTo( provider, dummyProviderPSet, "RECO", 1, 1);
+   dummyProviderPSet.insert(true, "module_type", edm::Entry(std::string("LoadableDummyProvider"), true));
+   dummyProviderPSet.insert(true, "module_label", edm::Entry(std::string(""), true));
+   ModuleFactory::get()->addTo(provider, dummyProviderPSet, "RECO", 1, 1);
    
 }

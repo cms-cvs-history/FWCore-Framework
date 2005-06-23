@@ -26,7 +26,7 @@ public:
    
 protected:
    
-   const value_type* make( const record_type&, const DataKey&) {
+   const value_type* make(const record_type&, const DataKey&) {
       return static_cast<const value_type*>(0) ;
    }
    void invalidateCache() {
@@ -38,21 +38,21 @@ private:
 class Test1Producer : public ProxyFactoryProducer {
 public:
    Test1Producer() {
-      std::auto_ptr<ProxyFactoryTemplate<DummyProxy> > pFactory( new 
-                                                                 ProxyFactoryTemplate<DummyProxy>() );
-      registerFactory( pFactory );
+      std::auto_ptr<ProxyFactoryTemplate<DummyProxy> > pFactory(new 
+                                                                 ProxyFactoryTemplate<DummyProxy>());
+      registerFactory(pFactory);
    }
 };
 
-BOOST_AUTO_UNIT_TEST( register_proxyfactorytemplate_test )
+BOOST_AUTO_UNIT_TEST(register_proxyfactorytemplate_test)
 {
    Test1Producer testProd;
    EventSetupRecordKey dummyRecordKey = EventSetupRecordKey::makeKey<DummyRecord>();
-   BOOST_CHECK(testProd.isUsingRecord( dummyRecordKey ) );
+   BOOST_CHECK(testProd.isUsingRecord(dummyRecordKey));
 
    const DataProxyProvider::KeyedProxies& keyedProxies =
-      testProd.keyedProxies( dummyRecordKey  );
+      testProd.keyedProxies(dummyRecordKey);
 
-   BOOST_CHECK( keyedProxies.size() == 1 );
-   BOOST_CHECK( 0 != dynamic_cast<DummyProxy*>(&(*(keyedProxies.front().second) ) ) );
+   BOOST_CHECK(keyedProxies.size() == 1);
+   BOOST_CHECK(0 != dynamic_cast<DummyProxy*>(&(*(keyedProxies.front().second))));
 }

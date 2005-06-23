@@ -35,25 +35,25 @@ using namespace edm::eventsetup;
 using namespace edm::eventsetup::test;
 
 
-BOOST_AUTO_UNIT_TEST( get_from_dataproxyprovider_test )
+BOOST_AUTO_UNIT_TEST(get_from_dataproxyprovider_test)
 {
    eventsetup::EventSetupProvider provider;
 
-   boost::shared_ptr<DataProxyProvider> pProxyProv( new DummyProxyProvider );
-   provider.add( pProxyProv );
+   boost::shared_ptr<DataProxyProvider> pProxyProv(new DummyProxyProvider);
+   provider.add(pProxyProv);
    
-   boost::shared_ptr<DummyFinder> pFinder( new DummyFinder);
-   provider.add( boost::shared_ptr<EventSetupRecordIntervalFinder>(pFinder) );
+   boost::shared_ptr<DummyFinder> pFinder(new DummyFinder);
+   provider.add(boost::shared_ptr<EventSetupRecordIntervalFinder>(pFinder));
 
-   pFinder->setInterval( ValidityInterval(1,5) );
-   for( unsigned int iTime=1; iTime != 6; ++iTime) {
-      EventSetup const& eventSetup = provider.eventSetupForInstance( Timestamp(iTime) );
+   pFinder->setInterval(ValidityInterval(1,5));
+   for(unsigned int iTime=1; iTime != 6; ++iTime) {
+      EventSetup const& eventSetup = provider.eventSetupForInstance(Timestamp(iTime));
       ESHandle<DummyData> pDummy;
       eventSetup.get<DummyRecord>().get(pDummy);
-      BOOST_CHECK(0 != &(*pDummy) );
+      BOOST_CHECK(0 != &(*pDummy));
       
       eventSetup.getData(pDummy);
    
-      BOOST_CHECK(0 != &(*pDummy) );
+      BOOST_CHECK(0 != &(*pDummy));
    }
 }
