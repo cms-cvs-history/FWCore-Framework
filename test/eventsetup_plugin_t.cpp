@@ -8,7 +8,7 @@
 //
 // Author:      Chris Jones
 // Created:     Thu May 26 11:01:19 EDT 2005
-// $Id: eventsetup_plugin_t.cpp,v 1.1 2005/05/29 02:29:54 wmtan Exp $
+// $Id: eventsetup_plugin_t.cpp,v 1.2 2005/06/23 20:01:12 wmtan Exp $
 //
 
 // system include files
@@ -29,7 +29,7 @@
 static void doInit() {
    static bool firstTime=true;
    if(firstTime) {
-      seal::PluginManager::get ()->initialise ();
+      seal::PluginManager::get()->initialise();
       firstTime = false;
    }
 }

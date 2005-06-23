@@ -35,7 +35,7 @@ int main()
   try {
 
     //seal::SharedLibrary* lib = seal::SharedLibrary::load("libTestMod.so");
-    seal::PluginManager::get ()->initialise ();
+    seal::PluginManager::get()->initialise();
     Factory* f = Factory::get();
 
     //Factory::Iterator ib(f->begin()),ie(f->end());
