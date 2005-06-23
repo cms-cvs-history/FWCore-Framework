@@ -13,18 +13,16 @@
 
 #include "FWCore/CoreFramework/interface/DependentRecordImplementation.h"
 #include "FWCore/CoreFramework/test/DummyRecord.h"
+#include "FWCore/CoreFramework/test/DepRecord.h"
 #include "FWCore/CoreFramework/test/DummyFinder.h"
 
 #include "FWCore/CoreFramework/interface/EventSetupRecordProviderFactoryManager.h"
 #include "FWCore/CoreFramework/interface/DependentRecordIntervalFinder.h"
 
-class DepRecord 
-: public edm::eventsetup::DependentRecordImplementation<DepRecord, boost::mpl::vector<DummyRecord> >
-{
-};
-
 #include "FWCore/CoreFramework/interface/EventSetupProvider.h"
 #include "FWCore/CoreFramework/interface/DataProxyProvider.h"
+#include "FWCore/CoreFramework/interface/EventSetupRecordProvider.h"
+#include "FWCore/CoreFramework/interface/NoRecordException.h"
 
 class DummyProxyProvider : public edm::eventsetup::DataProxyProvider {
 public:
@@ -57,10 +55,6 @@ protected:
    }
    
 };
-
-#include "FWCore/CoreFramework/interface/eventsetuprecord_registration_macro.h"
-
-EVENTSETUP_RECORD_REG(DepRecord);
 
 using namespace edm::eventsetup;
 
