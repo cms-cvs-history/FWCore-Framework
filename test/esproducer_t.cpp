@@ -16,6 +16,8 @@
 #include "FWCore/CoreFramework/test/DummyRecord.h"
 #include "FWCore/CoreFramework/test/DummyFinder.h"
 
+#include "FWCore/CoreFramework/test/DepRecord.h"
+
 #include "FWCore/CoreFramework/interface/EventSetupProvider.h"
 #include "FWCore/CoreFramework/interface/ESHandle.h"
 
@@ -161,5 +163,54 @@ BOOST_AUTO_UNIT_TEST( decorator_test )
       BOOST_CHECK( iTime  == TestDecorator::s_pre );
       BOOST_CHECK( iTime  == TestDecorator::s_post );
       BOOST_CHECK( iTime == pDummy->value_ );
+   }
+}
+
+class DepProducer : public ESProducer {
+public:
+   DepProducer(): ptr_( new DummyData ){
+      ptr_->value_ = 0;
+      setWhatProduced(this , dependsOn( &DepProducer::callWhenDummyChanges, 
+                                        &DepProducer::callWhenDummyChanges2,
+                                        &DepProducer::callWhenDummyChanges3 ) );
+   }
+   boost::shared_ptr<DummyData> produce( const DepRecord& iRecord ) {
+      return ptr_;
+   }
+   void callWhenDummyChanges( const DummyRecord& ) {
+      ++ptr_->value_;
+      std::cout <<"callWhenDummyChanges called "<<ptr_->value_<<std::endl;
+   }
+   void callWhenDummyChanges2( const DummyRecord& ) {
+      ++ptr_->value_;
+      std::cout <<"callWhenDummyChanges2 called "<<ptr_->value_<<std::endl;
+   }
+   void callWhenDummyChanges3( const DummyRecord& ) {
+      ++ptr_->value_;
+      std::cout <<"callWhenDummyChanges3 called "<<ptr_->value_<<std::endl;
+   }
+   
+private:
+   boost::shared_ptr<DummyData> ptr_;
+};
+
+BOOST_AUTO_UNIT_TEST( dependsOn_test )
+{
+   EventSetupProvider provider;
+   
+   boost::shared_ptr<DataProxyProvider> pProxyProv( new DepProducer );
+   provider.add( pProxyProv );
+   
+   boost::shared_ptr<DummyFinder> pFinder( new DummyFinder);
+   provider.add( boost::shared_ptr<EventSetupRecordIntervalFinder>(pFinder) );
+   
+   for( int iTime=1; iTime != 6; ++iTime) {
+      pFinder->setInterval( edm::ValidityInterval(iTime,iTime) );
+      const edm::EventSetup& eventSetup = provider.eventSetupForInstance( edm::Timestamp(iTime) );
+      ESHandle<DummyData> pDummy;
+      
+      eventSetup.get<DepRecord>().get(pDummy);
+      BOOST_CHECK(0 != &(*pDummy) );
+      BOOST_CHECK( 3*iTime == pDummy->value_ );
    }
 }
