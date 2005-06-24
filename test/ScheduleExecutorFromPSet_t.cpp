@@ -3,18 +3,18 @@
    test for ScheduleExecutor
 
    \author Stefano ARGIRO
-   \version $Id: ScheduleExecutorFromPSet_t.cpp,v 1.9 2005/06/22 08:28:42 argiro Exp $
+   \version $Id: ScheduleExecutorFromPSet_t.cpp,v 1.10 2005/06/23 20:01:12 wmtan Exp $
    \date 18 May 2005
 */
 
-static const char CVSId[] = "$Id: ScheduleExecutorFromPSet_t.cpp,v 1.9 2005/06/22 08:28:42 argiro Exp $";
+static const char CVSId[] = "$Id: ScheduleExecutorFromPSet_t.cpp,v 1.10 2005/06/23 20:01:12 wmtan Exp $";
 
 
 #include "FWCore/CoreFramework/interface/ScheduleExecutor.h"
 #include "FWCore/CoreFramework/interface/ScheduleBuilder.h"
 #include "FWCore/CoreFramework/interface/UnknownModuleException.h"
 
-
+#include "FWCore/CoreFramework/src/WorkerRegistry.h"
 #include "FWCore/CoreFramework/interface/EventPrincipal.h"
 #include "FWCore/CoreFramework/interface/EventSetup.h"
 #include "FWCore/CoreFramework/interface/EventSetupProvider.h"
@@ -97,7 +97,8 @@ void test_trivial_path(){
   ProcessPSetBuilder b(conf);
   boost::shared_ptr<ParameterSet> processPSet = b.getProcessPSet();
   
-  ScheduleBuilder builder(*processPSet);
+  WorkerRegistry wreg;
+  ScheduleBuilder builder(*processPSet,&wreg);
   
   ScheduleExecutor executor(builder.getPathList());
   
@@ -128,8 +129,8 @@ void test_one_path_with_sequence(){
     
   ProcessPSetBuilder b(conf);
   boost::shared_ptr<ParameterSet> processPSet = b.getProcessPSet();
-
-  ScheduleBuilder builder(*processPSet);
+  WorkerRegistry wreg;
+  ScheduleBuilder builder(*processPSet,&wreg);
   
   ScheduleExecutor executor(builder.getPathList());
   
@@ -162,8 +163,8 @@ void test_multiple_path_with_sequence(){
   boost::shared_ptr<ParameterSet> processPSet = b.getProcessPSet();
    
   // actual test of schedule executor
-  
-  ScheduleBuilder builder(*processPSet);
+  WorkerRegistry wreg;
+  ScheduleBuilder builder(*processPSet,&wreg);
   
   ScheduleExecutor executor(builder.getPathList());
   
@@ -196,7 +197,9 @@ const char * conf =   "process test ={ \n"
  boost::shared_ptr<ParameterSet> processPSet = b.getProcessPSet(); 
  
  BOOST_CHECKPOINT("Going to instanciate a non-implemented module");
- BOOST_CHECK_THROW(ScheduleBuilder builder(*processPSet),
+
+ WorkerRegistry wreg;
+ BOOST_CHECK_THROW(ScheduleBuilder builder(*processPSet,&wreg),
 		   UnknownModuleException);
 
 }
