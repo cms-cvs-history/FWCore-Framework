@@ -49,9 +49,6 @@
   <bin file=EventProcessor2_t.cpp>
   </bin>
 
-  <bin file=EDMException_t.cpp>
-  </bin>
-
   <bin file=Mange.cpp>
   </bin>
 
