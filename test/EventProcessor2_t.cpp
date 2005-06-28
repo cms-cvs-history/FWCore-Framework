@@ -2,13 +2,15 @@
 
 Test of the EventProcessor class.
 
-$Id: EventProcessor2_t.cpp,v 1.4 2005/06/10 05:33:42 wmtan Exp $
+$Id: EventProcessor2_t.cpp,v 1.5 2005/06/23 20:01:12 wmtan Exp $
 
 ----------------------------------------------------------------------*/  
 #include <exception>
 #include <iostream>
 #include <string>
+#include <stdexcept>
 
+#include "FWCore/FWUtilities/interface/EDMException.h"
 #include "FWCore/CoreFramework/interface/EventProcessor.h"
 
 void work()
@@ -29,9 +31,16 @@ int main()
 {
   int rc = -1;                // we should never return this value!
   try { work(); rc = 0;}
-  catch (std::exception& e)
+  catch (seal::Error& e)
     {
-      std::cerr << "Exception caught: " << e.what() << std::endl;
+      std::cerr << "Application exception caught: "
+		<< e.explainSelf() << std::endl;
+      rc = 1;
+    }
+  catch (std::runtime_error& e)
+    {
+      std::cerr << "Standard library exception caught: "
+		<< e.what() << std::endl;
       rc = 1;
     }
   catch (...)

@@ -2,7 +2,7 @@
 
 Test of the EventProcessor class.
 
-$Id: EventProcessor_t.cpp,v 1.2 2005/06/02 20:20:00 wmtan Exp $
+$Id: EventProcessor_t.cpp,v 1.3 2005/06/23 20:01:12 wmtan Exp $
 
 ----------------------------------------------------------------------*/  
 #include <exception>
@@ -10,6 +10,7 @@ $Id: EventProcessor_t.cpp,v 1.2 2005/06/02 20:20:00 wmtan Exp $
 #include <string>
 
 #include "FWCore/CoreFramework/interface/EventProcessor.h"
+#include "FWCore/FWUtilities/interface/Exception.h"
 
 void work()
 {
@@ -28,9 +29,16 @@ int main()
 {
   int rc = -1;                // we should never return this value!
   try { work(); rc = 0;}
+  catch (seal::Error& e)
+    {
+      std::cerr << "Application exception caught: "
+		<< e.explainSelf() << std::endl;
+      rc = 1;
+    }
   catch (std::exception& e)
     {
-      std::cerr << "Exception caught: " << e.what() << std::endl;
+      std::cerr << "Standard library exception caught: "
+		<< e.what() << std::endl;
       rc = 1;
     }
   catch (...)

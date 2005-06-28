@@ -4,7 +4,7 @@ This is a generic main that can be used with any plugin and a
 PSet script.   See notes in EventProcessor.cpp for details about
 it.
 
-$Id: Mange.cpp,v 1.1 2005/05/29 02:29:54 wmtan Exp $
+$Id: Mange.cpp,v 1.2 2005/06/23 20:01:12 wmtan Exp $
 
 ----------------------------------------------------------------------*/  
 
@@ -14,6 +14,7 @@ $Id: Mange.cpp,v 1.1 2005/05/29 02:29:54 wmtan Exp $
 #include <vector>
 
 #include "FWCore/CoreFramework/interface/EventProcessor.h"
+#include "FWCore/FWUtilities/interface/Exception.h"
 
 using namespace std;
 
@@ -28,17 +29,27 @@ int main(int argc, char* argv[])
       edm::EventProcessor proc(argc,argv);
       proc.run();
       rc = 0;
-}
+    }
+  catch (seal::Error& e)
+    {
+      std::cerr << "Exception caught in " << argv[0] << ": "
+		<< e.explainSelf()
+		<< std::endl;
+      rc = 1;
+    }
   catch (std::exception& e)
     {
-      std::cerr << "Exception caught: " << e.what() << std::endl;
+      std::cerr << "Standard library exception caught in " << argv[0] << ": "
+		<< e.what()
+		<< std::endl;
       rc = 1;
     }
   catch (...)
     {
-      std::cerr << "Unknown exception caught" << std::endl;
+      std::cerr << "Unknown exception caught in " << argv[0]
+		<< std::endl;
       rc = 2;
     }
-
+  
   return rc;
 }

@@ -2,7 +2,7 @@
 
 Test of the EventPrincipal class.
 
-$Id: EventPrincipal_t.cpp,v 1.4 2005/06/23 04:33:54 wmtan Exp $
+$Id: EventPrincipal_t.cpp,v 1.5 2005/06/23 20:01:12 wmtan Exp $
 
 ----------------------------------------------------------------------*/  
 #include <cassert>
@@ -12,6 +12,7 @@ $Id: EventPrincipal_t.cpp,v 1.4 2005/06/23 04:33:54 wmtan Exp $
 #include <string>
 #include <typeinfo>
 
+#include "FWCore/FWUtilities/interface/EDMException.h"
 #include "FWCore/EDProduct/interface/EDP_ID.h"
 #include "FWCore/CoreFramework/interface/Handle.h"
 #include "FWCore/CoreFramework/interface/Selector.h"
@@ -34,7 +35,7 @@ void fail_get_by_id()
       handle h = ep.get(id);
       assert("Failed to throw required exception" == 0);
     }
-  catch (std::runtime_error& x)
+  catch (edm::Exception& x)
     {
       // nothing to do
     }
@@ -55,7 +56,7 @@ void fail_get_by_selector()
       handle h = ep.getBySelector(tid, sel);
       assert("Failed to throw required exception" == 0);      
     }
-  catch (std::runtime_error& x)
+  catch (edm::Exception& x)
     {
       // nothing to do
     }
@@ -76,7 +77,7 @@ void fail_get_by_label()
       handle h = ep.getByLabel(tid, label);
       assert("Failed to throw required exception" == 0);      
     }
-  catch (std::runtime_error& x)
+  catch (edm::Exception& x)
     {
       // nothing to do
     }
@@ -98,7 +99,7 @@ void fail_get_many()
       ep.getMany(tid, sel, handles);
       assert("Failed to throw required exception" == 0);      
     }
-  catch (std::runtime_error& x)
+  catch (edm::Exception& x)
     {
       // nothing to do
     }
@@ -134,7 +135,7 @@ void fail_get_by_invalid_id()
       handle h = ep.get(id-1);
       assert("Failed to throw required exception" == 0);      
     }
-  catch (std::runtime_error& x)
+  catch (edm::Exception& x)
     {
       // nothing to do
     }
@@ -174,7 +175,7 @@ void get_by_id()
       assert(h.isValid());
       assert(h->id() == id);
     }
-  catch (std::runtime_error& x)
+  catch (edm::Exception& x)
     {
       std::cerr << x.what()<< std::endl;
       assert("Threw exception unexpectedly" == 0);
@@ -217,7 +218,7 @@ void get_by_label()
       assert(h.isValid());
       assert(h.provenance()->module.module_label == label);
     }
-  catch (std::runtime_error& x)
+  catch (edm::Exception& x)
     {
       std::cerr << x.what()<< std::endl;
       assert("Threw exception unexpectedly" == 0);
@@ -262,7 +263,7 @@ void get_by_selector()
       assert(h.isValid());
       assert(h.provenance()->module.module_label == label);
     }
-  catch (std::runtime_error& x)
+  catch (edm::Exception& x)
     {
       std::cerr << x.what()<< std::endl;
       assert("Threw exception unexpectedly" == 0);

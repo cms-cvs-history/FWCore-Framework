@@ -3,11 +3,11 @@
    test for ScheduleExecutor
 
    \author Stefano ARGIRO
-   \version $Id: ScheduleExecutorFromPSet_t.cpp,v 1.10 2005/06/23 20:01:12 wmtan Exp $
+   \version $Id: ScheduleExecutorFromPSet_t.cpp,v 1.11 2005/06/24 14:55:31 argiro Exp $
    \date 18 May 2005
 */
 
-static const char CVSId[] = "$Id: ScheduleExecutorFromPSet_t.cpp,v 1.10 2005/06/23 20:01:12 wmtan Exp $";
+static const char CVSId[] = "$Id: ScheduleExecutorFromPSet_t.cpp,v 1.11 2005/06/24 14:55:31 argiro Exp $";
 
 
 #include "FWCore/CoreFramework/interface/ScheduleExecutor.h"
@@ -32,6 +32,7 @@ static const char CVSId[] = "$Id: ScheduleExecutorFromPSet_t.cpp,v 1.10 2005/06/
 
 #include "FWCore/CoreFramework/src/ToyProducts.h"
 
+#include "FWCore/FWUtilities/interface/EDMException.h"
 
 #include <sstream>
 #include <string>
@@ -200,7 +201,7 @@ const char * conf =   "process test ={ \n"
 
  WorkerRegistry wreg;
  BOOST_CHECK_THROW(ScheduleBuilder builder(*processPSet,&wreg),
-		   UnknownModuleException);
+		   edm::Exception);
 
 }
 
