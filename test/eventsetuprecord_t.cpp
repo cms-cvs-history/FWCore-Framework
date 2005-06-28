@@ -17,7 +17,11 @@
 using namespace edm;
 using namespace edm::eventsetup;
 
-class DummyRecord : public edm::eventsetup::EventSetupRecordImplementation<DummyRecord> {};
+class DummyRecord : public edm::eventsetup::EventSetupRecordImplementation<DummyRecord> { public:
+   const DataProxy* find(const edm::eventsetup::DataKey& iKey ) const {
+      return edm::eventsetup::EventSetupRecord::find( iKey );
+   }
+};
 
 #include "FWCore/CoreFramework/interface/HCMethods.icc"
 //#include "FWCore/CoreFramework/interface/HCTypeTag.icc"
