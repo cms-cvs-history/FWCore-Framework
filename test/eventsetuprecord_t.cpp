@@ -143,3 +143,32 @@ BOOST_AUTO_UNIT_TEST(get_test)
    
 }
 
+BOOST_AUTO_UNIT_TEST(doGet_test)
+{
+   DummyRecord dummyRecord;
+   FailingDummyProxy dummyProxy;
+   
+   const DataKey dummyDataKey(DataKey::makeTypeTag<FailingDummyProxy::value_type>(),
+                              "");
+   
+   BOOST_CHECK(!dummyRecord.doGet(dummyDataKey)) ;
+   
+   dummyRecord.add(dummyDataKey,
+                   &dummyProxy);
+   
+   typedef edm::eventsetup::MakeDataException<DummyRecord,Dummy> ExceptionType;
+   BOOST_CHECK_THROW(dummyRecord.doGet(dummyDataKey), ExceptionType);
+   
+   Dummy myDummy;
+   WorkingDummyProxy workingProxy(&myDummy);
+   
+   const DataKey workingDataKey(DataKey::makeTypeTag<WorkingDummyProxy::value_type>(),
+                                "working");
+   
+   dummyRecord.add(workingDataKey,
+                   &workingProxy);
+   
+   BOOST_CHECK(dummyRecord.doGet(workingDataKey) );
+   
+}
+
