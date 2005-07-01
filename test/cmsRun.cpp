@@ -4,7 +4,7 @@ This is a generic main that can be used with any plugin and a
 PSet script.   See notes in EventProcessor.cpp for details about
 it.
 
-$Id: Mange.cpp,v 1.3 2005/06/28 04:46:02 jbk Exp $
+$Id: cmsRun.cpp,v 1.3 2005/06/28 04:46:02 jbk Exp $
 
 ----------------------------------------------------------------------*/  
 
@@ -23,9 +23,6 @@ int main(int argc, char* argv[])
   // Right now option processing is not really present.
   // The EventProcessor should handle this in the future.
 
-  std::cerr << "Mange has been renamed cmsRun. "
-            << " Mange will be removed in the next prerelease. "
-            << " To avoid this annoying message, switch to cmsRun now. " << std::endl;
   int rc = -1; // we should never return this value!
   try
     {
