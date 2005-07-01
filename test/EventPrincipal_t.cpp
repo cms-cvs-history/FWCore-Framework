@@ -2,7 +2,7 @@
 
 Test of the EventPrincipal class.
 
-$Id: EventPrincipal_t.cpp,v 1.5 2005/06/23 20:01:12 wmtan Exp $
+$Id: EventPrincipal_t.cpp,v 1.6 2005/06/28 04:46:02 jbk Exp $
 
 ----------------------------------------------------------------------*/  
 #include <cassert>
@@ -14,14 +14,15 @@ $Id: EventPrincipal_t.cpp,v 1.5 2005/06/23 20:01:12 wmtan Exp $
 
 #include "FWCore/FWUtilities/interface/EDMException.h"
 #include "FWCore/EDProduct/interface/EDP_ID.h"
-#include "FWCore/CoreFramework/interface/Handle.h"
+#include "FWCore/CoreFramework/interface/BasicHandle.h"
+#include "FWCore/EDProduct/interface/Wrapper.h"
 #include "FWCore/CoreFramework/interface/Selector.h"
 #include "FWCore/CoreFramework/src/TypeID.h"
 #include "FWCore/CoreFramework/src/ToyProducts.h"
 
 #include "FWCore/CoreFramework/interface/EventPrincipal.h"
 
-typedef edm::Handle<edm::EDProduct> handle;
+typedef edm::BasicHandle handle;
 
 
 
@@ -115,7 +116,10 @@ void fail_get_by_invalid_id()
   edm::EventPrincipal ep;
   ep.addToProcessHistory("PROD");
 
-  std::auto_ptr<edm::EDProduct> pprod(new edmtest::DummyProduct);
+  typedef edmtest::DummyProduct DP;
+  typedef edm::Wrapper<DP> WDP;
+  DP * pr = new DP;
+  std::auto_ptr<edm::EDProduct> pprod(new WDP(*pr));
   std::auto_ptr<edm::Provenance> pprov(new edm::Provenance);
   std::string label("fred");
   std::string processName = "PROD";
@@ -123,7 +127,7 @@ void fail_get_by_invalid_id()
   edmtest::DummyProduct dp;
   edm::TypeID dummytype(dp);
   std::string className = dummytype.friendlyClassName();
-  pprov->full_product_type_name = dummytype.reflectionClassName();
+  pprov->full_product_type_name = dummytype.userClassName();
   pprov->friendly_product_type_name = className;
   pprov->module.module_label = label;
   pprov->module.process_name = processName;
@@ -153,7 +157,10 @@ void get_by_id()
   edm::EventPrincipal ep;
   ep.addToProcessHistory(processName);
 
-  std::auto_ptr<edm::EDProduct> pprod(new edmtest::DummyProduct());
+  typedef edmtest::DummyProduct DP;
+  typedef edm::Wrapper<DP> WDP;
+  DP * pr = new DP;
+  std::auto_ptr<edm::EDProduct> pprod(new WDP(*pr));
   std::auto_ptr<edm::Provenance> pprov(new edm::Provenance);
   std::string label("fred");
 
@@ -161,7 +168,7 @@ void get_by_id()
   edm::TypeID dummytype(dp);
   std::string className = dummytype.friendlyClassName();
 
-  pprov->full_product_type_name = dummytype.reflectionClassName();
+  pprov->full_product_type_name = dummytype.userClassName();
   pprov->friendly_product_type_name = className;
   pprov->module.module_label = label;
   pprov->module.process_name = processName;
@@ -173,7 +180,7 @@ void get_by_id()
     {
       handle h = ep.get(id);
       assert(h.isValid());
-      assert(h->id() == id);
+      assert(h.id() == id);
     }
   catch (edm::Exception& x)
     {
@@ -193,7 +200,10 @@ void get_by_label()
   std::string processName = "PROD";
   ep.addToProcessHistory(processName);
 
-  std::auto_ptr<edm::EDProduct> pprod(new edmtest::DummyProduct());
+  typedef edmtest::DummyProduct DP;
+  typedef edm::Wrapper<DP> WDP;
+  DP * pr = new DP;
+  std::auto_ptr<edm::EDProduct> pprod(new WDP(*pr));
   std::auto_ptr<edm::Provenance> pprov(new edm::Provenance);
   std::string label("fred");
 
@@ -201,7 +211,7 @@ void get_by_label()
   edm::TypeID dummytype(dp);
   std::string className = dummytype.friendlyClassName();
 
-  pprov->full_product_type_name = dummytype.reflectionClassName();
+  pprov->full_product_type_name = dummytype.userClassName();
   pprov->friendly_product_type_name = className;
 
 
@@ -238,7 +248,10 @@ void get_by_selector()
   std::string processName("PROD");
   ep.addToProcessHistory(processName);
 
-  std::auto_ptr<edm::EDProduct> pprod(new edmtest::DummyProduct());
+  typedef edmtest::DummyProduct DP;
+  typedef edm::Wrapper<DP> WDP;
+  DP * pr = new DP;
+  std::auto_ptr<edm::EDProduct> pprod(new WDP(*pr));
   std::auto_ptr<edm::Provenance> pprov(new edm::Provenance);
   std::string label("fred");
 
@@ -246,7 +259,7 @@ void get_by_selector()
   edm::TypeID dummytype(dp);
   std::string className = dummytype.friendlyClassName();
 
-  pprov->full_product_type_name = dummytype.reflectionClassName();
+  pprov->full_product_type_name = dummytype.userClassName();
   pprov->friendly_product_type_name = className;
 
   pprov->module.module_label = label;

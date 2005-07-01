@@ -3,11 +3,11 @@
    test for ScheduleExecutor
 
    \author Stefano ARGIRO
-   \version $Id: ScheduleExecutorFromPSet_t.cpp,v 1.11 2005/06/24 14:55:31 argiro Exp $
+   \version $Id: ScheduleExecutorFromPSet_t.cpp,v 1.12 2005/06/28 04:46:02 jbk Exp $
    \date 18 May 2005
 */
 
-static const char CVSId[] = "$Id: ScheduleExecutorFromPSet_t.cpp,v 1.11 2005/06/24 14:55:31 argiro Exp $";
+static const char CVSId[] = "$Id: ScheduleExecutorFromPSet_t.cpp,v 1.12 2005/06/28 04:46:02 jbk Exp $";
 
 
 #include "FWCore/CoreFramework/interface/ScheduleExecutor.h"
@@ -18,6 +18,8 @@ static const char CVSId[] = "$Id: ScheduleExecutorFromPSet_t.cpp,v 1.11 2005/06/
 #include "FWCore/CoreFramework/interface/EventPrincipal.h"
 #include "FWCore/CoreFramework/interface/EventSetup.h"
 #include "FWCore/CoreFramework/interface/EventSetupProvider.h"
+#include "FWCore/CoreFramework/interface/Handle.h"
+#include "FWCore/CoreFramework/interface/BasicHandle.h"
 #include "FWCore/CoreFramework/interface/Timestamp.h"
 
 #include "FWCore/CoreFramework/interface/InputServiceDescription.h"
@@ -75,14 +77,13 @@ void checkProducts(const std::string names, EventPrincipal& pep){
        namesIt!=names.end(); ++namesIt){
     
     stringstream tmp;
-    tmp<< *namesIt;
+    tmp << *namesIt;
     // this is only for testing and should never be done by the user
    
-    Handle<EDProduct> tmp1 = 
+    BasicHandle tmp1 = 
       pep.getByLabel((TypeID(typeid(edmtest::StringProduct))),tmp.str());
     Handle<edmtest::StringProduct> p;
     convert_handle(tmp1,p);
-
     BOOST_CHECK(p->name_==tmp.str());
   }//for
 
