@@ -3,11 +3,11 @@
    test for ScheduleExecutor
 
    \author Stefano ARGIRO
-   \version $Id: ScheduleExecutorFromPSet_t.cpp,v 1.12 2005/06/28 04:46:02 jbk Exp $
+   \version $Id: ScheduleExecutorFromPSet_t.cpp,v 1.13 2005/07/01 00:08:04 wmtan Exp $
    \date 18 May 2005
 */
 
-static const char CVSId[] = "$Id: ScheduleExecutorFromPSet_t.cpp,v 1.12 2005/06/28 04:46:02 jbk Exp $";
+static const char CVSId[] = "$Id: ScheduleExecutorFromPSet_t.cpp,v 1.13 2005/07/01 00:08:04 wmtan Exp $";
 
 
 #include "FWCore/CoreFramework/interface/ScheduleExecutor.h"
@@ -21,6 +21,7 @@ static const char CVSId[] = "$Id: ScheduleExecutorFromPSet_t.cpp,v 1.12 2005/06/
 #include "FWCore/CoreFramework/interface/Handle.h"
 #include "FWCore/CoreFramework/interface/BasicHandle.h"
 #include "FWCore/CoreFramework/interface/Timestamp.h"
+#include "FWCore/EDProduct/interface/Wrapper.h"
 
 #include "FWCore/CoreFramework/interface/InputServiceDescription.h"
 #include "FWCore/CoreFramework/test/DummyEventSetupRecordRetriever.h"
