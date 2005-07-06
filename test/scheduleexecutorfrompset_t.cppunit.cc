@@ -1,0 +1,247 @@
+/**
+   \file
+   test for ScheduleExecutor
+
+   \author Stefano ARGIRO
+   \Changed by Viji Sundararajan on 03-Jul-05.
+   \version $Id: ScheduleExecutorFromPSet_t.cppunit.cc,v 1.1 2005/07/06 15:50:16 viji Exp $
+   \date 18 May 2005
+*/
+
+static const char CVSId[] = "$Id: ScheduleExecutorFromPSet_t.cppunit.cc,v 1.1 2005/07/06 15:50:16 viji Exp $";
+
+
+#include "FWCore/CoreFramework/interface/ScheduleExecutor.h"
+#include "FWCore/CoreFramework/interface/ScheduleBuilder.h"
+#include "FWCore/CoreFramework/interface/UnknownModuleException.h"
+
+#include "FWCore/CoreFramework/src/WorkerRegistry.h"
+#include "FWCore/CoreFramework/interface/EventPrincipal.h"
+#include "FWCore/CoreFramework/interface/EventSetup.h"
+#include "FWCore/CoreFramework/interface/EventSetupProvider.h"
+#include "FWCore/CoreFramework/interface/Handle.h"
+#include "FWCore/CoreFramework/interface/BasicHandle.h"
+#include "FWCore/CoreFramework/interface/Timestamp.h"
+
+#include "FWCore/CoreFramework/interface/InputServiceDescription.h"
+#include "FWCore/CoreFramework/test/DummyEventSetupRecordRetriever.h"
+#include "FWCore/FWCoreServices/src/EmptyInputService.h"
+
+#include <FWCore/ParameterSet/interface/ProcessPSetBuilder.h>
+#include <FWCore/ParameterSet/interface/Makers.h>
+#include <FWCore/ParameterSet/interface/parse.h>
+
+#include "FWCore/CoreFramework/src/TypeID.h"
+
+#include "FWCore/CoreFramework/src/ToyProducts.h"
+
+#include "FWCore/FWUtilities/interface/EDMException.h"
+
+#include <sstream>
+#include <string>
+
+
+#include <cppunit/extensions/HelperMacros.h>
+
+using namespace edm;
+using namespace edm::pset;
+using namespace std;
+
+auto_ptr<InputService> setupDummyInputService(){
+
+  std::string param1("int32 maxEvents=5");
+  boost::shared_ptr<ParameterSet> input_service_pset = 
+    makePSet(*edm::pset::parse(param1.c_str()));
+  const InputServiceDescription desc("test",1);
+  auto_ptr<InputService> 
+    input(new EmptyInputService(*input_service_pset,desc));
+  
+  return input;  
+}
+
+const EventSetup& setupDummyEventSetup(){
+
+  edm::eventsetup::EventSetupProvider cp;
+  boost::shared_ptr<DummyEventSetupRecordRetriever> 
+    pRetriever(new DummyEventSetupRecordRetriever);
+  cp.add(boost::shared_ptr<eventsetup::DataProxyProvider>(pRetriever));
+  cp.add(boost::shared_ptr<eventsetup::EventSetupRecordIntervalFinder>(pRetriever)); 
+  edm::Timestamp ts(123);
+  return cp.eventSetupForInstance(ts);
+}
+
+// check that each module wrote its name
+void checkProducts(const std::string names, EventPrincipal& pep){
+
+ for (string::const_iterator namesIt = names.begin();
+       namesIt!=names.end(); ++namesIt){
+    
+    stringstream tmp;
+    tmp << *namesIt;
+    // this is only for testing and should never be done by the user
+   
+    BasicHandle tmp1 = 
+      pep.getByLabel((TypeID(typeid(edmtest::StringProduct))),tmp.str());
+    Handle<edmtest::StringProduct> p;
+    convert_handle(tmp1,p);
+    CPPUNIT_ASSERT(p->name_==tmp.str());
+  }//for
+
+}
+
+
+class testScheduleExecutorFromPSet: public CppUnit::TestFixture
+{
+CPPUNIT_TEST_SUITE(testScheduleExecutorFromPSet);
+
+CPPUNIT_TEST(trivialPathTest);
+CPPUNIT_TEST(onePathwithSequenceTest);
+CPPUNIT_TEST(multiplePathwithSequenceTest);
+//CPPUNIT_TEST(failingToloadModuleTest);
+CPPUNIT_TEST_EXCEPTION(failingToloadModuleTest,edm::Exception);
+
+
+CPPUNIT_TEST_SUITE_END();
+public:
+  void setUp(){}
+  void tearDown(){}
+
+  void trivialPathTest();
+  void onePathwithSequenceTest();
+  void multiplePathwithSequenceTest();
+  void failingToloadModuleTest();
+};
+
+///registration of the test so that the runner can find it
+CPPUNIT_TEST_SUITE_REGISTRATION(testScheduleExecutorFromPSet);
+
+void testScheduleExecutorFromPSet::trivialPathTest(){
+
+  const char * conf =   "process test ={ \n"                  
+  "module a = TestSchedulerModule1 { string module_name = \"a\" }\n"
+  "path p = { a}\n" 
+  "}\n";
+
+  ProcessPSetBuilder b(conf);
+  boost::shared_ptr<ParameterSet> processPSet = b.getProcessPSet();
+  
+  WorkerRegistry wreg;
+  ScheduleBuilder builder(*processPSet,&wreg);
+  
+  ScheduleExecutor executor(builder.getPathList());
+  
+  auto_ptr<InputService> input = setupDummyInputService();
+  auto_ptr<EventPrincipal> pep = input->readEvent();
+  const EventSetup& c = setupDummyEventSetup();
+  
+  executor.runOneEvent(*pep,c);
+  
+  const string names("a");
+  checkProducts(names,*pep);
+  
+}
+
+void testScheduleExecutorFromPSet::onePathwithSequenceTest(){
+
+  const char * conf =   "process test ={ \n"                  
+  "module a = TestSchedulerModule1 { string module_name = \"a\" }\n"
+  "module b = TestSchedulerModule2 { string module_name = \"b\" }\n"
+  "module c = TestSchedulerModule1 { string module_name = \"c\" }\n"
+  "module d = TestSchedulerModule2 { string module_name = \"d\" }\n"
+  "module e = TestSchedulerModule1 { string module_name = \"e\" }\n" 
+  "sequence s1 = { a,b,c}\n"
+  "sequence s2 = { d}\n"
+  "path p = { s1,s2,e}\n" 
+  "}\n";
+
+    
+  ProcessPSetBuilder b(conf);
+  boost::shared_ptr<ParameterSet> processPSet = b.getProcessPSet();
+  WorkerRegistry wreg;
+  ScheduleBuilder builder(*processPSet,&wreg);
+  
+  ScheduleExecutor executor(builder.getPathList());
+  
+  auto_ptr<InputService> input = setupDummyInputService();
+  auto_ptr<EventPrincipal> pep = input->readEvent();
+  const EventSetup& c = setupDummyEventSetup();
+
+  executor.runOneEvent(*pep,c);
+
+  const string names("abcde");
+  checkProducts(names,*pep);
+ 
+}
+
+void testScheduleExecutorFromPSet::multiplePathwithSequenceTest(){
+
+  const char * conf =   "process test ={ \n"                  
+  "module a = TestSchedulerModule1 { string module_name = \"a\" }\n"
+  "module b = TestSchedulerModule2 { string module_name = \"b\" }\n"
+  "module c = TestSchedulerModule1 { string module_name = \"c\" }\n"
+  "module d = TestSchedulerModule2 { string module_name = \"d\" }\n"
+  "module e = TestSchedulerModule1 { string module_name = \"e\" }\n" 
+  "sequence s1 = { a,b}\n"
+  "sequence s2 = { c,d}\n"
+  "path p1 = { s1,e}\n"
+  "path p2 = { s2}\n"
+  "}\n";
+
+  ProcessPSetBuilder b(conf);
+  boost::shared_ptr<ParameterSet> processPSet = b.getProcessPSet();
+   
+  // actual test of schedule executor
+  WorkerRegistry wreg;
+  ScheduleBuilder builder(*processPSet,&wreg);
+  
+  ScheduleExecutor executor(builder.getPathList());
+  
+  auto_ptr<InputService> input = setupDummyInputService();
+  auto_ptr<EventPrincipal> pep = input->readEvent();
+  const EventSetup& c = setupDummyEventSetup();
+
+  executor.runOneEvent(*pep,c);
+
+  const string names("abecde");
+  checkProducts(names,*pep);
+
+}
+void testScheduleExecutorFromPSet::failingToloadModuleTest(){
+
+  // register_exception_translator<UnknownModuleException>(&exception1_translator);
+
+const char * conf =   "process test ={ \n"                  
+  "module a = NonExistentTestSchedulerModule { uint32 a=1}\n"
+  "module b = TestSchedulerModule2 { uint32 a=2}\n"
+  "module c = TestSchedulerModule1 { uint32 a=3}\n"
+  "module d = TestSchedulerModule2 { uint32 a=4}\n"
+  "module e = TestSchedulerModule1 { uint32 a=5}\n" 
+  "sequence s1 = { a,b}\n"
+  "sequence s2 = { c,d}\n"
+  "path p = { s1,s2,e}\n" 
+  "}\n";
+
+ ProcessPSetBuilder b(conf);
+ boost::shared_ptr<ParameterSet> processPSet = b.getProcessPSet(); 
+ 
+ //BOOST_CHECKPOINT("Going to instanciate a non-implemented module");
+
+ WorkerRegistry wreg;
+ //BOOST_CHECK_THROW(ScheduleBuilder builder(*processPSet,&wreg),
+//		   edm::Exception);
+ ScheduleBuilder builder(*processPSet,&wreg);
+}
+
+
+//test_suite*
+//init_unit_test_suite(int /*argc*/, char* /*argv*/[]) 
+/*{
+  test_suite* test = BOOST_TEST_SUITE("TestScheduler");
+
+  test->add(BOOST_TEST_CASE(&test_trivial_path));
+  test->add(BOOST_TEST_CASE(&test_one_path_with_sequence));
+  test->add(BOOST_TEST_CASE(&test_multiple_path_with_sequence));
+  test->add(BOOST_TEST_CASE(&test_failing_toload_module));
+  
+  return test;
+}*/
