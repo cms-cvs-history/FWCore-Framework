@@ -119,7 +119,7 @@
     <lib name=TestEventSetupDummyStuff>
   </bin>
 
-  <bin name=testcppunitfiles file=testRunner.cc,*.cppunit.cc>
+  <bin name=testcppunitfiles file=testRunner.cc,callback_t.cppunit.cc,datakey_t.cppunit.cc,dependentrecord_t.cppunit.cc,esproducer_t.cppunit.cc,esproducts_t.cppunit.cc,eventsetupplugin_t.cppunit.cc,eventsetuprecord_t.cppunit.cc,eventsetup_t.cppunit.cc,fullchain_t.cppunit.cc,interval_t.cppunit.cc,proxyfactoryproducer_t.cppunit.cc,scheduleexecutorfrompset_t.cppunit.cc,typeid_t.cppunit.cc>
     <use name=cppunit>
     <lib name=TestEventSetupDummyStuff>
   </bin>
