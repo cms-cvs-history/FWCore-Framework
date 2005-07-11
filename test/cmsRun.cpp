@@ -4,7 +4,7 @@ This is a generic main that can be used with any plugin and a
 PSet script.   See notes in EventProcessor.cpp for details about
 it.
 
-$Id: cmsRun.cpp,v 1.3 2005/06/28 04:46:02 jbk Exp $
+$Id: cmsRun.cpp,v 1.1 2005/07/01 13:54:10 wmtan Exp $
 
 ----------------------------------------------------------------------*/  
 
@@ -32,14 +32,14 @@ int main(int argc, char* argv[])
     }
   catch (seal::Error& e)
     {
-      std::cerr << "Exception caught in " << argv[0] << ": "
+      std::cerr << "Exception caught in " << argv[0] << "\n"
 		<< e.explainSelf()
 		<< std::endl;
       rc = 1;
     }
   catch (std::exception& e)
     {
-      std::cerr << "Standard library exception caught in " << argv[0] << ": "
+      std::cerr << "Standard library exception caught in " << argv[0] << "\n"
 		<< e.what()
 		<< std::endl;
       rc = 1;

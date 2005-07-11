@@ -31,6 +31,8 @@ int main()
   string param2 = 
     "string module_type = \"TestMod\" "
     "string module_label = \"t2\"";
+
+  int rc=0;
     
   try {
 
@@ -53,15 +55,18 @@ int main()
   }
   catch(std::exception& e)
     {
-      std::cerr << "std::Exception: " << e.what() << std::endl;
-    }
-  catch(seal::Exception& e)
-    {
-      std::cerr << "seal::Exception: " << e.what() << std::endl;
+      std::cerr << "std::Exception:\n" << e.what() << std::endl;
+      rc=-3;
     }
   catch(seal::SharedLibraryError& e)
     {
-      std::cerr << "sharedliberror " << e.explainSelf() << std::endl;
+      std::cerr << "sharedliberror\n" << e.explainSelf() << std::endl;
+      rc=-2;
+    }
+  catch(seal::Error& e)
+    {
+      std::cerr << "seal::Error:\n" << e.explain() << std::endl;
+      rc=-1;
     }
   catch(...)
     {
@@ -69,5 +74,5 @@ int main()
       throw;
     }
 
-  return 0;
+  return rc;
 }
