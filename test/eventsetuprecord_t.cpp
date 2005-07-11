@@ -92,7 +92,6 @@ BOOST_AUTO_UNIT_TEST(proxy_test)
                               "");
    
    BOOST_CHECK(0 == dummyRecord.find(dummyDataKey));
-   //BOOST_CHECK_THROW(dummyRecord.get(dummyPtr), edm::eventsetup::MakeDataException<DummyRecord,Dummy>);
 
    
    dummyRecord.add(dummyDataKey,
