@@ -4,11 +4,11 @@
 
    \author Stefano ARGIRO
    \Changed by Viji Sundararajan on 03-Jul-05.
-   \version $Id: scheduleexecutorfrompset_t.cppunit.cc,v 1.1 2005/07/06 16:10:42 viji Exp $
+   \version $Id: scheduleexecutorfrompset_t.cppunit.cc,v 1.2 2005/07/07 09:16:40 viji Exp $
    \date 18 May 2005
 */
 
-static const char CVSId[] = "$Id: scheduleexecutorfrompset_t.cppunit.cc,v 1.1 2005/07/06 16:10:42 viji Exp $";
+static const char CVSId[] = "$Id: scheduleexecutorfrompset_t.cppunit.cc,v 1.2 2005/07/07 09:16:40 viji Exp $";
 
 #include "FWCore/CoreFramework/interface/ScheduleExecutor.h"
 #include "FWCore/CoreFramework/interface/ScheduleBuilder.h"
@@ -81,7 +81,7 @@ void checkProducts(const std::string names, EventPrincipal& pep){
     // this is only for testing and should never be done by the user
    
     BasicHandle tmp1 = 
-      pep.getByLabel((TypeID(typeid(edmtest::StringProduct))),tmp.str());
+      pep.getByLabel((TypeID(typeid(edmtest::StringProduct))),tmp.str(), std::string());
     Handle<edmtest::StringProduct> p;
     convert_handle(tmp1,p);
     CPPUNIT_ASSERT(p->name_==tmp.str());

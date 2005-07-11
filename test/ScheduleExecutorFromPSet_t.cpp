@@ -3,11 +3,11 @@
    test for ScheduleExecutor
 
    \author Stefano ARGIRO
-   \version $Id: ScheduleExecutorFromPSet_t.cpp,v 1.13 2005/07/01 00:08:04 wmtan Exp $
+   \version $Id: ScheduleExecutorFromPSet_t.cpp,v 1.14 2005/07/05 17:36:22 wmtan Exp $
    \date 18 May 2005
 */
 
-static const char CVSId[] = "$Id: ScheduleExecutorFromPSet_t.cpp,v 1.13 2005/07/01 00:08:04 wmtan Exp $";
+static const char CVSId[] = "$Id: ScheduleExecutorFromPSet_t.cpp,v 1.14 2005/07/05 17:36:22 wmtan Exp $";
 
 
 #include "FWCore/CoreFramework/interface/ScheduleExecutor.h"
@@ -82,7 +82,7 @@ void checkProducts(const std::string names, EventPrincipal& pep){
     // this is only for testing and should never be done by the user
    
     BasicHandle tmp1 = 
-      pep.getByLabel((TypeID(typeid(edmtest::StringProduct))),tmp.str());
+      pep.getByLabel((TypeID(typeid(edmtest::StringProduct))),tmp.str(),std::string());
     Handle<edmtest::StringProduct> p;
     convert_handle(tmp1,p);
     BOOST_CHECK(p->name_==tmp.str());

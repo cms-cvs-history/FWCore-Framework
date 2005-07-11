@@ -2,7 +2,7 @@
 
 Test of the EventPrincipal class.
 
-$Id: EventPrincipal_t.cpp,v 1.6 2005/06/28 04:46:02 jbk Exp $
+$Id: EventPrincipal_t.cpp,v 1.7 2005/07/01 00:08:42 wmtan Exp $
 
 ----------------------------------------------------------------------*/  
 #include <cassert>
@@ -75,7 +75,7 @@ void fail_get_by_label()
     {
       edm::TypeID tid(ep);   // sure not to match any product
       std::string label("this does not exist");
-      handle h = ep.getByLabel(tid, label);
+      handle h = ep.getByLabel(tid, label, std::string());
       assert("Failed to throw required exception" == 0);      
     }
   catch (edm::Exception& x)
@@ -206,6 +206,7 @@ void get_by_label()
   std::auto_ptr<edm::EDProduct> pprod(new WDP(*pr));
   std::auto_ptr<edm::Provenance> pprov(new edm::Provenance);
   std::string label("fred");
+  std::string productInstanceName("Rick");
 
   edmtest::DummyProduct dp;
   edm::TypeID dummytype(dp);
@@ -214,8 +215,8 @@ void get_by_label()
   pprov->full_product_type_name = dummytype.userClassName();
   pprov->friendly_product_type_name = className;
 
-
   pprov->module.module_label = label;
+  pprov->product_instance_name = productInstanceName;
   pprov->module.process_name = processName;
   ep.put(pprod, pprov);
   
@@ -224,7 +225,7 @@ void get_by_label()
       edmtest::DummyProduct example;
       edm::TypeID tid(example);
 
-      handle h = ep.getByLabel(tid, label);
+      handle h = ep.getByLabel(tid, label, productInstanceName);
       assert(h.isValid());
       assert(h.provenance()->module.module_label == label);
     }
