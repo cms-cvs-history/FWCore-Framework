@@ -9,12 +9,12 @@
 #define BOOST_AUTO_TEST_MAIN
 #include "boost/test/auto_unit_test.hpp"
 
-#include "FWCore/CoreFramework/interface/ProxyFactoryProducer.h"
-#include "FWCore/CoreFramework/interface/ProxyFactoryTemplate.h"
+#include "FWCore/Framework/interface/ProxyFactoryProducer.h"
+#include "FWCore/Framework/interface/ProxyFactoryTemplate.h"
 
-#include "FWCore/CoreFramework/interface/DataProxyTemplate.h"
-#include "FWCore/CoreFramework/test/DummyData.h"
-#include "FWCore/CoreFramework/test/DummyRecord.h"
+#include "FWCore/Framework/interface/DataProxyTemplate.h"
+#include "FWCore/Framework/test/DummyData.h"
+#include "FWCore/Framework/test/DummyRecord.h"
 
 
 using edm::eventsetup::test::DummyData;

@@ -10,16 +10,16 @@
 #define BOOST_AUTO_TEST_MAIN
 #include "boost/test/auto_unit_test.hpp"
 
-#include "FWCore/CoreFramework/interface/ESProducer.h"
+#include "FWCore/Framework/interface/ESProducer.h"
 
-#include "FWCore/CoreFramework/test/DummyData.h"
-#include "FWCore/CoreFramework/test/DummyRecord.h"
-#include "FWCore/CoreFramework/test/DummyFinder.h"
+#include "FWCore/Framework/test/DummyData.h"
+#include "FWCore/Framework/test/DummyRecord.h"
+#include "FWCore/Framework/test/DummyFinder.h"
 
-#include "FWCore/CoreFramework/test/DepRecord.h"
+#include "FWCore/Framework/test/DepRecord.h"
 
-#include "FWCore/CoreFramework/interface/EventSetupProvider.h"
-#include "FWCore/CoreFramework/interface/ESHandle.h"
+#include "FWCore/Framework/interface/EventSetupProvider.h"
+#include "FWCore/Framework/interface/ESHandle.h"
 
 using edm::eventsetup::test::DummyData;
 using namespace edm::eventsetup;

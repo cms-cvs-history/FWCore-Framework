@@ -13,8 +13,8 @@
 #include "boost/test/auto_unit_test.hpp"
 
 
-#include "FWCore/CoreFramework/interface/Callback.h"
-#include "FWCore/CoreFramework/interface/ESProducts.h"
+#include "FWCore/Framework/interface/Callback.h"
+#include "FWCore/Framework/interface/ESProducts.h"
 
 namespace callbacktest {
    struct Data {

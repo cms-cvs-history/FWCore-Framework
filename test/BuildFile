@@ -1,7 +1,7 @@
 <environment>
   <use name=boost>
-  <use name=FWCore/CoreFramework>
-  <use name=FWCore/FWCoreServices>
+  <use name=FWCore/Framework>
+  <use name=FWCore/Services>
 
 #Had to hard code in the -gcc-mt because I could find no
 # option in scram to tell it just to use boost_unit_test_framework
@@ -52,9 +52,6 @@
   </bin>
 
   <bin file=cmsRun.cpp>
-  </bin>
-
-  <bin file=Mange.cpp>
   </bin>
 
   <bin file=ScheduleExecutorFromPSet_t.cpp>

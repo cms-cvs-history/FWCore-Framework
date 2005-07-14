@@ -2,15 +2,15 @@
 
 Test of the EventProcessor class.
 
-$Id: EventProcessor2_t.cpp,v 1.6 2005/06/28 04:46:02 jbk Exp $
+$Id: EventProcessor2_t.cpp,v 1.7 2005/07/06 15:27:15 viji Exp $
 
 ----------------------------------------------------------------------*/  
 #include <exception>
 #include <iostream>
 #include <string>
 #include <stdexcept>
-#include "FWCore/FWUtilities/interface/EDMException.h"
-#include "FWCore/CoreFramework/interface/EventProcessor.h"
+#include "FWCore/Utilities/interface/EDMException.h"
+#include "FWCore/Framework/interface/EventProcessor.h"
 
 void work()
 {

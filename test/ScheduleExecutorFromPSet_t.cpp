@@ -3,39 +3,39 @@
    test for ScheduleExecutor
 
    \author Stefano ARGIRO
-   \version $Id: ScheduleExecutorFromPSet_t.cpp,v 1.14 2005/07/05 17:36:22 wmtan Exp $
+   \version $Id: ScheduleExecutorFromPSet_t.cpp,v 1.15 2005/07/11 21:55:14 wmtan Exp $
    \date 18 May 2005
 */
 
-static const char CVSId[] = "$Id: ScheduleExecutorFromPSet_t.cpp,v 1.14 2005/07/05 17:36:22 wmtan Exp $";
+static const char CVSId[] = "$Id: ScheduleExecutorFromPSet_t.cpp,v 1.15 2005/07/11 21:55:14 wmtan Exp $";
 
 
-#include "FWCore/CoreFramework/interface/ScheduleExecutor.h"
-#include "FWCore/CoreFramework/interface/ScheduleBuilder.h"
-#include "FWCore/CoreFramework/interface/UnknownModuleException.h"
+#include "FWCore/Framework/interface/ScheduleExecutor.h"
+#include "FWCore/Framework/interface/ScheduleBuilder.h"
+#include "FWCore/Framework/interface/UnknownModuleException.h"
 
-#include "FWCore/CoreFramework/src/WorkerRegistry.h"
-#include "FWCore/CoreFramework/interface/EventPrincipal.h"
-#include "FWCore/CoreFramework/interface/EventSetup.h"
-#include "FWCore/CoreFramework/interface/EventSetupProvider.h"
-#include "FWCore/CoreFramework/interface/Handle.h"
-#include "FWCore/CoreFramework/interface/BasicHandle.h"
-#include "FWCore/CoreFramework/interface/Timestamp.h"
+#include "FWCore/Framework/src/WorkerRegistry.h"
+#include "FWCore/Framework/interface/EventPrincipal.h"
+#include "FWCore/Framework/interface/EventSetup.h"
+#include "FWCore/Framework/interface/EventSetupProvider.h"
+#include "FWCore/Framework/interface/Handle.h"
+#include "FWCore/Framework/interface/BasicHandle.h"
+#include "FWCore/Framework/interface/Timestamp.h"
 #include "FWCore/EDProduct/interface/Wrapper.h"
 
-#include "FWCore/CoreFramework/interface/InputServiceDescription.h"
-#include "FWCore/CoreFramework/test/DummyEventSetupRecordRetriever.h"
-#include "FWCore/FWCoreServices/src/EmptyInputService.h"
+#include "FWCore/Framework/interface/InputServiceDescription.h"
+#include "FWCore/Framework/test/DummyEventSetupRecordRetriever.h"
+#include "FWCore/Services/src/EmptyInputService.h"
 
 #include <FWCore/ParameterSet/interface/ProcessPSetBuilder.h>
 #include <FWCore/ParameterSet/interface/Makers.h>
 #include <FWCore/ParameterSet/interface/parse.h>
 
-#include "FWCore/CoreFramework/src/TypeID.h"
+#include "FWCore/Framework/src/TypeID.h"
 
-#include "FWCore/CoreFramework/src/ToyProducts.h"
+#include "FWCore/Framework/src/ToyProducts.h"
 
-#include "FWCore/FWUtilities/interface/EDMException.h"
+#include "FWCore/Utilities/interface/EDMException.h"
 
 #include <sstream>
 #include <string>

@@ -11,18 +11,18 @@
 #define BOOST_AUTO_TEST_MAIN
 #include "boost/test/auto_unit_test.hpp"
 
-#include "FWCore/CoreFramework/interface/DependentRecordImplementation.h"
-#include "FWCore/CoreFramework/test/DummyRecord.h"
-#include "FWCore/CoreFramework/test/DepRecord.h"
-#include "FWCore/CoreFramework/test/DummyFinder.h"
+#include "FWCore/Framework/interface/DependentRecordImplementation.h"
+#include "FWCore/Framework/test/DummyRecord.h"
+#include "FWCore/Framework/test/DepRecord.h"
+#include "FWCore/Framework/test/DummyFinder.h"
 
-#include "FWCore/CoreFramework/interface/EventSetupRecordProviderFactoryManager.h"
-#include "FWCore/CoreFramework/interface/DependentRecordIntervalFinder.h"
+#include "FWCore/Framework/interface/EventSetupRecordProviderFactoryManager.h"
+#include "FWCore/Framework/interface/DependentRecordIntervalFinder.h"
 
-#include "FWCore/CoreFramework/interface/EventSetupProvider.h"
-#include "FWCore/CoreFramework/interface/DataProxyProvider.h"
-#include "FWCore/CoreFramework/interface/EventSetupRecordProvider.h"
-#include "FWCore/CoreFramework/interface/NoRecordException.h"
+#include "FWCore/Framework/interface/EventSetupProvider.h"
+#include "FWCore/Framework/interface/DataProxyProvider.h"
+#include "FWCore/Framework/interface/EventSetupRecordProvider.h"
+#include "FWCore/Framework/interface/NoRecordException.h"
 
 class DummyProxyProvider : public edm::eventsetup::DataProxyProvider {
 public:
@@ -39,7 +39,7 @@ protected:
    
 };
 
-#include "FWCore/CoreFramework/interface/DataProxyProvider.h"
+#include "FWCore/Framework/interface/DataProxyProvider.h"
 
 class DepRecordProxyProvider : public edm::eventsetup::DataProxyProvider {
 public:

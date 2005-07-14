@@ -9,19 +9,19 @@
 
 #define BOOST_AUTO_TEST_MAIN
 #include "boost/test/auto_unit_test.hpp"
-#include "FWCore/CoreFramework/interface/EventSetup.h"
-#include "FWCore/CoreFramework/interface/EventSetupRecordImplementation.h"
-#include "FWCore/CoreFramework/interface/EventSetupProvider.h"
-#include "FWCore/CoreFramework/interface/Timestamp.h"
+#include "FWCore/Framework/interface/EventSetup.h"
+#include "FWCore/Framework/interface/EventSetupRecordImplementation.h"
+#include "FWCore/Framework/interface/EventSetupProvider.h"
+#include "FWCore/Framework/interface/Timestamp.h"
 
-#include "FWCore/CoreFramework/interface/eventSetupGetImplementation.icc"
+#include "FWCore/Framework/interface/eventSetupGetImplementation.icc"
 
-#include "FWCore/CoreFramework/test/DummyRecord.h"
+#include "FWCore/Framework/test/DummyRecord.h"
 //class DummyRecord : public edm::eventsetup::EventSetupRecordImplementation<DummyRecord> {};
 
-#include "FWCore/CoreFramework/interface/HCMethods.icc"
-//#include "FWCore/CoreFramework/interface/HCTypeTag.icc"
-#include "FWCore/CoreFramework/interface/HCTypeTagTemplate.h"
+#include "FWCore/Framework/interface/HCMethods.icc"
+//#include "FWCore/Framework/interface/HCTypeTag.icc"
+#include "FWCore/Framework/interface/HCTypeTagTemplate.h"
 /*
 template<>
 const char*
@@ -55,7 +55,7 @@ BOOST_AUTO_UNIT_TEST(get_test)
    BOOST_CHECK(&dummyRecord == &gottenRecord);
 }
 
-#include "FWCore/CoreFramework/interface/EventSetupRecordProviderTemplate.h"
+#include "FWCore/Framework/interface/EventSetupRecordProviderTemplate.h"
 
 class DummyEventSetupProvider : public edm::eventsetup::EventSetupProvider {
 public:
@@ -83,7 +83,7 @@ BOOST_AUTO_UNIT_TEST(record_provider_test)
    BOOST_CHECK(0 != &gottenRecord);
 }
 
-#include "FWCore/CoreFramework/interface/EventSetupRecordIntervalFinder.h"
+#include "FWCore/Framework/interface/EventSetupRecordIntervalFinder.h"
 
 class DummyFinder : public eventsetup::EventSetupRecordIntervalFinder {
 public:
@@ -142,7 +142,7 @@ BOOST_AUTO_UNIT_TEST(record_validity_test)
    
 }
 
-#include "FWCore/CoreFramework/interface/DataProxyProvider.h"
+#include "FWCore/Framework/interface/DataProxyProvider.h"
 
 class DummyProxyProvider : public eventsetup::DataProxyProvider {
 public:
@@ -159,7 +159,7 @@ protected:
 
 };
 
-#include "FWCore/CoreFramework/interface/EventSetupRecordProviderFactoryTemplate.h"
+#include "FWCore/Framework/interface/EventSetupRecordProviderFactoryTemplate.h"
 //create an instance of the factory
 static eventsetup::EventSetupRecordProviderFactoryTemplate<DummyRecord> s_factory;
 

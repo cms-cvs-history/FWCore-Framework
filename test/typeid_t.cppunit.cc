@@ -3,14 +3,14 @@
 Test program for edm::TypeID class.
 Changed by Viji on 29-06-2005
 
-$Id: TypeID_t.cpp,v 1.2 2005/06/23 20:01:12 wmtan Exp $
+$Id: typeid_t.cppunit.cc,v 1.1 2005/07/06 15:50:16 viji Exp $
  ----------------------------------------------------------------------*/
 
 #include <cassert>
 #include <iostream>
 #include <string>
 #include <cppunit/extensions/HelperMacros.h>
-#include "FWCore/CoreFramework/src/TypeID.h"
+#include "FWCore/Framework/src/TypeID.h"
 
 class testTypeid: public CppUnit::TestFixture
 {

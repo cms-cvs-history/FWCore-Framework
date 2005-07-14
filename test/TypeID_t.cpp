@@ -2,7 +2,7 @@
 
 Test program for edm::TypeID class.
 
-$Id: TypeID_t.cpp,v 1.1 2005/05/29 02:29:54 wmtan Exp $
+$Id: TypeID_t.cpp,v 1.2 2005/06/23 20:01:12 wmtan Exp $
  ----------------------------------------------------------------------*/
 #define BOOST_AUTO_TEST_MAIN
 #include "boost/test/auto_unit_test.hpp"
@@ -11,7 +11,7 @@ $Id: TypeID_t.cpp,v 1.1 2005/05/29 02:29:54 wmtan Exp $
 #include <iostream>
 #include <string>
 
-#include "FWCore/CoreFramework/src/TypeID.h"
+#include "FWCore/Framework/src/TypeID.h"
 
 namespace edmtest {
   struct empty { };

@@ -9,7 +9,7 @@
 #define BOOST_AUTO_TEST_MAIN
 #include "boost/test/auto_unit_test.hpp"
 
-#include "FWCore/CoreFramework/interface/ESProducts.h"
+#include "FWCore/Framework/interface/ESProducts.h"
 using namespace edm::eventsetup::produce;
 
 ESProducts<const int*, const float*>

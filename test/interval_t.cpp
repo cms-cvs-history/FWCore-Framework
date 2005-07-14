@@ -10,8 +10,8 @@
 
 #define BOOST_AUTO_TEST_MAIN
 #include "boost/test/auto_unit_test.hpp"
-#include "FWCore/CoreFramework/interface/Timestamp.h"
-#include "FWCore/CoreFramework/interface/ValidityInterval.h"
+#include "FWCore/Framework/interface/Timestamp.h"
+#include "FWCore/Framework/interface/ValidityInterval.h"
 
 using edm::Timestamp;
 using edm::ValidityInterval;
