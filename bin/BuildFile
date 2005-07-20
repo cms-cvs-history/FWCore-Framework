@@ -1,0 +1,8 @@
+<environment>
+
+  <bin file=cmsRun.cpp>
+    <use name=boost>
+    <use name=FWCore/Framework>
+  </bin>
+
+</environment>

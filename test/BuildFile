@@ -51,9 +51,6 @@
   <bin file=EventProcessor2_t.cpp>
   </bin>
 
-  <bin file=cmsRun.cpp>
-  </bin>
-
   <bin file=ScheduleExecutorFromPSet_t.cpp>
      <lib name=boost_unit_test_framework-gcc-mt> 
   </bin>
