@@ -3,11 +3,11 @@
    test for ScheduleExecutor
 
    \author Stefano ARGIRO
-   \version $Id: ScheduleExecutorFromPSet_t.cpp,v 1.15 2005/07/11 21:55:14 wmtan Exp $
+   \version $Id: ScheduleExecutorFromPSet_t.cpp,v 1.16 2005/07/14 22:50:53 wmtan Exp $
    \date 18 May 2005
 */
 
-static const char CVSId[] = "$Id: ScheduleExecutorFromPSet_t.cpp,v 1.15 2005/07/11 21:55:14 wmtan Exp $";
+static const char CVSId[] = "$Id: ScheduleExecutorFromPSet_t.cpp,v 1.16 2005/07/14 22:50:53 wmtan Exp $";
 
 
 #include "FWCore/Framework/interface/ScheduleExecutor.h"
@@ -21,6 +21,7 @@ static const char CVSId[] = "$Id: ScheduleExecutorFromPSet_t.cpp,v 1.15 2005/07/
 #include "FWCore/Framework/interface/Handle.h"
 #include "FWCore/Framework/interface/BasicHandle.h"
 #include "FWCore/Framework/interface/Timestamp.h"
+#include "FWCore/Framework/interface/Actions.h"
 #include "FWCore/EDProduct/interface/Wrapper.h"
 
 #include "FWCore/Framework/interface/InputServiceDescription.h"
@@ -101,9 +102,10 @@ void test_trivial_path(){
   boost::shared_ptr<ParameterSet> processPSet = b.getProcessPSet();
   
   WorkerRegistry wreg;
-  ScheduleBuilder builder(*processPSet,&wreg);
+  ActionTable table;
+  ScheduleBuilder builder(*processPSet,&wreg,&table);
   
-  ScheduleExecutor executor(builder.getPathList());
+  ScheduleExecutor executor(builder.getPathList(),table);
   
   auto_ptr<InputService> input = setupDummyInputService();
   auto_ptr<EventPrincipal> pep = input->readEvent();
@@ -133,9 +135,10 @@ void test_one_path_with_sequence(){
   ProcessPSetBuilder b(conf);
   boost::shared_ptr<ParameterSet> processPSet = b.getProcessPSet();
   WorkerRegistry wreg;
-  ScheduleBuilder builder(*processPSet,&wreg);
+  ActionTable table;
+  ScheduleBuilder builder(*processPSet,&wreg,&table);
   
-  ScheduleExecutor executor(builder.getPathList());
+  ScheduleExecutor executor(builder.getPathList(),table);
   
   auto_ptr<InputService> input = setupDummyInputService();
   auto_ptr<EventPrincipal> pep = input->readEvent();
@@ -167,9 +170,10 @@ void test_multiple_path_with_sequence(){
    
   // actual test of schedule executor
   WorkerRegistry wreg;
-  ScheduleBuilder builder(*processPSet,&wreg);
+  ActionTable table;
+  ScheduleBuilder builder(*processPSet,&wreg,&table);
   
-  ScheduleExecutor executor(builder.getPathList());
+  ScheduleExecutor executor(builder.getPathList(),table);
   
   auto_ptr<InputService> input = setupDummyInputService();
   auto_ptr<EventPrincipal> pep = input->readEvent();
@@ -202,7 +206,9 @@ const char * conf =   "process test ={ \n"
  BOOST_CHECKPOINT("Going to instanciate a non-implemented module");
 
  WorkerRegistry wreg;
- BOOST_CHECK_THROW(ScheduleBuilder builder(*processPSet,&wreg),
+ ActionTable table;
+
+ BOOST_CHECK_THROW(ScheduleBuilder builder(*processPSet,&wreg,&table),
 		   edm::Exception);
 
 }

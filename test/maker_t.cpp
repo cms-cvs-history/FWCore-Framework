@@ -5,7 +5,9 @@
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Framework/interface/Handle.h"
 #include "FWCore/Framework/interface/MakerMacros.h"
+#include "FWCore/Framework/interface/Actions.h"
 #include "FWCore/Framework/src/Factory.h"
+#include "FWCore/Framework/src/WorkerParams.h"
 
 #include "PluginManager/PluginManager.h"
 #include "FWCore/Framework/interface/EventSetup.h"
@@ -50,8 +52,14 @@ int main()
     boost::shared_ptr<ParameterSet> p2 = makePSet(*edm::pset::parse(param2.c_str()));;
 
     cerr << p1->getParameter<std::string>("module_type");
-    auto_ptr<Worker> w1 = f->makeWorker(*p1,"PROD",0,0);
-    auto_ptr<Worker> w2 = f->makeWorker(*p2,"PROD",0,0);
+
+    edm::ActionTable table;
+
+    edm::WorkerParams params1(*p1,0,&table,"PROD",0,0);
+    edm::WorkerParams params2(*p1,0,&table,"PROD",0,0);
+
+    auto_ptr<Worker> w1 = f->makeWorker(params1);
+    auto_ptr<Worker> w2 = f->makeWorker(params2);
   }
   catch(std::exception& e)
     {

@@ -4,7 +4,7 @@ This is a generic main that can be used with any plugin and a
 PSet script.   See notes in EventProcessor.cpp for details about
 it.
 
-$Id: cmsRun.cpp,v 1.2 2005/07/11 22:00:38 jbk Exp $
+$Id: cmsRun.cpp,v 1.1 2005/07/12 23:24:36 wmtan Exp $
 
 ----------------------------------------------------------------------*/  
 
@@ -14,14 +14,19 @@ $Id: cmsRun.cpp,v 1.2 2005/07/11 22:00:38 jbk Exp $
 #include <vector>
 
 #include "FWCore/Framework/interface/EventProcessor.h"
+#include "FWCore/Framework/interface/ProblemTracker.h"
 #include "FWCore/Utilities/interface/Exception.h"
 
 using namespace std;
+
+// -----------------------------------------------
 
 int main(int argc, char* argv[])
 {
   // Right now option processing is not really present.
   // The EventProcessor should handle this in the future.
+
+  edm::AssertHandler ah;
 
   int rc = -1; // we should never return this value!
   try
