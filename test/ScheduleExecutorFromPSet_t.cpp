@@ -3,11 +3,11 @@
    test for ScheduleExecutor
 
    \author Stefano ARGIRO
-   \version $Id: ScheduleExecutorFromPSet_t.cpp,v 1.16 2005/07/14 22:50:53 wmtan Exp $
+   \version $Id: ScheduleExecutorFromPSet_t.cpp,v 1.17 2005/07/20 03:00:36 jbk Exp $
    \date 18 May 2005
 */
 
-static const char CVSId[] = "$Id: ScheduleExecutorFromPSet_t.cpp,v 1.16 2005/07/14 22:50:53 wmtan Exp $";
+static const char CVSId[] = "$Id: ScheduleExecutorFromPSet_t.cpp,v 1.17 2005/07/20 03:00:36 jbk Exp $";
 
 
 #include "FWCore/Framework/interface/ScheduleExecutor.h"
@@ -16,6 +16,7 @@ static const char CVSId[] = "$Id: ScheduleExecutorFromPSet_t.cpp,v 1.16 2005/07/
 
 #include "FWCore/Framework/src/WorkerRegistry.h"
 #include "FWCore/Framework/interface/EventPrincipal.h"
+#include "FWCore/Framework/interface/ProductRegistry.h"
 #include "FWCore/Framework/interface/EventSetup.h"
 #include "FWCore/Framework/interface/EventSetupProvider.h"
 #include "FWCore/Framework/interface/Handle.h"
@@ -49,12 +50,12 @@ using namespace edm::pset;
 using namespace std;
 using namespace boost::unit_test_framework;
 
-auto_ptr<InputService> setupDummyInputService(){
+auto_ptr<InputService> setupDummyInputService(ProductRegistry* preg){
 
   std::string param1("int32 maxEvents=5");
   boost::shared_ptr<ParameterSet> input_service_pset = 
     makePSet(*edm::pset::parse(param1.c_str()));
-  const InputServiceDescription desc("test",1);
+  const InputServiceDescription desc("test",1,preg);
   auto_ptr<InputService> 
     input(new EmptyInputService(*input_service_pset,desc));
   
@@ -101,13 +102,13 @@ void test_trivial_path(){
   ProcessPSetBuilder b(conf);
   boost::shared_ptr<ParameterSet> processPSet = b.getProcessPSet();
   
-  WorkerRegistry wreg;
+  WorkerRegistry  wreg;
+  ProductRegistry preg;
   ActionTable table;
-  ScheduleBuilder builder(*processPSet,&wreg,&table);
-  
+  ScheduleBuilder builder(*processPSet,&wreg,&preg,&table);
   ScheduleExecutor executor(builder.getPathList(),table);
   
-  auto_ptr<InputService> input = setupDummyInputService();
+  auto_ptr<InputService> input = setupDummyInputService(&preg);
   auto_ptr<EventPrincipal> pep = input->readEvent();
   const EventSetup& c = setupDummyEventSetup();
   
@@ -135,12 +136,13 @@ void test_one_path_with_sequence(){
   ProcessPSetBuilder b(conf);
   boost::shared_ptr<ParameterSet> processPSet = b.getProcessPSet();
   WorkerRegistry wreg;
+  ProductRegistry preg;
   ActionTable table;
-  ScheduleBuilder builder(*processPSet,&wreg,&table);
+  ScheduleBuilder builder(*processPSet,&wreg,&preg,&table);
   
   ScheduleExecutor executor(builder.getPathList(),table);
   
-  auto_ptr<InputService> input = setupDummyInputService();
+  auto_ptr<InputService> input = setupDummyInputService(&preg);
   auto_ptr<EventPrincipal> pep = input->readEvent();
   const EventSetup& c = setupDummyEventSetup();
 
@@ -170,12 +172,13 @@ void test_multiple_path_with_sequence(){
    
   // actual test of schedule executor
   WorkerRegistry wreg;
+  ProductRegistry preg; 
   ActionTable table;
-  ScheduleBuilder builder(*processPSet,&wreg,&table);
+  ScheduleBuilder builder(*processPSet,&wreg,&preg,&table);
   
   ScheduleExecutor executor(builder.getPathList(),table);
   
-  auto_ptr<InputService> input = setupDummyInputService();
+  auto_ptr<InputService> input = setupDummyInputService(&preg);
   auto_ptr<EventPrincipal> pep = input->readEvent();
   const EventSetup& c = setupDummyEventSetup();
 
@@ -206,9 +209,10 @@ const char * conf =   "process test ={ \n"
  BOOST_CHECKPOINT("Going to instanciate a non-implemented module");
 
  WorkerRegistry wreg;
+ ProductRegistry preg;
  ActionTable table;
 
- BOOST_CHECK_THROW(ScheduleBuilder builder(*processPSet,&wreg,&table),
+ BOOST_CHECK_THROW(ScheduleBuilder builder(*processPSet,&wreg,&preg,&table),
 		   edm::Exception);
 
 }
