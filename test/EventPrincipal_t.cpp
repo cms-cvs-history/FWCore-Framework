@@ -2,7 +2,7 @@
 
 Test of the EventPrincipal class.
 
-$Id: EventPrincipal_t.cpp,v 1.8 2005/07/11 21:55:14 wmtan Exp $
+$Id: EventPrincipal_t.cpp,v 1.9 2005/07/14 22:50:53 wmtan Exp $
 
 ----------------------------------------------------------------------*/  
 #include <cassert>
@@ -127,10 +127,10 @@ void fail_get_by_invalid_id()
   edmtest::DummyProduct dp;
   edm::TypeID dummytype(dp);
   std::string className = dummytype.friendlyClassName();
-  pprov->full_product_type_name = dummytype.userClassName();
-  pprov->friendly_product_type_name = className;
-  pprov->module.module_label = label;
-  pprov->module.process_name = processName;
+  pprov->product.full_product_type_name = dummytype.userClassName();
+  pprov->product.friendly_product_type_name = className;
+  pprov->product.module.module_label = label;
+  pprov->product.module.process_name = processName;
   ep.put(pprod, pprov);
   edm::EDP_ID id(1);
 
@@ -168,10 +168,10 @@ void get_by_id()
   edm::TypeID dummytype(dp);
   std::string className = dummytype.friendlyClassName();
 
-  pprov->full_product_type_name = dummytype.userClassName();
-  pprov->friendly_product_type_name = className;
-  pprov->module.module_label = label;
-  pprov->module.process_name = processName;
+  pprov->product.full_product_type_name = dummytype.userClassName();
+  pprov->product.friendly_product_type_name = className;
+  pprov->product.module.module_label = label;
+  pprov->product.module.process_name = processName;
   ep.put(pprod, pprov);
 
   edm::EDP_ID id(1);
@@ -212,12 +212,12 @@ void get_by_label()
   edm::TypeID dummytype(dp);
   std::string className = dummytype.friendlyClassName();
 
-  pprov->full_product_type_name = dummytype.userClassName();
-  pprov->friendly_product_type_name = className;
+  pprov->product.full_product_type_name = dummytype.userClassName();
+  pprov->product.friendly_product_type_name = className;
 
-  pprov->module.module_label = label;
-  pprov->product_instance_name = productInstanceName;
-  pprov->module.process_name = processName;
+  pprov->product.module.module_label = label;
+  pprov->product.product_instance_name = productInstanceName;
+  pprov->product.module.process_name = processName;
   ep.put(pprod, pprov);
   
   try
@@ -227,7 +227,7 @@ void get_by_label()
 
       handle h = ep.getByLabel(tid, label, productInstanceName);
       assert(h.isValid());
-      assert(h.provenance()->module.module_label == label);
+      assert(h.provenance()->product.module.module_label == label);
     }
   catch (edm::Exception& x)
     {
@@ -260,11 +260,11 @@ void get_by_selector()
   edm::TypeID dummytype(dp);
   std::string className = dummytype.friendlyClassName();
 
-  pprov->full_product_type_name = dummytype.userClassName();
-  pprov->friendly_product_type_name = className;
+  pprov->product.full_product_type_name = dummytype.userClassName();
+  pprov->product.friendly_product_type_name = className;
 
-  pprov->module.module_label = label;
-  pprov->module.process_name = processName;
+  pprov->product.module.module_label = label;
+  pprov->product.module.process_name = processName;
   ep.put(pprod, pprov);
 
   try
@@ -275,7 +275,7 @@ void get_by_selector()
 
       handle h = ep.getBySelector(tid, pnsel);
       assert(h.isValid());
-      assert(h.provenance()->module.module_label == label);
+      assert(h.provenance()->product.module.module_label == label);
     }
   catch (edm::Exception& x)
     {
