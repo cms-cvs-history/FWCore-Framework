@@ -3,11 +3,11 @@
    test for ScheduleExecutor
 
    \author Stefano ARGIRO
-   \version $Id: ScheduleExecutorFromPSet_t.cpp,v 1.17 2005/07/20 03:00:36 jbk Exp $
+   \version $Id: ScheduleExecutorFromPSet_t.cpp,v 1.18 2005/07/21 21:07:15 argiro Exp $
    \date 18 May 2005
 */
 
-static const char CVSId[] = "$Id: ScheduleExecutorFromPSet_t.cpp,v 1.17 2005/07/20 03:00:36 jbk Exp $";
+static const char CVSId[] = "$Id: ScheduleExecutorFromPSet_t.cpp,v 1.18 2005/07/21 21:07:15 argiro Exp $";
 
 
 #include "FWCore/Framework/interface/ScheduleExecutor.h"
@@ -50,14 +50,14 @@ using namespace edm::pset;
 using namespace std;
 using namespace boost::unit_test_framework;
 
-auto_ptr<InputService> setupDummyInputService(ProductRegistry* preg){
+auto_ptr<InputService> setupDummyInputService(ProductRegistry& preg){
 
   std::string param1("int32 maxEvents=5");
   boost::shared_ptr<ParameterSet> input_service_pset = 
     makePSet(*edm::pset::parse(param1.c_str()));
-  const InputServiceDescription desc("test",1,preg);
+  const InputServiceDescription desc("test", 1, preg);
   auto_ptr<InputService> 
-    input(new EmptyInputService(*input_service_pset,desc));
+    input(new EmptyInputService(*input_service_pset, desc));
   
   return input;  
 }
@@ -105,10 +105,10 @@ void test_trivial_path(){
   WorkerRegistry  wreg;
   ProductRegistry preg;
   ActionTable table;
-  ScheduleBuilder builder(*processPSet,&wreg,&preg,&table);
-  ScheduleExecutor executor(builder.getPathList(),table);
+  ScheduleBuilder builder(*processPSet, wreg, preg, table);
+  ScheduleExecutor executor(builder.getPathList(), table);
   
-  auto_ptr<InputService> input = setupDummyInputService(&preg);
+  auto_ptr<InputService> input = setupDummyInputService(preg);
   auto_ptr<EventPrincipal> pep = input->readEvent();
   const EventSetup& c = setupDummyEventSetup();
   
@@ -138,11 +138,11 @@ void test_one_path_with_sequence(){
   WorkerRegistry wreg;
   ProductRegistry preg;
   ActionTable table;
-  ScheduleBuilder builder(*processPSet,&wreg,&preg,&table);
+  ScheduleBuilder builder(*processPSet, wreg, preg, table);
   
-  ScheduleExecutor executor(builder.getPathList(),table);
+  ScheduleExecutor executor(builder.getPathList(), table);
   
-  auto_ptr<InputService> input = setupDummyInputService(&preg);
+  auto_ptr<InputService> input = setupDummyInputService(preg);
   auto_ptr<EventPrincipal> pep = input->readEvent();
   const EventSetup& c = setupDummyEventSetup();
 
@@ -174,11 +174,11 @@ void test_multiple_path_with_sequence(){
   WorkerRegistry wreg;
   ProductRegistry preg; 
   ActionTable table;
-  ScheduleBuilder builder(*processPSet,&wreg,&preg,&table);
+  ScheduleBuilder builder(*processPSet, wreg, preg, table);
   
   ScheduleExecutor executor(builder.getPathList(),table);
   
-  auto_ptr<InputService> input = setupDummyInputService(&preg);
+  auto_ptr<InputService> input = setupDummyInputService(preg);
   auto_ptr<EventPrincipal> pep = input->readEvent();
   const EventSetup& c = setupDummyEventSetup();
 
@@ -212,7 +212,7 @@ const char * conf =   "process test ={ \n"
  ProductRegistry preg;
  ActionTable table;
 
- BOOST_CHECK_THROW(ScheduleBuilder builder(*processPSet,&wreg,&preg,&table),
+ BOOST_CHECK_THROW(ScheduleBuilder builder(*processPSet, wreg, preg, table),
 		   edm::Exception);
 
 }

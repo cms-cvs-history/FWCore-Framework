@@ -6,6 +6,7 @@
 #include "FWCore/Framework/interface/Handle.h"
 #include "FWCore/Framework/interface/EventSetup.h"
 #include "FWCore/Framework/interface/Actions.h"
+#include "FWCore/Framework/interface/ProductRegistry.h"
 #include "FWCore/Framework/src/WorkerMaker.h"
 #include "FWCore/Framework/src/Factory.h"
 #include "FWCore/Framework/src/WorkerParams.h"
@@ -18,20 +19,18 @@
 using namespace std;
 using namespace edm;
 
-class TestMod : public EDProducer
-{
+class TestMod : public EDProducer {
  public:
   explicit TestMod(ParameterSet const& p);
 
   void produce(Event& e, EventSetup const&);
 };
 
-TestMod::TestMod(ParameterSet const& p)
-{
+TestMod::TestMod(ParameterSet const& p) {
+  produces<int>();
 }
 
-void TestMod::produce(Event& e, EventSetup const&)
-{
+void TestMod::produce(Event& e, EventSetup const&) {
 }
 
 // ----------------------------------------------
@@ -53,8 +52,9 @@ int main()
 
   edm::ActionTable table;
 
-  edm::WorkerParams params1(*p1,0,&table,"PROD",0,0);
-  edm::WorkerParams params2(*p1,0,&table,"PROD",0,0);
+  edm::ProductRegistry preg;
+  edm::WorkerParams params1(*p1, preg, table, "PROD", 0, 0);
+  edm::WorkerParams params2(*p1, preg, table, "PROD", 0, 0);
 
   auto_ptr<Worker> w1 = f->makeWorker(params1);
   auto_ptr<Worker> w2 = f->makeWorker(params2);
