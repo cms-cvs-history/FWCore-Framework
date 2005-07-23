@@ -3,11 +3,11 @@
    test InputService for ProductRegistry
 
    \author Stefano ARGIRO
-   \version $Id: TestInputService4ProductRegistry.cc,v 1.1 2005/07/21 21:07:14 argiro Exp $
+   \version $Id: TestInputService4ProductRegistry.cc,v 1.2 2005/07/22 23:34:10 wmtan Exp $
    \date 21 Jul 2005
 */
 
-static const char CVSId[] = "$Id: TestInputService4ProductRegistry.cc,v 1.1 2005/07/21 21:07:14 argiro Exp $";
+static const char CVSId[] = "$Id: TestInputService4ProductRegistry.cc,v 1.2 2005/07/22 23:34:10 wmtan Exp $";
 
 #include <FWCore/Framework/interface/EventPrincipal.h>
 #include <FWCore/Framework/interface/InputService.h>
@@ -31,7 +31,7 @@ namespace edm {
 
   public:
     TestInputService4ProductRegistry(const edm::ParameterSet& pset, 
-      const edm::InputServiceDescription& desc): InputService(desc.process_name){
+      const edm::InputServiceDescription& desc): InputService(desc) {
 
       const  edm::ProductRegistry::ProductList& plist=
 	desc.preg_->productList();
