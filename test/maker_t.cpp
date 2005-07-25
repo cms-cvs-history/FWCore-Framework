@@ -58,7 +58,7 @@ int main()
 
     edm::ProductRegistry preg;
     edm::WorkerParams params1(*p1, preg, table, "PROD", 0, 0);
-    edm::WorkerParams params2(*p1, preg, table, "PROD", 0, 0);
+    edm::WorkerParams params2(*p2, preg, table, "PROD", 0, 0);
 
     auto_ptr<Worker> w1 = f->makeWorker(params1);
     auto_ptr<Worker> w2 = f->makeWorker(params2);
