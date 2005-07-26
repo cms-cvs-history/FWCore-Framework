@@ -2,7 +2,7 @@
 
 Test of the EventPrincipal class.
 
-$Id: EventPrincipal_t.cpp,v 1.9 2005/07/14 22:50:53 wmtan Exp $
+$Id: EventPrincipal_t.cpp,v 1.10 2005/07/21 17:25:38 wmtan Exp $
 
 ----------------------------------------------------------------------*/  
 #include <cassert>
@@ -131,6 +131,7 @@ void fail_get_by_invalid_id()
   pprov->product.friendly_product_type_name = className;
   pprov->product.module.module_label = label;
   pprov->product.module.process_name = processName;
+  pprov->product.init();
   ep.put(pprod, pprov);
   edm::EDP_ID id(1);
 
@@ -172,6 +173,7 @@ void get_by_id()
   pprov->product.friendly_product_type_name = className;
   pprov->product.module.module_label = label;
   pprov->product.module.process_name = processName;
+  pprov->product.init();
   ep.put(pprod, pprov);
 
   edm::EDP_ID id(1);
@@ -218,6 +220,7 @@ void get_by_label()
   pprov->product.module.module_label = label;
   pprov->product.product_instance_name = productInstanceName;
   pprov->product.module.process_name = processName;
+  pprov->product.init();
   ep.put(pprod, pprov);
   
   try
@@ -265,6 +268,7 @@ void get_by_selector()
 
   pprov->product.module.module_label = label;
   pprov->product.module.process_name = processName;
+  pprov->product.init();
   ep.put(pprod, pprov);
 
   try
