@@ -3,11 +3,11 @@
    test InputService for ProductRegistry
 
    \author Stefano ARGIRO
-   \version $Id: TestInputService4ProductRegistry.cc,v 1.2 2005/07/22 23:34:10 wmtan Exp $
+   \version $Id: TestInputService4ProductRegistry.cc,v 1.3 2005/07/23 05:53:33 wmtan Exp $
    \date 21 Jul 2005
 */
 
-static const char CVSId[] = "$Id: TestInputService4ProductRegistry.cc,v 1.2 2005/07/22 23:34:10 wmtan Exp $";
+static const char CVSId[] = "$Id: TestInputService4ProductRegistry.cc,v 1.3 2005/07/23 05:53:33 wmtan Exp $";
 
 #include <FWCore/Framework/interface/EventPrincipal.h>
 #include <FWCore/Framework/interface/InputService.h>
@@ -41,16 +41,16 @@ namespace edm {
       edmtest::StringProduct stringprod;
       edm::TypeID stringID(stringprod);
       CPPUNIT_ASSERT(stringID.friendlyClassName() == 
-		     pd->friendly_product_type_name);
-      CPPUNIT_ASSERT(pd->module.module_label=="m1");
+		     pd->second.friendly_product_type_name);
+      CPPUNIT_ASSERT(pd->second.module.module_label=="m1");
 
       ++pd;
 
       edmtest::DoubleProduct dprod;
       edm::TypeID dID(dprod);
       CPPUNIT_ASSERT(dID.friendlyClassName() == 
-		     pd->friendly_product_type_name);
-      CPPUNIT_ASSERT(pd->module.module_label=="m2");
+		     pd->second.friendly_product_type_name);
+      CPPUNIT_ASSERT(pd->second.module.module_label=="m2");
 
     }
 
