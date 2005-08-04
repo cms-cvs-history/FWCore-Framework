@@ -4,11 +4,11 @@
 
    \author Stefano ARGIRO
    \Changed by Viji Sundararajan on 03-Jul-05.
-   \version $Id: scheduleexecutorfrompset_t.cppunit.cc,v 1.6 2005/07/21 21:07:14 argiro Exp $
+   \version $Id: scheduleexecutorfrompset_t.cppunit.cc,v 1.7 2005/07/23 05:20:52 wmtan Exp $
    \date 18 May 2005
 */
 
-static const char CVSId[] = "$Id: scheduleexecutorfrompset_t.cppunit.cc,v 1.6 2005/07/21 21:07:14 argiro Exp $";
+static const char CVSId[] = "$Id: scheduleexecutorfrompset_t.cppunit.cc,v 1.7 2005/07/23 05:20:52 wmtan Exp $";
 
 #include "FWCore/Framework/interface/ScheduleExecutor.h"
 #include "FWCore/Framework/interface/ScheduleBuilder.h"
@@ -22,7 +22,7 @@ static const char CVSId[] = "$Id: scheduleexecutorfrompset_t.cppunit.cc,v 1.6 20
 #include "FWCore/Framework/interface/Handle.h"
 #include "FWCore/Framework/interface/Actions.h"
 #include "FWCore/Framework/interface/BasicHandle.h"
-#include "FWCore/Framework/interface/Timestamp.h"
+#include "FWCore/Framework/interface/IOVSyncValue.h"
 #include "FWCore/EDProduct/interface/Wrapper.h"
 
 #include "FWCore/Framework/interface/InputServiceDescription.h"
@@ -68,7 +68,7 @@ const EventSetup& setupDummyEventSetup(){
     pRetriever(new DummyEventSetupRecordRetriever);
   cp.add(boost::shared_ptr<eventsetup::DataProxyProvider>(pRetriever));
   cp.add(boost::shared_ptr<eventsetup::EventSetupRecordIntervalFinder>(pRetriever)); 
-  edm::Timestamp ts(123);
+  edm::IOVSyncValue ts(123);
   return cp.eventSetupForInstance(ts);
 }
 
