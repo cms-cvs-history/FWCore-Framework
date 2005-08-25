@@ -4,11 +4,11 @@
 
    \author Stefano ARGIRO
    \Changed by Viji Sundararajan on 03-Jul-05.
-   \version $Id: scheduleexecutorfrompset_t.cppunit.cc,v 1.8 2005/08/04 15:04:08 chrjones Exp $
+   \version $Id: scheduleexecutorfrompset_t.cppunit.cc,v 1.9 2005/08/10 02:35:11 chrjones Exp $
    \date 18 May 2005
 */
 
-static const char CVSId[] = "$Id: scheduleexecutorfrompset_t.cppunit.cc,v 1.8 2005/08/04 15:04:08 chrjones Exp $";
+static const char CVSId[] = "$Id: scheduleexecutorfrompset_t.cppunit.cc,v 1.9 2005/08/10 02:35:11 chrjones Exp $";
 
 #include "FWCore/Framework/interface/ScheduleExecutor.h"
 #include "FWCore/Framework/interface/ScheduleBuilder.h"
@@ -137,6 +137,7 @@ void testScheduleExecutorFromPSet::trivialPathTest(){
   ScheduleExecutor executor(builder.getPathList(), table);
   
   auto_ptr<InputService> input = setupDummyInputService(preg);
+  preg.setProductIDs();
   auto_ptr<EventPrincipal> pep = input->readEvent();
 
   edm::eventsetup::EventSetupProvider cp;
@@ -173,6 +174,7 @@ void testScheduleExecutorFromPSet::onePathwithSequenceTest(){
   ScheduleExecutor executor(builder.getPathList(), table);
   
   auto_ptr<InputService> input = setupDummyInputService(preg);
+  preg.setProductIDs();
   auto_ptr<EventPrincipal> pep = input->readEvent();
   edm::eventsetup::EventSetupProvider cp;
   const EventSetup& c = setupDummyEventSetup(cp);
@@ -206,10 +208,11 @@ void testScheduleExecutorFromPSet::multiplePathwithSequenceTest(){
   ProductRegistry preg;
   ActionTable table;
   ScheduleBuilder builder(*processPSet, wreg, preg, table);
-  
+
   ScheduleExecutor executor(builder.getPathList(), table);
   
   auto_ptr<InputService> input = setupDummyInputService(preg);
+  preg.setProductIDs();
   auto_ptr<EventPrincipal> pep = input->readEvent();
   edm::eventsetup::EventSetupProvider cp;
      const EventSetup& c = setupDummyEventSetup(cp);
@@ -246,6 +249,8 @@ const char * conf =   "process test ={ \n"
  //BOOST_CHECK_THROW(ScheduleBuilder builder(*processPSet, wreg),
 //		   edm::Exception);
  ScheduleBuilder builder(*processPSet, wreg, preg, table);
+ preg.setProductIDs();
+  
 }
 
 
