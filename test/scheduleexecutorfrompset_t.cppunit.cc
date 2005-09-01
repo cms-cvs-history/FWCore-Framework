@@ -4,11 +4,11 @@
 
    \author Stefano ARGIRO
    \Changed by Viji Sundararajan on 03-Jul-05.
-   \version $Id: scheduleexecutorfrompset_t.cppunit.cc,v 1.10 2005/08/25 23:14:58 wmtan Exp $
+   \version $Id: scheduleexecutorfrompset_t.cppunit.cc,v 1.11 2005/08/25 23:29:34 wmtan Exp $
    \date 18 May 2005
 */
 
-static const char CVSId[] = "$Id: scheduleexecutorfrompset_t.cppunit.cc,v 1.10 2005/08/25 23:14:58 wmtan Exp $";
+static const char CVSId[] = "$Id: scheduleexecutorfrompset_t.cppunit.cc,v 1.11 2005/08/25 23:29:34 wmtan Exp $";
 
 #include "FWCore/Framework/interface/ScheduleExecutor.h"
 #include "FWCore/Framework/interface/ScheduleBuilder.h"
@@ -64,13 +64,13 @@ auto_ptr<InputService> setupDummyInputService(ProductRegistry& preg){
 
 //Have to pass EventSetupProvider in as argument since EventSetup returned
 // only have lifetime as long as the EventSetupProvider from which it comes
-const EventSetup& setupDummyEventSetup(edm::eventsetup::EventSetupProvider& cp ){
+const EventSetup& setupDummyEventSetup(edm::eventsetup::EventSetupProvider& cp){
 
   boost::shared_ptr<DummyEventSetupRecordRetriever> 
     pRetriever(new DummyEventSetupRecordRetriever);
   cp.add(boost::shared_ptr<eventsetup::DataProxyProvider>(pRetriever));
   cp.add(boost::shared_ptr<eventsetup::EventSetupRecordIntervalFinder>(pRetriever)); 
-  edm::IOVSyncValue ts( edm::Timestamp(123) );
+  edm::IOVSyncValue ts(edm::Timestamp(123));
   return cp.eventSetupForInstance(ts);
 }
 

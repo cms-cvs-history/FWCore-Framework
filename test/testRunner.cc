@@ -13,7 +13,7 @@ int main()
   CppUnit::TestFactoryRegistry& registry = 
     CppUnit::TestFactoryRegistry::getRegistry();
 
-  runner.addTest( registry.makeTest() );
+  runner.addTest(registry.makeTest());
 
   bool ret = runner.run("", false);
   return ret ? 0 : 1;
