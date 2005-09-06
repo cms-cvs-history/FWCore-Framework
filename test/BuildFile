@@ -1,7 +1,6 @@
 <use name=boost>
 <use name=cppunit>
 <use name=FWCore/Framework>
-<use name=FWCore/Services>
 
 #Had to hard code in the -gcc-mt because I could find no
 # option in scram to tell it just to use boost_unit_test_framework
@@ -51,14 +50,7 @@
   <flags SEAL_PLUGIN_NAME="FWCoreFrameworkTestBeginEndJobAnalyzer" >
 </library>
 
-#<bin name=testFramework file=testRunner.cc,callback_t.cppunit.cc,datakey_t.cppunit.cc,dependentrecord_t.cppunit.cc,esproducer_t.cppunit.cc,esproducts_t.cppunit.cc,eventsetupplugin_t.cppunit.cc,eventsetuprecord_t.cppunit.cc,eventsetup_t.cppunit.cc,fullchain_t.cppunit.cc,interval_t.cppunit.cc,proxyfactoryproducer_t.cppunit.cc,scheduleexecutorfrompset_t.cppunit.cc,typeid_t.cppunit.cc,eventprocessor_t.cppunit.cc,eventprocessor2_t.cppunit.cc,maker2_t.cppunit.cc,maker_t.cppunit.cc,eventprincipal_t.cppunit.cc,productregistry.cppunit.cc>
-
-<bin name=testFramework file=testRunner.cc,callback_t.cppunit.cc,datakey_t.cppunit.cc,dependentrecord_t.cppunit.cc,esproducer_t.cppunit.cc,esproducts_t.cppunit.cc,eventsetupplugin_t.cppunit.cc,eventsetuprecord_t.cppunit.cc,eventsetup_t.cppunit.cc,fullchain_t.cppunit.cc,interval_t.cppunit.cc,proxyfactoryproducer_t.cppunit.cc,scheduleexecutorfrompset_t.cppunit.cc,typeid_t.cppunit.cc,eventprocessor_t.cppunit.cc,eventprocessor2_t.cppunit.cc,maker2_t.cppunit.cc,maker_t.cppunit.cc,eventprincipal_t.cppunit.cc,iovsyncvalue_t.cppunit.cc>
+<bin name=testFramework file=testRunner.cc,callback_t.cppunit.cc,datakey_t.cppunit.cc,dependentrecord_t.cppunit.cc,esproducer_t.cppunit.cc,esproducts_t.cppunit.cc,eventsetupplugin_t.cppunit.cc,eventsetuprecord_t.cppunit.cc,eventsetup_t.cppunit.cc,fullchain_t.cppunit.cc,interval_t.cppunit.cc,proxyfactoryproducer_t.cppunit.cc,typeid_t.cppunit.cc,eventprocessor_t.cppunit.cc,eventprocessor2_t.cppunit.cc,maker2_t.cppunit.cc,maker_t.cppunit.cc,iovsyncvalue_t.cppunit.cc>
   <lib name=TestEventSetupDummyStuff> 
   <lib name=FWCoreFrameworkTestBeginEndJobAnalyzer> 
 </bin>
-
-#<bin name=testFramework file=testRunner.cc,productregistry.cppunit.cc>
-# <use name=cppunit>
-
-#</bin>
