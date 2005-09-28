@@ -1,18 +1,18 @@
 /**
    \file
-   test InputService for ProductRegistry
+   test InputSource for ProductRegistry
 
    \author Stefano ARGIRO
-   \version $Id: TestInputService4ProductRegistry.cc,v 1.4 2005/07/30 04:39:08 wmtan Exp $
+   \version $Id: TestInputSource4ProductRegistry.cc,v 1.5 2005/07/30 23:41:36 wmtan Exp $
    \date 21 Jul 2005
 */
 
-static const char CVSId[] = "$Id: TestInputService4ProductRegistry.cc,v 1.4 2005/07/30 04:39:08 wmtan Exp $";
+static const char CVSId[] = "$Id: TestInputSource4ProductRegistry.cc,v 1.5 2005/07/30 23:41:36 wmtan Exp $";
 
 #include <FWCore/Framework/interface/EventPrincipal.h>
-#include <FWCore/Framework/interface/InputService.h>
-#include <FWCore/Framework/interface/InputServiceDescription.h>
-#include <FWCore/Framework/interface/InputServiceMacros.h>
+#include <FWCore/Framework/interface/InputSource.h>
+#include <FWCore/Framework/interface/InputSourceDescription.h>
+#include <FWCore/Framework/interface/InputSourceMacros.h>
 #include <FWCore/Framework/interface/ProductRegistry.h>
 #include <FWCore/Framework/interface/ProductDescription.h>
 #include <FWCore/Framework/src/TypeID.h>
@@ -22,16 +22,16 @@ static const char CVSId[] = "$Id: TestInputService4ProductRegistry.cc,v 1.4 2005
 
 namespace edm {
 
-  class Retriever;
+  class DelayedReader;
   class ParameterSet;
-  class InputServiceDescription;
+  class InputSourceDescription;
 } 
 
-  class TestInputService4ProductRegistry : public edm::InputService {
+  class TestInputSource4ProductRegistry : public edm::InputSource {
 
   public:
-    TestInputService4ProductRegistry(const edm::ParameterSet& pset, 
-      const edm::InputServiceDescription& desc): InputService(desc) {
+    TestInputSource4ProductRegistry(const edm::ParameterSet& pset, 
+      const edm::InputSourceDescription& desc): InputSource(desc) {
 
       const  edm::ProductRegistry::ProductList& plist=
 	desc.preg_->productList();
@@ -64,6 +64,6 @@ namespace edm {
   
   }; 
  
-  DEFINE_FWK_INPUT_SERVICE(TestInputService4ProductRegistry)
+  DEFINE_FWK_INPUT_SOURCE(TestInputSource4ProductRegistry)
 
 

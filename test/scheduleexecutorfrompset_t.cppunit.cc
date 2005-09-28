@@ -4,11 +4,11 @@
 
    \author Stefano ARGIRO
    \Changed by Viji Sundararajan on 03-Jul-05.
-   \version $Id: scheduleexecutorfrompset_t.cppunit.cc,v 1.1 2005/09/06 21:05:35 wmtan Exp $
+   \version $Id: scheduleexecutorfrompset_t.cppunit.cc,v 1.14 2005/09/07 19:12:37 wmtan Exp $
    \date 18 May 2005
 */
 
-static const char CVSId[] = "$Id: scheduleexecutorfrompset_t.cppunit.cc,v 1.1 2005/09/06 21:05:35 wmtan Exp $";
+static const char CVSId[] = "$Id: scheduleexecutorfrompset_t.cppunit.cc,v 1.14 2005/09/07 19:12:37 wmtan Exp $";
 
 #include "FWCore/Framework/interface/ScheduleExecutor.h"
 #include "FWCore/Framework/interface/ScheduleBuilder.h"
@@ -25,9 +25,9 @@ static const char CVSId[] = "$Id: scheduleexecutorfrompset_t.cppunit.cc,v 1.1 20
 #include "FWCore/Framework/interface/IOVSyncValue.h"
 #include "FWCore/EDProduct/interface/Wrapper.h"
 
-#include "FWCore/Framework/interface/InputServiceDescription.h"
+#include "FWCore/Framework/interface/InputSourceDescription.h"
 #include "FWCore/Framework/test/DummyEventSetupRecordRetriever.h"
-#include "FWCore/Framework/src/EmptyInputService.h"
+#include "FWCore/Framework/src/EmptySource.h"
 
 #include <FWCore/ParameterSet/interface/ProcessPSetBuilder.h>
 #include <FWCore/ParameterSet/interface/Makers.h>
@@ -49,14 +49,14 @@ using namespace edm;
 using namespace edm::pset;
 using namespace std;
 
-auto_ptr<InputService> setupDummyInputService(ProductRegistry& preg){
+auto_ptr<InputSource> setupDummyInputSource(ProductRegistry& preg){
 
   std::string param1("int32 maxEvents=5");
   boost::shared_ptr<ParameterSet> input_service_pset = 
     makePSet(*edm::pset::parse(param1.c_str()));
-  const InputServiceDescription desc("test",1,preg);
-  auto_ptr<InputService> 
-    input(new EmptyInputService(*input_service_pset, desc));
+  const InputSourceDescription desc("test",1,preg);
+  auto_ptr<InputSource> 
+    input(new EmptySource(*input_service_pset, desc));
   
   return input;  
 }
@@ -133,7 +133,7 @@ void testScheduleExecutorFromPSet::trivialPathTest(){
   ProductRegistry preg;
   ActionTable table;
 
-  auto_ptr<InputService> input = setupDummyInputService(preg);
+  auto_ptr<InputSource> input = setupDummyInputSource(preg);
 
   ScheduleBuilder builder(*processPSet, wreg, preg, table);
   
@@ -171,7 +171,7 @@ void testScheduleExecutorFromPSet::onePathwithSequenceTest(){
   ProductRegistry preg;
   ActionTable table;
 
-  auto_ptr<InputService> input = setupDummyInputService(preg);
+  auto_ptr<InputSource> input = setupDummyInputSource(preg);
 
   ScheduleBuilder builder(*processPSet, wreg, preg, table);
   
@@ -210,7 +210,7 @@ void testScheduleExecutorFromPSet::multiplePathwithSequenceTest(){
   ProductRegistry preg;
   ActionTable table;
 
-  auto_ptr<InputService> input = setupDummyInputService(preg);
+  auto_ptr<InputSource> input = setupDummyInputSource(preg);
 
   ScheduleBuilder builder(*processPSet, wreg, preg, table);
 

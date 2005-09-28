@@ -42,8 +42,8 @@
   <flags SEAL_PLUGIN_NAME="TestPRegisterModule2" >
 </library>
 
-<library file=stubs/TestInputService4ProductRegistry.cc name=TestInputService4ProductRegistry>
-  <flags SEAL_PLUGIN_NAME="/TestInputService4ProductRegistry">
+<library file=stubs/TestInputSource4ProductRegistry.cc name=TestInputSource4ProductRegistry>
+  <flags SEAL_PLUGIN_NAME="/TestInputSource4ProductRegistry">
 </library>
 
 <library file=stubs/TestBeginEndJobAnalyzer.cc name=FWCoreFrameworkTestBeginEndJobAnalyzer >
