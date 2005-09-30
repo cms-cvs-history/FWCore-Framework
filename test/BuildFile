@@ -46,3 +46,6 @@
   <lib name=TestEventSetupDummyStuff> 
   <lib name=FWCoreFrameworkTestBeginEndJobAnalyzer> 
 </bin>
+
+# The following test will not work until EventPrincipal is modified for easier unit testing.
+#<bin name=testPut file=testPut.cc></bin>
