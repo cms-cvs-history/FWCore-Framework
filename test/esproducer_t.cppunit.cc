@@ -13,10 +13,13 @@
 #include "FWCore/Framework/test/DepRecord.h"
 #include "FWCore/Framework/interface/EventSetupProvider.h"
 #include "FWCore/Framework/interface/ESHandle.h"
+#include "FWCore/Framework/interface/ESProducts.h"
 #include <cppunit/extensions/HelperMacros.h>
 
 using edm::eventsetup::test::DummyData;
 using namespace edm::eventsetup;
+using edm::eventsetup::ESProducer;
+using edm::eventsetup::ESHandle;
 
 class testEsproducer: public CppUnit::TestFixture 
 {
@@ -27,6 +30,7 @@ CPPUNIT_TEST(getFromTest);
 CPPUNIT_TEST(getfromShareTest);
 CPPUNIT_TEST(decoratorTest);
 CPPUNIT_TEST(dependsOnTest);
+CPPUNIT_TEST(labelTest);
 
 CPPUNIT_TEST_SUITE_END();
 public:
@@ -38,6 +42,7 @@ public:
   void getfromShareTest();
   void decoratorTest();
   void dependsOnTest();
+  void labelTest();
 
 private:
 class Test1Producer : public ESProducer {
@@ -69,6 +74,39 @@ public:
 private:
    boost::shared_ptr<DummyData> ptr_;
 };
+
+class LabelledProducer : public ESProducer {
+public:
+   enum {kFi, kFum};
+   typedef edm::ESProducts< edm::es::L<DummyData,kFi>, edm::es::L<DummyData,kFum> > ReturnProducts;
+   LabelledProducer(): ptr_(new DummyData), fi_(new DummyData){
+      ptr_->value_ = 0;
+      fi_->value_=0;
+      setWhatProduced(this,"foo");
+      setWhatProduced(this, &LabelledProducer::produceMore, edm::es::label("fi",kFi)("fum",kFum));
+   }
+   
+   boost::shared_ptr<DummyData> produce(const DummyRecord& /*iRecord*/) {
+      ++ptr_->value_;
+      std::cout <<"\"foo\" produce called "<<ptr_->value_<<std::endl;
+      return ptr_;
+   }
+   
+   ReturnProducts produceMore(const DummyRecord&){
+      using edm::es::L;
+      using namespace edm;
+      ++fi_->value_;
+
+      L<DummyData,kFum> fum( new DummyData);
+      fum->value_ = fi_->value_;
+      
+      return edm::es::products(fum, es::l<kFi>(fi_) );
+   }
+private:
+   boost::shared_ptr<DummyData> ptr_;
+   boost::shared_ptr<DummyData> fi_;
+};
+
 };
 
 ///registration of the test so that the runner can find it
@@ -125,6 +163,38 @@ void testEsproducer::getfromShareTest()
       const edm::EventSetup& eventSetup = provider.eventSetupForInstance(edm::IOVSyncValue(time));
       ESHandle<DummyData> pDummy;
       eventSetup.get<DummyRecord>().get(pDummy);
+      CPPUNIT_ASSERT(0 != &(*pDummy));
+      std::cout <<pDummy->value_ << std::endl;
+      CPPUNIT_ASSERT(iTime == pDummy->value_);
+   }
+}
+
+void testEsproducer::labelTest()
+{
+   EventSetupProvider provider;
+   
+   boost::shared_ptr<DataProxyProvider> pProxyProv(new LabelledProducer);
+   provider.add(pProxyProv);
+   
+   boost::shared_ptr<DummyFinder> pFinder(new DummyFinder);
+   provider.add(boost::shared_ptr<EventSetupRecordIntervalFinder>(pFinder));
+   
+   for(int iTime=1; iTime != 6; ++iTime) {
+      const edm::Timestamp time(iTime);
+      pFinder->setInterval(edm::ValidityInterval(edm::IOVSyncValue(time) , edm::IOVSyncValue(time)));
+      const edm::EventSetup& eventSetup = provider.eventSetupForInstance(edm::IOVSyncValue(time));
+      ESHandle<DummyData> pDummy;
+      eventSetup.get<DummyRecord>().get("foo",pDummy);
+      CPPUNIT_ASSERT(0 != &(*pDummy));
+      std::cout <<pDummy->value_ << std::endl;
+      CPPUNIT_ASSERT(iTime == pDummy->value_);
+      
+      eventSetup.get<DummyRecord>().get("fi",pDummy);
+      CPPUNIT_ASSERT(0 != &(*pDummy));
+      std::cout <<pDummy->value_ << std::endl;
+      CPPUNIT_ASSERT(iTime == pDummy->value_);
+      
+      eventSetup.get<DummyRecord>().get("fum",pDummy);
       CPPUNIT_ASSERT(0 != &(*pDummy));
       std::cout <<pDummy->value_ << std::endl;
       CPPUNIT_ASSERT(iTime == pDummy->value_);
