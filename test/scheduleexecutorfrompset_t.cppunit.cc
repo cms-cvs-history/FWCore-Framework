@@ -4,11 +4,11 @@
 
    \author Stefano ARGIRO
    \Changed by Viji Sundararajan on 03-Jul-05.
-   \version $Id: scheduleexecutorfrompset_t.cppunit.cc,v 1.14 2005/09/07 19:12:37 wmtan Exp $
+   \version $Id: scheduleexecutorfrompset_t.cppunit.cc,v 1.15 2005/09/28 04:44:08 wmtan Exp $
    \date 18 May 2005
 */
 
-static const char CVSId[] = "$Id: scheduleexecutorfrompset_t.cppunit.cc,v 1.14 2005/09/07 19:12:37 wmtan Exp $";
+static const char CVSId[] = "$Id: scheduleexecutorfrompset_t.cppunit.cc,v 1.15 2005/09/28 04:44:08 wmtan Exp $";
 
 #include "FWCore/Framework/interface/ScheduleExecutor.h"
 #include "FWCore/Framework/interface/ScheduleBuilder.h"
@@ -69,7 +69,7 @@ const EventSetup& setupDummyEventSetup(edm::eventsetup::EventSetupProvider& cp){
   boost::shared_ptr<DummyEventSetupRecordRetriever> 
     pRetriever(new DummyEventSetupRecordRetriever);
   cp.add(boost::shared_ptr<eventsetup::DataProxyProvider>(pRetriever));
-  cp.add(boost::shared_ptr<eventsetup::EventSetupRecordIntervalFinder>(pRetriever)); 
+  cp.add(boost::shared_ptr<EventSetupRecordIntervalFinder>(pRetriever)); 
   edm::IOVSyncValue ts(edm::Timestamp(123));
   return cp.eventSetupForInstance(ts);
 }
