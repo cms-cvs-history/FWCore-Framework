@@ -4,11 +4,11 @@
 
    \author Stefano ARGIRO
    \Changed by Viji Sundararajan on 03-Jul-05.
-   \version $Id: scheduleexecutorfrompset_t.cppunit.cc,v 1.15 2005/09/28 04:44:08 wmtan Exp $
+   \version $Id: scheduleexecutorfrompset_t.cppunit.cc,v 1.16 2005/10/03 23:18:29 chrjones Exp $
    \date 18 May 2005
 */
 
-static const char CVSId[] = "$Id: scheduleexecutorfrompset_t.cppunit.cc,v 1.15 2005/09/28 04:44:08 wmtan Exp $";
+static const char CVSId[] = "$Id: scheduleexecutorfrompset_t.cppunit.cc,v 1.16 2005/10/03 23:18:29 chrjones Exp $";
 
 #include "FWCore/Framework/interface/ScheduleExecutor.h"
 #include "FWCore/Framework/interface/ScheduleBuilder.h"
@@ -27,7 +27,7 @@ static const char CVSId[] = "$Id: scheduleexecutorfrompset_t.cppunit.cc,v 1.15 2
 
 #include "FWCore/Framework/interface/InputSourceDescription.h"
 #include "FWCore/Framework/test/DummyEventSetupRecordRetriever.h"
-#include "FWCore/Framework/src/EmptySource.h"
+#include "FWCore/Framework/test/EmptySource.h"
 
 #include <FWCore/ParameterSet/interface/ProcessPSetBuilder.h>
 #include <FWCore/ParameterSet/interface/Makers.h>

@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------
-$Id: EmptySource.cc,v 1.1 2005/09/28 05:18:26 wmtan Exp $
+$Id: EmptySource.cc,v 1.2 2005/10/04 01:57:37 wmtan Exp $
 ----------------------------------------------------------------------*/
 
 #include <stdexcept>
@@ -7,11 +7,14 @@ $Id: EmptySource.cc,v 1.1 2005/09/28 05:18:26 wmtan Exp $
 #include <string>
 
 
-#include "FWCore/Framework/src/EmptySource.h"
+#include "FWCore/Framework/test/EmptySource.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "FWCore/Framework/interface/InputSourceDescription.h"
 #include "FWCore/Framework/interface/EventPrincipal.h"
 #include "FWCore/EDProduct/interface/EventID.h"
+#include "PluginManager/ModuleDef.h"
+#include "FWCore/Framework/interface/InputSourceMacros.h"
+#include "FWCore/Framework/interface/SourceFactory.h"
 
 namespace edm {
   class BranchKey;
@@ -70,3 +73,5 @@ namespace edm {
     presentRun_ = nextID_.run();
   }
 }
+using edm::EmptySource;
+DEFINE_FWK_INPUT_SOURCE(EmptySource)
