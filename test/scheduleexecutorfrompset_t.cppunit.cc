@@ -4,11 +4,11 @@
 
    \author Stefano ARGIRO
    \Changed by Viji Sundararajan on 03-Jul-05.
-   \version $Id: scheduleexecutorfrompset_t.cppunit.cc,v 1.16 2005/10/03 23:18:29 chrjones Exp $
+   \version $Id: scheduleexecutorfrompset_t.cppunit.cc,v 1.17 2005/10/15 02:06:56 wmtan Exp $
    \date 18 May 2005
 */
 
-static const char CVSId[] = "$Id: scheduleexecutorfrompset_t.cppunit.cc,v 1.16 2005/10/03 23:18:29 chrjones Exp $";
+static const char CVSId[] = "$Id: scheduleexecutorfrompset_t.cppunit.cc,v 1.17 2005/10/15 02:06:56 wmtan Exp $";
 
 #include "FWCore/Framework/interface/ScheduleExecutor.h"
 #include "FWCore/Framework/interface/ScheduleBuilder.h"
@@ -27,7 +27,7 @@ static const char CVSId[] = "$Id: scheduleexecutorfrompset_t.cppunit.cc,v 1.16 2
 
 #include "FWCore/Framework/interface/InputSourceDescription.h"
 #include "FWCore/Framework/test/DummyEventSetupRecordRetriever.h"
-#include "FWCore/Framework/test/EmptySource.h"
+#include "FWCore/Framework/test/DummySource.h"
 
 #include <FWCore/ParameterSet/interface/ProcessPSetBuilder.h>
 #include <FWCore/ParameterSet/interface/Makers.h>
@@ -56,7 +56,7 @@ auto_ptr<InputSource> setupDummyInputSource(ProductRegistry& preg){
     makePSet(*edm::pset::parse(param1.c_str()));
   const InputSourceDescription desc("test",1,preg);
   auto_ptr<InputSource> 
-    input(new EmptySource(*input_service_pset, desc));
+    input(new DummySource(*input_service_pset, desc));
   
   return input;  
 }
