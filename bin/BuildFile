@@ -1,5 +1,6 @@
-
+<use name=boost>
 <bin file=cmsRun.cpp>
  <use name=boost>
  <use name=FWCore/Framework>
+ <lib name=boost_program_options-gcc-mt> 
 </bin>
