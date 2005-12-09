@@ -52,9 +52,6 @@
   <lib name=DummySource> 
 </bin>
 
-# The following test will not work until EventPrincipal is modified for easier unit testing.
-#<bin name=testPut file=testPut.cc></bin>
-
 <bin file=TestDriver.cpp>
   <flags TEST_RUNNER_ARGS=" /bin/bash FWCore/Framework/test run_cmsRun.sh">
 </bin>
