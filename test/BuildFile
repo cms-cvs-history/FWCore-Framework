@@ -33,6 +33,11 @@
   <lib name=TestEventSetupDummyStuff>
 </library>
 
+<library file=stubs/LoadableDummyESSource.cc name=TestLoadableDummyESSource>
+  <flags SEAL_PLUGIN_NAME="TestLoadableDummyESSource">
+  <lib name=TestEventSetupDummyStuff>
+</library>
+
 <library file=stubs/LoadableDummyProvider.cc name=TestLoadableDummyProvider>
   <flags SEAL_PLUGIN_NAME="TestLoadableDummyProvider">
   <lib name=TestEventSetupDummyStuff>
