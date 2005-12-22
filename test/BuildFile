@@ -43,6 +43,11 @@
   <lib name=TestEventSetupDummyStuff>
 </library>
 
+<library file=stubs/TestESDummyDataAnalyzer.cc name=FWCoreFrameworkTestESDummyDataAnalyzer>
+  <flags SEAL_PLUGIN_NAME="FWCoreFrameworkTestESDummyDataAnalyzer">
+  <lib name=TestEventSetupDummyStuff>
+</library>
+
 <library file=stubs/TestPRegisterModule2.cc,stubs/TestPRegisterModule1.cc,stubs/TestInputSource4ProductRegistry.cc,stubs/TestPRegisterSealModules.cc name=FWCoreFrameworkTestPRegisterModules >
   <flags SEAL_PLUGIN_NAME="FWCoreFrameworkTestPRegisterModules" >
 </library>
@@ -63,5 +68,5 @@
 </bin>
 
 <bin file=TestDriver.cpp>
-  <flags TEST_RUNNER_ARGS=" /bin/bash FWCore/Framework/test run_cmsRun.sh">
+  <flags TEST_RUNNER_ARGS=" /bin/bash FWCore/Framework/test run_cmsRun.sh run_es_refer_tests.sh">
 </bin>
