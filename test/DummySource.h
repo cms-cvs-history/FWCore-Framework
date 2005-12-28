@@ -2,7 +2,7 @@
 #define Modules_DummySource_h
 
 /*----------------------------------------------------------------------
-$Id: DummySource.h,v 1.1 2005/10/17 19:22:41 wmtan Exp $
+$Id: DummySource.h,v 1.2 2005/12/28 00:51:28 wmtan Exp $
 ----------------------------------------------------------------------*/
 
 #include "FWCore/Framework/interface/GeneratedInputSource.h"
@@ -13,7 +13,7 @@ namespace edm {
     explicit DummySource(ParameterSet const&, InputSourceDescription const&);
     ~DummySource();
   private:
-    virtual void produce(Event &);
+    virtual bool produce(Event &);
   };
 }
 #endif

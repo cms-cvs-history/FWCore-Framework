@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------
-$Id: DummySource.cc,v 1.2 2005/11/14 21:22:31 wmtan Exp $
+$Id: DummySource.cc,v 1.2 2005/12/28 00:51:28 wmtan Exp $
 ----------------------------------------------------------------------*/
 
 #include <stdexcept>
@@ -18,8 +18,9 @@ namespace edm {
   DummySource::~DummySource() {
   }
 
-  void
+  bool
   DummySource::produce(edm::Event &) {
+    return true;
   }
 }
 using edm::DummySource;
