@@ -1,27 +1,19 @@
-#ifndef Framework_DummySource_h
-#define Framework_DummySource_h
+#ifndef Modules_DummySource_h
+#define Modules_DummySource_h
 
 /*----------------------------------------------------------------------
-$Id: DummySource.h,v 1.1 2005/10/15 02:06:56 wmtan Exp $
+$Id: DummySource.h,v 1.1 2005/10/17 19:22:41 wmtan Exp $
 ----------------------------------------------------------------------*/
 
-#include <memory>
-
-#include "FWCore/Framework/interface/Frameworkfwd.h"
-#include "FWCore/Framework/interface/InputSource.h"
-#include "FWCore/EDProduct/interface/EventID.h"
+#include "FWCore/Framework/interface/GeneratedInputSource.h"
 
 namespace edm {
-  class ParameterSet;
-
-  class DummySource : public InputSource {
+  class DummySource : public GeneratedInputSource {
   public:
-    explicit DummySource(ParameterSet const&, const InputSourceDescription&);
+    explicit DummySource(ParameterSet const&, InputSourceDescription const&);
     ~DummySource();
   private:
-    std::auto_ptr<EventPrincipal> read();
-    int remainingEvents_;
-    EventID nextID_;
+    virtual void produce(Event &);
   };
 }
 #endif

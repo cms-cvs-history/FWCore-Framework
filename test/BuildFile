@@ -48,7 +48,7 @@
   <lib name=TestEventSetupDummyStuff>
 </library>
 
-<library file=stubs/TestPRegisterModule2.cc,stubs/TestPRegisterModule1.cc,stubs/TestInputSource4ProductRegistry.cc,stubs/TestPRegisterSealModules.cc name=FWCoreFrameworkTestPRegisterModules >
+<library file=stubs/TestPRegisterModule2.cc,stubs/TestPRegisterModule1.cc,stubs/TestPRegisterSealModules.cc name=FWCoreFrameworkTestPRegisterModules >
   <flags SEAL_PLUGIN_NAME="FWCoreFrameworkTestPRegisterModules" >
 </library>
 
