@@ -12,6 +12,10 @@
  <flags SEAL_PLUGIN_NAME="DummySource">
 </library>
 
+<library file=stubs/TestFilterModule.cc name=TestFilterModule>
+ <flags SEAL_PLUGIN_NAME="TestFilterModule">
+</library>
+
 <library file=stubs/TestMod.cc name=TestMod>
  <flags SEAL_PLUGIN_NAME="TestMod">
 </library>
