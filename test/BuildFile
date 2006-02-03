@@ -77,3 +77,6 @@
 
 <bin file=GroupSelector_t.cpp>
 </bin>
+
+<bin file=EventSelector_t.cpp>
+</bin>
