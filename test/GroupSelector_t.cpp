@@ -122,7 +122,7 @@ int work()
     const string keep_i2_rule = "keep *_*_i2_*";
     vector<string> cmds;
     cmds.push_back(keep_i2_rule);
-    keep_i2.addParameter<vector<string> >("outputCommands", cmds);
+    keep_i2.addUntrackedParameter<vector<string> >("outputCommands", cmds);
 
     rc += doTest(keep_i2, "keep_i2 parameters", allbranches, expected);
   }
@@ -138,7 +138,7 @@ int work()
     vector<string> cmds;
     cmds.push_back(drop_i2_rule1);
     cmds.push_back(drop_i2_rule2);
-    drop_i2.addParameter<vector<string> >("outputCommands", cmds);
+    drop_i2.addUntrackedParameter<vector<string> >("outputCommands", cmds);
 
     rc += doTest(drop_i2, "drop_i2 parameters", allbranches, expected);
   }
@@ -155,7 +155,7 @@ int work()
     vector<string> cmds;
     cmds.push_back(drop_foo_rule1);
     cmds.push_back(drop_foo_rule2);
-    drop_foo.addParameter<vector<string> >("outputCommands", cmds);
+    drop_foo.addUntrackedParameter<vector<string> >("outputCommands", cmds);
 
     rc += doTest(drop_foo, "drop_foo parameters", allbranches, expected);
   }
@@ -171,7 +171,7 @@ int work()
     vector<string> cmds;
     cmds.push_back(drop_ProdTypeA_rule1);
     cmds.push_back(drop_ProdTypeA_rule2);
-    drop_ProdTypeA.addParameter<vector<string> >("outputCommands", cmds);
+    drop_ProdTypeA.addUntrackedParameter<vector<string> >("outputCommands", cmds);
 
     rc += doTest(drop_ProdTypeA,
 		 "drop_ProdTypeA",
@@ -187,7 +187,7 @@ int work()
     const string keep_i1prod_rule = "keep *_*_i1_PROD";
     vector<string> cmds;
     cmds.push_back(keep_i1prod_rule);
-    keep_i1prod.addParameter<vector<string> >("outputCommands", cmds);
+    keep_i1prod.addUntrackedParameter<vector<string> >("outputCommands", cmds);
 
     rc += doTest(keep_i1prod,
 		 "keep_i1prod",
@@ -208,7 +208,7 @@ int work()
     cmds.push_back(indecisive_rule1);
     cmds.push_back(indecisive_rule2);
     cmds.push_back(indecisive_rule3);
-    indecisive.addParameter<vector<string> >("outputCommands", cmds);
+    indecisive.addUntrackedParameter<vector<string> >("outputCommands", cmds);
 
     rc += doTest(indecisive,
 		 "indecisive",
@@ -229,7 +229,7 @@ int work()
     cmds.push_back(rule1);
     cmds.push_back(rule2);
     cmds.push_back(rule3);
-    params.addParameter<vector<string> >("outputCommands", cmds);
+    params.addUntrackedParameter<vector<string> >("outputCommands", cmds);
 
     rc += doTest(params,
 		 "drop_modA_keep_user",
@@ -244,7 +244,7 @@ int work()
 	const string bad_rule = "beep *_*_i2_*";
 	vector<string> cmds;
 	cmds.push_back(bad_rule);
-	bad.addParameter<vector<string> >("outputCommands", cmds);
+	bad.addUntrackedParameter<vector<string> >("outputCommands", cmds);
 	edm::GroupSelector gs(bad, allbranches);
       }
     catch ( edm::Exception const& x )
@@ -268,7 +268,7 @@ int work()
 	const string bad_rule = "drop ";
 	vector<string> cmds;
 	cmds.push_back(bad_rule);
-	bad.addParameter<vector<string> >("outputCommands", cmds);
+	bad.addUntrackedParameter<vector<string> >("outputCommands", cmds);
 	edm::GroupSelector gs(bad, allbranches);	
 	std::cerr << "Failed to throw required exception\n";
 	rc += 1;
