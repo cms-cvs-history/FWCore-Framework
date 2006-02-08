@@ -4,17 +4,17 @@
 
    \author Stefano ARGIRO
    \Changed by Viji Sundararajan on 03-Jul-05.
-   \version $Id: scheduleexecutorfrompset_t.cppunit.cc,v 1.19 2006/02/07 07:51:42 wmtan Exp $
+   \version $Id: scheduleexecutorfrompset_t.cppunit.cc,v 1.20 2006/02/07 21:17:14 paterno Exp $
    \date 18 May 2005
 */
 
-static const char CVSId[] = "$Id: scheduleexecutorfrompset_t.cppunit.cc,v 1.19 2006/02/07 07:51:42 wmtan Exp $";
+static const char CVSId[] = "$Id: scheduleexecutorfrompset_t.cppunit.cc,v 1.20 2006/02/07 21:17:14 paterno Exp $";
 
 #include "FWCore/Framework/interface/ScheduleExecutor.h"
 #include "FWCore/Framework/interface/ScheduleBuilder.h"
 #include "FWCore/Framework/interface/UnknownModuleException.h"
 
-#include "FWCore/Framework/interface/ProductRegistry.h"
+#include "DataFormats/Common/interface/ProductRegistry.h"
 #include "FWCore/Framework/src/WorkerRegistry.h"
 #include "FWCore/Framework/interface/EventPrincipal.h"
 #include "FWCore/Framework/interface/EventSetup.h"
@@ -35,7 +35,7 @@ static const char CVSId[] = "$Id: scheduleexecutorfrompset_t.cppunit.cc,v 1.19 2
 
 #include "FWCore/Framework/src/TypeID.h"
 
-#include "FWCore/Framework/src/ToyProducts.h"
+#include "DataFormats/Common/interface/ToyProducts.h"
 
 #include "FWCore/Utilities/interface/EDMException.h"
 
