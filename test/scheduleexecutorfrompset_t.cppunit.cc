@@ -4,11 +4,11 @@
 
    \author Stefano ARGIRO
    \Changed by Viji Sundararajan on 03-Jul-05.
-   \version $Id: scheduleexecutorfrompset_t.cppunit.cc,v 1.20 2006/02/07 21:17:14 paterno Exp $
+   \version $Id: scheduleexecutorfrompset_t.cppunit.cc,v 1.21 2006/02/08 00:44:25 wmtan Exp $
    \date 18 May 2005
 */
 
-static const char CVSId[] = "$Id: scheduleexecutorfrompset_t.cppunit.cc,v 1.20 2006/02/07 21:17:14 paterno Exp $";
+static const char CVSId[] = "$Id: scheduleexecutorfrompset_t.cppunit.cc,v 1.21 2006/02/08 00:44:25 wmtan Exp $";
 
 #include "FWCore/Framework/interface/ScheduleExecutor.h"
 #include "FWCore/Framework/interface/ScheduleBuilder.h"
@@ -35,7 +35,7 @@ static const char CVSId[] = "$Id: scheduleexecutorfrompset_t.cppunit.cc,v 1.20 2
 
 #include "FWCore/Framework/src/TypeID.h"
 
-#include "DataFormats/Common/interface/ToyProducts.h"
+#include "DataFormats/TestObjects/interface/ToyProducts.h"
 
 #include "FWCore/Utilities/interface/EDMException.h"
 
