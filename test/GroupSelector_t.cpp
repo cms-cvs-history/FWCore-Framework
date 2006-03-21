@@ -3,6 +3,8 @@
 #include <string>
 #include <vector>
 
+#include "boost/shared_ptr.hpp"
+
 #include "FWCore/Framework/interface/GroupSelector.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "DataFormats/Common/interface/ModuleDescription.h"
