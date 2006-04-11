@@ -43,6 +43,11 @@
   <lib name=DummyForEventSetupTest>
 </library>
 
+<library file=stubs/LoadableDummyEventSetupRecordRetriever.cc name=TestLoadableDummyEventSetupRecordRetriever>
+  <flags SEAL_PLUGIN_NAME="TestLoadableDummyEventSetupRecordRetriever">
+</library>
+
+
 <library file=stubs/LoadableDummyProvider.cc name=TestLoadableDummyProvider>
   <flags SEAL_PLUGIN_NAME="TestLoadableDummyProvider">
   <lib name=DummyForEventSetupTest>
@@ -73,7 +78,7 @@
 </bin>
 
 <bin file=TestDriver.cpp>
-  <flags TEST_RUNNER_ARGS=" /bin/bash FWCore/Framework/test run_cmsRun.sh run_es_refer_tests.sh run_trigbit.sh run_unscheduled.sh">
+  <flags TEST_RUNNER_ARGS=" /bin/bash FWCore/Framework/test run_cmsRun.sh run_es_refer_tests.sh run_trigbit.sh run_unscheduled.sh run_replace_tests.sh">
 </bin>
 
 <bin file=GroupSelector_t.cpp>
