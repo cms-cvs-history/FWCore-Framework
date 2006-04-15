@@ -22,7 +22,7 @@ void apply_gs(edm::GroupSelector const& gs,
 {
   VCBDP::const_iterator it  = allbranches.begin();
   VCBDP::const_iterator end = allbranches.end();
-  for ( ; it != end; ++it ) results.push_back(gs.selected(**it));
+  for (; it != end; ++it) results.push_back(gs.selected(**it));
 }
 
 int doTest(edm::ParameterSet const& params,
@@ -30,7 +30,8 @@ int doTest(edm::ParameterSet const& params,
 	     VCBDP const&  allbranches,
 	     vector<bool>& expected)
 {
-  edm::GroupSelector gs(params, allbranches);
+  edm::GroupSelector gs(params);
+  gs.initialize(allbranches);
   std::cout << "GroupSelector from "
 	    << testname
 	    << ": "
@@ -41,7 +42,7 @@ int doTest(edm::ParameterSet const& params,
   apply_gs(gs, allbranches, results);
 
   int rc = 0;
-  if ( expected != results ) rc = 1;
+  if (expected != results) rc = 1;
   if (rc == 1) std::cerr << "FAILURE: " << testname << '\n';
   std::cout << "---" << std::endl;
   return rc;
@@ -96,7 +97,7 @@ int work()
   edm::BranchDescription b4(modC, "UglyProdTypeA", "ProdTypeA", "i1", null);
   edm::BranchDescription b5(modC, "UglyProdTypeA", "ProdTypeA", "i2", null);
 
-  
+
   // These are pointers to all the branches that are available. In a
   // framework program, these would come from the ProductRegistry
   // which is used to initialze the OutputModule being configured.
@@ -106,7 +107,7 @@ int work()
   allbranches.push_back(&b3); // ProdTypeB_modB_HLT. (no instance name)
   allbranches.push_back(&b4); // ProdTypeA_modA_i1_USER.
   allbranches.push_back(&b5); // ProdTypeA_modA_i2_USER.
-  
+
   // Test default parameters
   {
     bool wanted[] = { true, true, true, true, true };
@@ -178,7 +179,7 @@ int work()
 
     rc += doTest(drop_ProdTypeA,
 		 "drop_ProdTypeA",
-		 allbranches, expected);   
+		 allbranches, expected);
   }
 
   // Keep only branches with instance name 'i1', from Production.
@@ -194,7 +195,7 @@ int work()
 
     rc += doTest(keep_i1prod,
 		 "keep_i1prod",
-		 allbranches, expected);   
+		 allbranches, expected);
   }
 
   // First say to keep everything,  then  to drop everything, then  to
@@ -241,51 +242,25 @@ int work()
 
   {
     // Now try an illegal specification: not starting with 'keep' or 'drop'
-    try
-      {
+    try {
 	edm::ParameterSet bad;
 	const string bad_rule = "beep *_*_i2_*";
 	vector<string> cmds;
 	cmds.push_back(bad_rule);
 	bad.addUntrackedParameter<vector<string> >("outputCommands", cmds);
-	edm::GroupSelector gs(bad, allbranches);
-      }
-    catch ( edm::Exception const& x )
-      {
-	// OK, we should be here... now check exception type
-	assert ( x.categoryCode() == edm::errors::Configuration );
-      }
-    catch ( ... )
-      {
-	std::cerr << "Wrong exception type\n";
-	rc += 1;
-      }
-    
-  }
-
-  // Now try an illegal specification: too short
-  {
-    try
-      {
-	edm::ParameterSet bad;
-	const string bad_rule = "drop ";
-	vector<string> cmds;
-	cmds.push_back(bad_rule);
-	bad.addUntrackedParameter<vector<string> >("outputCommands", cmds);
-	edm::GroupSelector gs(bad, allbranches);	
+	edm::GroupSelector gs(bad);	
+        gs.initialize(allbranches);
 	std::cerr << "Failed to throw required exception\n";
 	rc += 1;
-      }
-    catch ( edm::Exception const& x )
-      {
+    }
+    catch (edm::Exception const& x) {
 	// OK, we should be here... now check exception type
-	assert ( x.categoryCode() == edm::errors::Configuration );
-      }
-    catch ( ... )
-      {
+	assert (x.categoryCode() == edm::errors::Configuration);
+    }
+    catch (...) {
 	std::cerr << "Wrong exception type\n";
 	rc += 1;
-      }    
+    }
   }
 
   return rc;
@@ -298,12 +273,12 @@ int main()
     {
       rc = work();
     }
-  catch ( edm::Exception& x )
+  catch (edm::Exception& x)
     {
       std::cerr << "edm::Exception caught:\n" << x << '\n';
       rc = 1;
     }
-  catch ( ... )
+  catch (...)
     {
       std::cerr << "Unknown exception caught\n";
       rc = 2;
