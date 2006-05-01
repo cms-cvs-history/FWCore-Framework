@@ -4,11 +4,11 @@
 
    \author Stefano ARGIRO
    \Changed by Viji Sundararajan on 03-Jul-05.
-   \version $Id: scheduleexecutorfrompset_t.cppunit.cc,v 1.22 2006/02/13 22:36:36 wmtan Exp $
+   \version $Id: scheduleexecutorfrompset_t.cppunit.cc,v 1.23 2006/02/20 01:51:59 wmtan Exp $
    \date 18 May 2005
 */
 
-static const char CVSId[] = "$Id: scheduleexecutorfrompset_t.cppunit.cc,v 1.22 2006/02/13 22:36:36 wmtan Exp $";
+static const char CVSId[] = "$Id: scheduleexecutorfrompset_t.cppunit.cc,v 1.23 2006/02/20 01:51:59 wmtan Exp $";
 
 #include "FWCore/Framework/interface/ScheduleExecutor.h"
 #include "FWCore/Framework/interface/ScheduleBuilder.h"
@@ -54,7 +54,10 @@ auto_ptr<InputSource> setupDummyInputSource(ProductRegistry& preg){
   std::string param1("untracked int32 maxEvents=5");
   boost::shared_ptr<ParameterSet> input_service_pset = 
     makePSet(*edm::pset::parse(param1.c_str()));
-  const InputSourceDescription desc("test",1,preg);
+  ModuleDescription md;
+  md.processName_ = std::string("test");
+  md.pass = 1;
+  const InputSourceDescription desc(md, preg);
   auto_ptr<InputSource> 
     input(new DummySource(*input_service_pset, desc));
   
