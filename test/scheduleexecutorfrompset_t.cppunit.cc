@@ -54,10 +54,7 @@ auto_ptr<InputSource> setupDummyInputSource(ProductRegistry& preg){
   std::string param1("untracked int32 maxEvents=5");
   boost::shared_ptr<ParameterSet> input_service_pset = 
     makePSet(*edm::pset::parse(param1.c_str()));
-  ModuleDescription md;
-  md.processName_ = std::string("test");
-  md.pass = 1;
-  const InputSourceDescription desc(md, preg);
+  const InputSourceDescription desc("test",1,preg);
   auto_ptr<InputSource> 
     input(new DummySource(*input_service_pset, desc));
   
