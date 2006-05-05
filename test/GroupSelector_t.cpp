@@ -67,8 +67,13 @@ int work()
   // The trailing argument is a null EDProduct pointer. Sure hope it ain't
   // used!
   boost::shared_ptr<edm::EDProduct const> null;
+#if 0
+  edm::BranchDescription b1(modA, "UglyProdTypeA", "ProdTypeA", "i1", "i1", null);
+  edm::BranchDescription b2(modA, "UglyProdTypeA", "ProdTypeA", "i2", "i2", null);
+#else
   edm::BranchDescription b1(modA, "UglyProdTypeA", "ProdTypeA", "i1", null);
   edm::BranchDescription b2(modA, "UglyProdTypeA", "ProdTypeA", "i2", null);
+#endif
 
   // Our second pretend module has only one product, and gives it no
   // instance name.
@@ -82,7 +87,11 @@ int work()
   modB.processName_   = "HLT";
   modB.pass           = 1UL;
 
+#if 0
+  edm::BranchDescription b3(modB, "UglyProdTypeB", "ProdTypeB", "", "modB", null);
+#else
   edm::BranchDescription b3(modB, "UglyProdTypeB", "ProdTypeB", "", null);
+#endif
 
   // Our third pretend is like modA, except it hass processName_ of
   // "USER"
@@ -94,8 +103,13 @@ int work()
   modC.processName_   = "USER";
   modC.pass           = modA.pass;
 
+#if 0
+  edm::BranchDescription b4(modC, "UglyProdTypeA", "ProdTypeA", "i1", "i1", null);
+  edm::BranchDescription b5(modC, "UglyProdTypeA", "ProdTypeA", "i2", "i2", null);
+#else
   edm::BranchDescription b4(modC, "UglyProdTypeA", "ProdTypeA", "i1", null);
   edm::BranchDescription b5(modC, "UglyProdTypeA", "ProdTypeA", "i2", null);
+#endif
 
 
   // These are pointers to all the branches that are available. In a
