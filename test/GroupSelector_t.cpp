@@ -68,8 +68,8 @@ int work()
   // used!
   boost::shared_ptr<edm::EDProduct const> null;
 
-  edm::BranchDescription b1(modA, "UglyProdTypeA", "ProdTypeA", "i1", "i1", null);
-  edm::BranchDescription b2(modA, "UglyProdTypeA", "ProdTypeA", "i2", "i2", null);
+  edm::BranchDescription b1(modA, "UglyProdTypeA", "ProdTypeA", "i1", "i1");
+  edm::BranchDescription b2(modA, "UglyProdTypeA", "ProdTypeA", "i2", "i2");
 
 
   // Our second pretend module has only one product, and gives it no
@@ -84,7 +84,7 @@ int work()
   modB.processName_   = "HLT";
   modB.pass           = 1UL;
 
-  edm::BranchDescription b3(modB, "UglyProdTypeB", "ProdTypeB", "", "modB", null);
+  edm::BranchDescription b3(modB, "UglyProdTypeB", "ProdTypeB", "", "modB");
 
   // Our third pretend is like modA, except it hass processName_ of
   // "USER"
@@ -96,8 +96,8 @@ int work()
   modC.processName_   = "USER";
   modC.pass           = modA.pass;
 
-  edm::BranchDescription b4(modC, "UglyProdTypeA", "ProdTypeA", "i1", "i1", null);
-  edm::BranchDescription b5(modC, "UglyProdTypeA", "ProdTypeA", "i2", "i2", null);
+  edm::BranchDescription b4(modC, "UglyProdTypeA", "ProdTypeA", "i1", "i1");
+  edm::BranchDescription b5(modC, "UglyProdTypeA", "ProdTypeA", "i2", "i2");
 
   // These are pointers to all the branches that are available. In a
   // framework program, these would come from the ProductRegistry
