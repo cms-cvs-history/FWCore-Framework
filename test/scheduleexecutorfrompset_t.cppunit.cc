@@ -1,14 +1,15 @@
+#error THIS FILE IS OBSOLETE
 /**
    \file
    test for ScheduleExecutor
 
    \author Stefano ARGIRO
    \Changed by Viji Sundararajan on 03-Jul-05.
-   \version $Id: scheduleexecutorfrompset_t.cppunit.cc,v 1.25 2006/05/01 21:50:37 wmtan Exp $
+   \version $Id: scheduleexecutorfrompset_t.cppunit.cc,v 1.26 2006/05/02 02:15:08 wmtan Exp $
    \date 18 May 2005
 */
 
-static const char CVSId[] = "$Id: scheduleexecutorfrompset_t.cppunit.cc,v 1.25 2006/05/01 21:50:37 wmtan Exp $";
+static const char CVSId[] = "$Id: scheduleexecutorfrompset_t.cppunit.cc,v 1.26 2006/05/02 02:15:08 wmtan Exp $";
 
 #include "FWCore/Framework/interface/ScheduleExecutor.h"
 #include "FWCore/Framework/interface/ScheduleBuilder.h"
