@@ -86,3 +86,6 @@
 
 <bin file=EventSelector_t.cpp>
 </bin>
+
+<bin file=CurrentProcessingContext_t.cpp>
+</bin>
