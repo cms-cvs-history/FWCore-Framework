@@ -89,3 +89,6 @@
 
 <bin file=CurrentProcessingContext_t.cpp>
 </bin>
+
+<bin file=CPCSentry_t.cpp>
+</bin>
