@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------
-$Id: EventPrincipal.cc,v 1.42 2006/06/26 20:33:34 wmtan Exp $
+$Id: EventPrincipal.cc,v 1.41.2.2 2006/06/27 02:14:12 wmtan Exp $
 ----------------------------------------------------------------------*/
 //#include <iostream>
 #include <memory>
@@ -49,7 +49,7 @@ private:
 				 Timestamp const& time,
                                  ProductRegistry const& reg,
 				 LuminosityBlockID const& lb,
-				 Hash<ProcessNameList> const& hist,
+				 ProcessNameListID const& hist,
 				 boost::shared_ptr<DelayedReader> rtrv) :
    aux_(id,time,lb),
    groups_(),
@@ -58,7 +58,7 @@ private:
    preg_(&reg),
    store_(rtrv)
   {
-    aux_.processHistoryHash_ = hist;
+    aux_.processHistoryID_ = hist;
     groups_.reserve(reg.productList().size());
   }
 
