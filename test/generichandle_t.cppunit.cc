@@ -2,24 +2,16 @@
 
 Test of the EventPrincipal class.
 
-$Id: generichandle_t.cppunit.cc,v 1.8 2006/05/11 19:05:51 chrjones Exp $
+$Id: generichandle_t.cppunit.cc,v 1.9 2006/06/24 01:46:35 wmtan Exp $
 
 ----------------------------------------------------------------------*/  
-#include <cassert>
-#include <iostream>
-#include <memory>
-#include <stdexcept>
 #include <string>
-#include <typeinfo>
 
 #include "FWCore/Utilities/interface/EDMException.h"
-#include "DataFormats/Common/interface/ProductID.h"
-#include "FWCore/Framework/interface/BasicHandle.h"
 #include "DataFormats/Common/interface/ProductRegistry.h"
-#include "DataFormats/Common/interface/BranchDescription.h"
+#include "DataFormats/Common/interface/ModuleDescription.h"
 #include "DataFormats/Common/interface/Timestamp.h"
 #include "DataFormats/Common/interface/Wrapper.h"
-#include "FWCore/Framework/interface/Selector.h"
 #include "FWCore/Framework/interface/TypeID.h"
 #include "DataFormats/TestObjects/interface/ToyProducts.h"
 
@@ -101,9 +93,9 @@ void testGenericHandle::getbyLabelTest() {
   pprov->product.friendlyClassName_ = className;
 
 
-  pprov->product.module.moduleLabel_ = label;
+  pprov->product.moduleLabel_ = label;
   pprov->product.productInstanceName_ = productInstanceName;
-  pprov->product.module.processName_ = processName;
+  pprov->product.processName_ = processName;
   pprov->product.init();
 
   edm::ProductRegistry preg;

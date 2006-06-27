@@ -2,7 +2,7 @@
 
 Test of the EventPrincipal class.
 
-$Id: eventprincipal_t.cppunit.cc,v 1.23 2006/03/29 21:51:54 wmtan Exp $
+$Id: eventprincipal_t.cppunit.cc,v 1.24 2006/06/24 01:46:35 wmtan Exp $
 
 ----------------------------------------------------------------------*/  
 #include <cassert>
@@ -184,8 +184,8 @@ void testeventprincipal::failgetbyInvalidIdTest() {
   std::string className = dummytype.friendlyClassName();
   pprov->product.fullClassName_ = dummytype.userClassName();
   pprov->product.friendlyClassName_ = className;
-  pprov->product.module.moduleLabel_ = label;
-  pprov->product.module.processName_ = processName;
+  pprov->product.moduleLabel_ = label;
+  pprov->product.processName_ = processName;
   pprov->product.init();
 
   edm::ProductRegistry preg;
@@ -246,8 +246,8 @@ void testeventprincipal::getbyIdTest() {
 
   pprov->product.fullClassName_ = dummytype.userClassName();
   pprov->product.friendlyClassName_ = className;
-  pprov->product.module.moduleLabel_ = label;
-  pprov->product.module.processName_ = processName;
+  pprov->product.moduleLabel_ = label;
+  pprov->product.processName_ = processName;
   pprov->product.init();
 
   edm::ProductRegistry preg;
@@ -296,9 +296,9 @@ void testeventprincipal::getbyLabelTest() {
   pprov->product.friendlyClassName_ = className;
 
 
-  pprov->product.module.moduleLabel_ = label;
+  pprov->product.moduleLabel_ = label;
   pprov->product.productInstanceName_ = productInstanceName;
-  pprov->product.module.processName_ = processName;
+  pprov->product.processName_ = processName;
   pprov->product.init();
 
   edm::ProductRegistry preg;
@@ -346,8 +346,8 @@ void testeventprincipal::getbySelectorTest() {
   pprov->product.fullClassName_ = dummytype.userClassName();
   pprov->product.friendlyClassName_ = className;
 
-  pprov->product.module.moduleLabel_ = label;
-  pprov->product.module.processName_ = processName;
+  pprov->product.moduleLabel_ = label;
+  pprov->product.processName_ = processName;
   pprov->product.init();
 
   edm::ProductRegistry preg;
@@ -398,9 +398,9 @@ void testeventprincipal::getbyTypeTest() {
   pprov->product.friendlyClassName_ = className;
 
 
-  pprov->product.module.moduleLabel_ = label;
+  pprov->product.moduleLabel_ = label;
   pprov->product.productInstanceName_ = productInstanceName;
-  pprov->product.module.processName_ = processName;
+  pprov->product.processName_ = processName;
   pprov->product.init();
 
   edm::ProductRegistry preg;
@@ -447,8 +447,8 @@ void testeventprincipal::getProvenanceTest() {
 
   pprov->product.fullClassName_ = dummytype.userClassName();
   pprov->product.friendlyClassName_ = className;
-  pprov->product.module.moduleLabel_ = label;
-  pprov->product.module.processName_ = processName;
+  pprov->product.moduleLabel_ = label;
+  pprov->product.processName_ = processName;
   pprov->product.init();
 
   edm::ProductRegistry preg;
@@ -493,8 +493,8 @@ void testeventprincipal::getAllProvenanceTest() {
 
   pprov->product.fullClassName_ = dummytype.userClassName();
   pprov->product.friendlyClassName_ = className;
-  pprov->product.module.moduleLabel_ = label;
-  pprov->product.module.processName_ = processName;
+  pprov->product.moduleLabel_ = label;
+  pprov->product.processName_ = processName;
   pprov->product.init();
 
   edm::ProductRegistry preg;
