@@ -6,7 +6,7 @@
 Selector: Base class for all "selector" objects, used to select
 EDProducts based on information in the associated Provenance.
 
-$Id: Selector.h,v 1.9 2006/03/06 01:18:56 chrjones Exp $
+$Id: Selector.h,v 1.10 2006/06/24 01:46:34 wmtan Exp $
 
 ----------------------------------------------------------------------*/
 
@@ -29,14 +29,14 @@ namespace edm {
   // Select based upon full description of EDProducer.
   class ModuleDescriptionSelector : public Selector {
   public:
-    ModuleDescriptionSelector(const ModuleDescription& md):md_(md) {}
+    ModuleDescriptionSelector(const Hash<ModuleDescription>& md):md_(md) {}
     
     virtual bool doMatch(const ProvenanceAccess& p) const {
-      return p.product().module == md_;
+      return p.event().moduleHash() == md_;
     }
 
   private:
-    ModuleDescription md_;
+    Hash<ModuleDescription> md_;
   };
 
 

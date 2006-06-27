@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------
-$Id: EventPrincipal.cc,v 1.41 2006/06/24 05:44:57 wmtan Exp $
+$Id: EventPrincipal.cc,v 1.42 2006/06/26 20:33:34 wmtan Exp $
 ----------------------------------------------------------------------*/
 //#include <iostream>
 #include <memory>
@@ -48,16 +48,17 @@ private:
   EventPrincipal::EventPrincipal(EventID const& id,
 				 Timestamp const& time,
                                  ProductRegistry const& reg,
-				 ProcessNameList const& nl,
+				 LuminosityBlockID const& lb,
+				 Hash<ProcessNameList> const& hist,
 				 boost::shared_ptr<DelayedReader> rtrv) :
-   aux_(id,time),
+   aux_(id,time,lb),
    groups_(),
    branchDict_(),
    typeDict_(),
    preg_(&reg),
    store_(rtrv)
   {
-    aux_.process_history_ = nl;
+    aux_.processHistoryHash_ = hist;
     groups_.reserve(reg.productList().size());
   }
 
@@ -133,7 +134,7 @@ private:
 
   void
   EventPrincipal::addToProcessHistory(string const& processName) {
-    ProcessNameList& ph = aux_.process_history_;
+    ProcessNameList& ph = aux_.processHistory();
     if (find(ph.begin(), ph.end(), processName) != ph.end()) {
       throw edm::Exception(errors::Configuration, "Duplicate Process")
         << "The process name " << processName << " was previously used on these events.\n"

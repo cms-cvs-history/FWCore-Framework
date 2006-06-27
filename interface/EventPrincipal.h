@@ -15,7 +15,7 @@ through shared pointers.
 The EventPrincipal returns BasicHandle, rather than a shared
 pointer to a Group, when queried.
 
-$Id: EventPrincipal.h,v 1.30 2006/05/03 23:36:27 wmtan Exp $
+$Id: EventPrincipal.h,v 1.31 2006/06/26 20:33:34 wmtan Exp $
 
 ----------------------------------------------------------------------*/
 #include <map>
@@ -29,6 +29,7 @@ $Id: EventPrincipal.h,v 1.30 2006/05/03 23:36:27 wmtan Exp $
 #include "DataFormats/Common/interface/BranchKey.h"
 #include "DataFormats/Common/interface/EventID.h"
 #include "DataFormats/Common/interface/Timestamp.h"
+#include "DataFormats/Common/interface/LuminosityBlockID.h"
 #include "DataFormats/Common/interface/ProductID.h"
 #include "DataFormats/Common/interface/EDProduct.h"
 #include "DataFormats/Common/interface/EDProductGetter.h"
@@ -62,7 +63,8 @@ namespace edm {
     EventPrincipal(EventID const& id,
                    Timestamp const& time,
                    ProductRegistry const& reg,
-                   ProcessNameList const& nl = ProcessNameList(),
+		   LuminosityBlockID const& lb = LuminosityBlockID(),
+                   Hash<ProcessNameList> const& hist = Hash<ProcessNameList>(),
                    boost::shared_ptr<DelayedReader> rtrv = boost::shared_ptr<DelayedReader>(new NoDelayedReader));
 
     virtual ~EventPrincipal();
