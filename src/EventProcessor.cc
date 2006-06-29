@@ -498,7 +498,7 @@ namespace edm {
     newpset.addParameter<string>("@service_type",service);
     adjust.push_back(newpset);
     // Record this new ParameterSet in the Registry!
-    pset::Registry::instance()->insertParameterSet(newpset);
+    pset::Registry::instance()->insertMapped(newpset);
   }
 
   // Add a service to the services list if it is not already there

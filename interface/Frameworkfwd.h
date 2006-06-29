@@ -5,7 +5,7 @@
   
 Forward declarations of types in the EDM.
 
-$Id: Frameworkfwd.h,v 1.23 2006/05/26 15:58:12 paterno Exp $
+$Id: Frameworkfwd.h,v 1.24 2006/06/20 23:13:27 paterno Exp $
 
 ----------------------------------------------------------------------*/
 
@@ -55,9 +55,6 @@ namespace edm {
 
 
   template <typename T> class Handle;
-  namespace pset {
-    class Registry;
-  }
 }
 
 // The following are trivial enough so that the real headers can be included.
