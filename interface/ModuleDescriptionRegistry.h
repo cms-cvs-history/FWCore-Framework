@@ -7,7 +7,8 @@
 
 namespace edm
 {
-  typedef edm::detail::ThreadSafeRegistry<edm::ModuleDescriptionID, edm::ModuleDescription> ModuleDescriptionRegistry;    
+  typedef edm::detail::ThreadSafeRegistry<edm::ModuleDescriptionID, edm::ModuleDescription> ModuleDescriptionRegistry;
+  typedef ModuleDescriptionRegistry::collection_type ModuleDescriptionMap;
 }
 
 #endif

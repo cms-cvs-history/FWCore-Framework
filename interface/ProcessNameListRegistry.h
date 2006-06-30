@@ -7,8 +7,8 @@
 
 namespace edm
 {
-  typedef edm::detail::ThreadSafeRegistry<edm::ProcessNameListID,edm::ProcessNameList>
-    ProcessNameListRegistry;    
+  typedef edm::detail::ThreadSafeRegistry<edm::ProcessNameListID,edm::ProcessNameList> ProcessNameListRegistry;
+  typedef ProcessNameListRegistry::collection_type ProcessNameListMap;
 }
 
 #endif

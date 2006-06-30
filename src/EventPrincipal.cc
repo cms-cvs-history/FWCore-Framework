@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------
-$Id: EventPrincipal.cc,v 1.41.2.2 2006/06/27 02:14:12 wmtan Exp $
+$Id: EventPrincipal.cc,v 1.41.2.3 2006/06/27 21:06:13 paterno Exp $
 ----------------------------------------------------------------------*/
 //#include <iostream>
 #include <memory>
@@ -9,6 +9,7 @@ $Id: EventPrincipal.cc,v 1.41.2.2 2006/06/27 02:14:12 wmtan Exp $
 
 #include "FWCore/Framework/interface/EventPrincipal.h"
 #include "FWCore/Framework/interface/EventProvenanceFiller.h"
+#include "FWCore/Framework/interface/ProcessNameListRegistry.h"
 #include "DataFormats/Common/interface/ProductRegistry.h"
 #include "FWCore/Utilities/interface/EDMException.h"
 #include "FWCore/Framework/interface/UnscheduledHandler.h"
@@ -141,6 +142,7 @@ private:
         << "Please modify the configuration file to use a distinct process name.";
     }
     ph.push_back(processName);
+    ProcessNameListRegistry::instance()->insertMapped(ph);
   }
 
   ProcessNameList const&
@@ -178,7 +180,7 @@ private:
   }
 
   EventPrincipal::SharedGroupPtr const
-  EventPrincipal::getGroup(ProductID const& oid) const {
+  EventPrincipal::getGroup(ProductID const& oid, bool resolve) const {
     ProductDict::const_iterator i = productDict_.find(oid);
     if (i == productDict_.end()) {
 	return SharedGroupPtr();
@@ -187,7 +189,9 @@ private:
     assert(slotNumber < groups_.size());
 
     SharedGroupPtr const& g = groups_[slotNumber];
-    this->resolve_(*g);
+    if (resolve && g->provenance().isPresent()) {
+      this->resolve_(*g, true);
+    }
     return g;
   }
 
@@ -450,8 +454,8 @@ private:
   }
 
   void
-  EventPrincipal::resolve_(Group const& g) const {
-    if (!g.isAccessible())
+  EventPrincipal::resolve_(Group const& g, bool unconditional) const {
+    if (!unconditional && !g.isAccessible())
       throw edm::Exception(errors::ProductNotFound,"InaccessibleProduct")
 	<< "resolve_: product is not accessible\n"
 	<< g.provenance();

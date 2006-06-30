@@ -1,9 +1,10 @@
 /*----------------------------------------------------------------------
   
-$Id: ProductRegistryHelper.cc,v 1.8 2006/05/24 01:52:51 wmtan Exp $
+$Id: ProductRegistryHelper.cc,v 1.8.2.1 2006/06/27 02:14:12 wmtan Exp $
 
 ----------------------------------------------------------------------*/
 
+#include "FWCore/Framework/interface/ModuleDescriptionRegistry.h"
 #include "FWCore/Framework/interface/ProductRegistryHelper.h"
 #include "DataFormats/Common/interface/ProductRegistry.h"
 #include "DataFormats/Common/interface/BranchDescription.h"
@@ -28,11 +29,11 @@ namespace edm {
                               p->typeID_.userClassName(),
                               p->typeID_.friendlyClassName(), 
                               p->productInstanceName_,
-                              std::set<ParameterSetID>(),
-                              std::set<std::string>());
+                              iDesc.id());
       pdesc.psetIDs_.insert(iDesc.pid);
       pdesc.branchAliases_.insert(p->branchAlias_);
       iReg.addProduct(pdesc, iIsListener);
+      ModuleDescriptionRegistry::instance()->insertMapped(iDesc);
     }//for
   }
 }

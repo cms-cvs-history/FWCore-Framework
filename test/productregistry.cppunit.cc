@@ -3,7 +3,7 @@
    test for ProductRegistry 
 
    \author Stefano ARGIRO
-   \version $Id: productregistry.cppunit.cc,v 1.14 2006/06/24 01:46:35 wmtan Exp $
+   \version $Id: productregistry.cppunit.cc,v 1.14.2.1 2006/06/27 21:32:08 wmtan Exp $
    \date 21 July 2005
 */
 
@@ -82,7 +82,7 @@ void  testProductRegistry:: testSignal(){
    Listener listening(hear);
    reg.productAddedSignal_.connect(listening);
    
-   BranchDescription prod("label", "PROD", "int", "int", "int", std::set<edm::ParameterSetID>(), std::set<std::string>());
+   BranchDescription prod("label", "PROD", "int", "int", "int");
    
    reg.addProduct(prod);
    CPPUNIT_ASSERT(1==hear);
@@ -100,10 +100,10 @@ void  testProductRegistry:: testWatch(){
 
    Responder one("one",constReg, reg);
                  
-   BranchDescription prod("label", "PROD", "int", "int", "int", std::set<edm::ParameterSetID>(), std::set<std::string>());
+   BranchDescription prod("label", "PROD", "int", "int", "int");
    reg.addProduct(prod);
 
-   BranchDescription prod2("label", "PROD", "float", "float", "float", std::set<edm::ParameterSetID>(), std::set<std::string>());
+   BranchDescription prod2("label", "PROD", "float", "float", "float");
    reg.addProduct(prod2);
    
    //Should be 4 products
@@ -127,7 +127,7 @@ void  testProductRegistry:: testCircular(){
    Responder one("one",constReg, reg);
    Responder two("two",constReg, reg);
    
-   BranchDescription prod("label", "PROD", "int", "int", "int", std::set<edm::ParameterSetID>(), std::set<std::string>());
+   BranchDescription prod("label", "PROD", "int", "int", "int");
    
    reg.addProduct(prod);
    //Should be 5 products

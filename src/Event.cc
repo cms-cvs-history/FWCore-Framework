@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------
-$Id: Event.cc,v 1.23 2006/02/08 00:44:25 wmtan Exp $
+$Id: Event.cc,v 1.24 2006/02/18 00:02:19 wmtan Exp $
 ----------------------------------------------------------------------*/
 
 #include <memory>
@@ -58,9 +58,11 @@ namespace edm {
 	auto_ptr<Provenance> pv(new Provenance(*pit->second));
 
 	// set parts of provenance
-	pv->event.cid = 0; // TODO: what is this supposed to be?
-	pv->event.status = BranchEntryDescription::Success;
-	pv->event.parents = gotProductIDs_;
+	pv->event.cid_ = 0; // TODO: what is this supposed to be?
+	pv->event.status_ = BranchEntryDescription::Success;
+	pv->event.isPresent_ = true;
+	pv->event.parents_ = gotProductIDs_;
+	pv->event.moduleDescriptionID_ = pit->second->moduleDescriptionID_;
 
 	ep_.put(pr,pv);
 	++pit;
