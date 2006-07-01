@@ -17,7 +17,7 @@ provenance, which is needed for the unscheduled case.
 //
 // Original Author:  Chris Jones
 //         Created:  Wed Feb 15 11:37:49 IST 2006
-// $Id$
+// $Id: ProvenanceAccess.h,v 1.1 2006/03/05 21:40:25 chrjones Exp $
 //
 
 // system include files
@@ -37,10 +37,8 @@ class ProvenanceAccess
       //virtual ~ProvenanceAccess();
 
       // ---------- const member functions ---------------------
-      ///the routine matches the product member data of the Provenance class
-      const BranchDescription& product() const;
-      ///the routine matches the product member data of the Provenance class
-      const BranchEntryDescription& event() const;
+      ///the routine matches the data of the Provenance class
+      const Provenance& provenance() const;
 
       // ---------- static member functions --------------------
 

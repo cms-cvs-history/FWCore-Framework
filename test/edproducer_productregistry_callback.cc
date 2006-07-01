@@ -3,7 +3,7 @@
    test for ProductRegistry 
 
    \author Stefano ARGIRO
-   \version $Id: edproducer_productregistry_callback.cc,v 1.6 2006/04/18 00:06:06 wmtan Exp $
+   \version $Id: edproducer_productregistry_callback.cc,v 1.7 2006/06/24 01:46:35 wmtan Exp $
    \date 21 July 2005
 */
 
@@ -122,7 +122,7 @@ public:
    {
       edm::TypeID intType(typeid(int));
       //std::cout <<"see class "<<iDesc.typeName()<<std::endl;
-      if(iDesc.productType() == intType.friendlyClassName()) {
+      if(iDesc.friendlyClassName() == intType.friendlyClassName()) {
          produces<float>(iDesc.moduleLabel()+"-"+iDesc.productInstanceName());
          //std::cout <<iDesc.moduleLabel()<<"-"<<iDesc.productInstanceName()<<std::endl;
       }

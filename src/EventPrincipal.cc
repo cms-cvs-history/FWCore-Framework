@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------
-$Id: EventPrincipal.cc,v 1.41.2.3 2006/06/27 21:06:13 paterno Exp $
+$Id: EventPrincipal.cc,v 1.41.2.4 2006/06/30 04:31:26 wmtan Exp $
 ----------------------------------------------------------------------*/
 //#include <iostream>
 #include <memory>
@@ -84,7 +84,7 @@ private:
   void 
   EventPrincipal::addGroup(auto_ptr<Group> group) {
     assert (!group->productDescription().className().empty());
-    assert (!group->productDescription().productType().empty());
+    assert (!group->productDescription().friendlyClassName().empty());
     assert (!group->productDescription().moduleLabel().empty());
     assert (!group->productDescription().processName().empty());
     SharedGroupPtr g(group);
