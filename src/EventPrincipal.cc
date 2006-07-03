@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------
-$Id: EventPrincipal.cc,v 1.41.2.4 2006/06/30 04:31:26 wmtan Exp $
+$Id: EventPrincipal.cc,v 1.41.2.5 2006/07/01 06:23:37 wmtan Exp $
 ----------------------------------------------------------------------*/
 //#include <iostream>
 #include <memory>
@@ -143,6 +143,7 @@ private:
     }
     ph.push_back(processName);
     ProcessNameListRegistry::instance()->insertMapped(ph);
+    aux_.processHistoryID_ = ph.id();
   }
 
   ProcessNameList const&
