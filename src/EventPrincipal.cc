@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------
-$Id: EventPrincipal.cc,v 1.41.2.5 2006/07/01 06:23:37 wmtan Exp $
+$Id: EventPrincipal.cc,v 1.41.2.6 2006/07/03 03:30:48 wmtan Exp $
 ----------------------------------------------------------------------*/
 //#include <iostream>
 #include <memory>
@@ -9,7 +9,7 @@ $Id: EventPrincipal.cc,v 1.41.2.5 2006/07/01 06:23:37 wmtan Exp $
 
 #include "FWCore/Framework/interface/EventPrincipal.h"
 #include "FWCore/Framework/interface/EventProvenanceFiller.h"
-#include "FWCore/Framework/interface/ProcessNameListRegistry.h"
+#include "FWCore/Framework/interface/ProcessHistoryRegistry.h"
 #include "DataFormats/Common/interface/ProductRegistry.h"
 #include "FWCore/Utilities/interface/EDMException.h"
 #include "FWCore/Framework/interface/UnscheduledHandler.h"
@@ -50,7 +50,7 @@ private:
 				 Timestamp const& time,
                                  ProductRegistry const& reg,
 				 LuminosityBlockID const& lb,
-				 ProcessNameListID const& hist,
+				 ProcessHistoryID const& hist,
 				 boost::shared_ptr<DelayedReader> rtrv) :
    aux_(id,time,lb),
    groups_(),
@@ -134,19 +134,22 @@ private:
   }
 
   void
-  EventPrincipal::addToProcessHistory(string const& processName) {
-    ProcessNameList& ph = aux_.processHistory();
-    if (find(ph.begin(), ph.end(), processName) != ph.end()) {
-      throw edm::Exception(errors::Configuration, "Duplicate Process")
-        << "The process name " << processName << " was previously used on these events.\n"
-        << "Please modify the configuration file to use a distinct process name.";
+  EventPrincipal::addToProcessHistory(ProcessHistoryItem const& processHistoryItem) {
+    ProcessHistory& ph = aux_.processHistory();
+    std::string const& processName = processHistoryItem.processName();
+    for (ProcessHistory::const_iterator it = ph.begin(); it != ph.end(); ++it) {
+      if (processName == it->processName()) {
+	throw edm::Exception(errors::Configuration, "Duplicate Process")
+	  << "The process name " << processName << " was previously used on these events.\n"
+	  << "Please modify the configuration file to use a distinct process name.";
+      }
     }
-    ph.push_back(processName);
-    ProcessNameListRegistry::instance()->insertMapped(ph);
+    ph.push_back(processHistoryItem);
+    ProcessHistoryRegistry::instance()->insertMapped(ph);
     aux_.processHistoryID_ = ph.id();
   }
 
-  ProcessNameList const&
+  ProcessHistory const&
   EventPrincipal::processHistory() const {
     return aux_.processHistory();
   }
@@ -299,11 +302,11 @@ private:
     // correct policy of making the assumed label be ... whatever we
     // set the policy to be. I don't know the answer right now...
 
-    ProcessNameList::const_reverse_iterator iproc = aux_.processHistory().rbegin();
-    ProcessNameList::const_reverse_iterator eproc = aux_.processHistory().rend();
+    ProcessHistory::const_reverse_iterator iproc = aux_.processHistory().rbegin();
+    ProcessHistory::const_reverse_iterator eproc = aux_.processHistory().rend();
     while (iproc != eproc) {
-	string const& processName_ = *iproc;
-	BranchKey bk(id.friendlyClassName(), label, productInstanceName, processName_);
+	string const& processName = iproc->processName();
+	BranchKey bk(id.friendlyClassName(), label, productInstanceName, processName);
 	BranchDict::const_iterator i = branchDict_.find(bk);
 
 	if (i != branchDict_.end()) {

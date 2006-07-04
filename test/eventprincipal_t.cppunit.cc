@@ -2,7 +2,7 @@
 
 Test of the EventPrincipal class.
 
-$Id: eventprincipal_t.cppunit.cc,v 1.24 2006/06/24 01:46:35 wmtan Exp $
+$Id: eventprincipal_t.cppunit.cc,v 1.24.2.1 2006/06/27 21:32:08 wmtan Exp $
 
 ----------------------------------------------------------------------*/  
 #include <cassert>
@@ -13,6 +13,9 @@ $Id: eventprincipal_t.cppunit.cc,v 1.24 2006/06/24 01:46:35 wmtan Exp $
 #include <typeinfo>
 
 #include "FWCore/Utilities/interface/EDMException.h"
+#include "FWCore/Utilities/interface/GetPassID.h"
+#include "FWCore/Utilities/interface/GetReleaseVersion.h"
+#include "DataFormats/Common/interface/ParameterSetID.h"
 #include "DataFormats/Common/interface/ProductID.h"
 #include "FWCore/Framework/interface/BasicHandle.h"
 #include "DataFormats/Common/interface/ProductRegistry.h"
@@ -69,7 +72,7 @@ CPPUNIT_TEST_SUITE_REGISTRATION(testeventprincipal);
 
 void testeventprincipal::failgetbyIdTest() {
   edm::EventPrincipal ep;
-  ep.addToProcessHistory("PROD");
+  ep.addToProcessHistory(edm::ProcessHistoryItem("PROD", edm::ParameterSetID(), edm::getReleaseVersion(), edm::getPassID()));
   try {
     edm::ProductID id;
     handle h = ep.get(id);
@@ -86,7 +89,7 @@ void testeventprincipal::failgetbyIdTest() {
 void testeventprincipal::failgetbySelectorTest()
 {
   edm::EventPrincipal ep;
-  ep.addToProcessHistory("PROD");
+  ep.addToProcessHistory(edm::ProcessHistoryItem("PROD", edm::ParameterSetID(), edm::getReleaseVersion(), edm::getPassID()));
   try {
     edm::TypeID tid(ep);   // sure not to match any product
     edm::ProcessNameSelector sel("PROD");
@@ -103,7 +106,7 @@ void testeventprincipal::failgetbySelectorTest()
 
 void testeventprincipal::failgetbyLabelTest() {
   edm::EventPrincipal ep;
-  ep.addToProcessHistory("PROD");
+  ep.addToProcessHistory(edm::ProcessHistoryItem("PROD", edm::ParameterSetID(), edm::getReleaseVersion(), edm::getPassID()));
   try {
     edm::TypeID tid(ep);   // sure not to match any product
     std::string label("this does not exist");
@@ -120,7 +123,7 @@ void testeventprincipal::failgetbyLabelTest() {
 
 void testeventprincipal::failgetManyTest() {
   edm::EventPrincipal ep;
-  ep.addToProcessHistory("PROD");
+  ep.addToProcessHistory(edm::ProcessHistoryItem("PROD", edm::ParameterSetID(), edm::getReleaseVersion(), edm::getPassID()));
   try {
     edm::TypeID tid(ep);   // sure not to match any product
     edm::ProcessNameSelector sel("PROD");
@@ -138,7 +141,7 @@ void testeventprincipal::failgetManyTest() {
 
 void testeventprincipal::failgetbyTypeTest() {
   edm::EventPrincipal ep;
-  ep.addToProcessHistory("PROD");
+  ep.addToProcessHistory(edm::ProcessHistoryItem("PROD", edm::ParameterSetID(), edm::getReleaseVersion(), edm::getPassID()));
   try {
     edm::TypeID tid(ep);   // sure not to match any product
     handle h = ep.getByType(tid);
@@ -154,7 +157,7 @@ void testeventprincipal::failgetbyTypeTest() {
 
 void testeventprincipal::failgetManybyTypeTest() {
   edm::EventPrincipal ep;
-  ep.addToProcessHistory("PROD");
+  ep.addToProcessHistory(edm::ProcessHistoryItem("PROD", edm::ParameterSetID(), edm::getReleaseVersion(), edm::getPassID()));
   try {
     edm::TypeID tid(ep);   // sure not to match any product
     std::vector<handle> handles;
@@ -194,7 +197,7 @@ void testeventprincipal::failgetbyInvalidIdTest() {
   edm::EventID col(1L);
   edm::Timestamp fakeTime;
   edm::EventPrincipal ep(col, fakeTime, preg);
-  ep.addToProcessHistory("PROD");
+  ep.addToProcessHistory(edm::ProcessHistoryItem("PROD", edm::ParameterSetID(), edm::getReleaseVersion(), edm::getPassID()));
 
   ep.put(pprod, pprov);
 
@@ -214,7 +217,7 @@ void testeventprincipal::failgetbyInvalidIdTest() {
 
 void testeventprincipal::failgetProvenanceTest() {
   edm::EventPrincipal ep;
-  ep.addToProcessHistory("PROD");
+  ep.addToProcessHistory(edm::ProcessHistoryItem("PROD", edm::ParameterSetID(), edm::getReleaseVersion(), edm::getPassID()));
   try {
     edm::ProductID id;
     edm::Provenance const& prov = ep.getProvenance(id);
@@ -256,7 +259,7 @@ void testeventprincipal::getbyIdTest() {
   edm::EventID col(1L);
   edm::Timestamp fakeTime;
   edm::EventPrincipal ep(col, fakeTime, preg);
-  ep.addToProcessHistory("PROD");
+  ep.addToProcessHistory(edm::ProcessHistoryItem("PROD", edm::ParameterSetID(), edm::getReleaseVersion(), edm::getPassID()));
 
   ep.put(pprod, pprov);
 
@@ -307,7 +310,7 @@ void testeventprincipal::getbyLabelTest() {
   edm::EventID col(1L);
   edm::Timestamp fakeTime;
   edm::EventPrincipal ep(col, fakeTime, preg);
-  ep.addToProcessHistory("PROD");
+  ep.addToProcessHistory(edm::ProcessHistoryItem("PROD", edm::ParameterSetID(), edm::getReleaseVersion(), edm::getPassID()));
 
   ep.put(pprod, pprov);
   
@@ -356,7 +359,7 @@ void testeventprincipal::getbySelectorTest() {
   edm::EventID col(1L);
   edm::Timestamp fakeTime;
   edm::EventPrincipal ep(col, fakeTime, preg);
-  ep.addToProcessHistory("PROD");
+  ep.addToProcessHistory(edm::ProcessHistoryItem("PROD", edm::ParameterSetID(), edm::getReleaseVersion(), edm::getPassID()));
 
   ep.put(pprod, pprov);
 
@@ -409,7 +412,7 @@ void testeventprincipal::getbyTypeTest() {
   edm::EventID col(1L);
   edm::Timestamp fakeTime;
   edm::EventPrincipal ep(col, fakeTime, preg);
-  ep.addToProcessHistory("PROD");
+  ep.addToProcessHistory(edm::ProcessHistoryItem("PROD", edm::ParameterSetID(), edm::getReleaseVersion(), edm::getPassID()));
 
   ep.put(pprod, pprov);
   
@@ -457,7 +460,7 @@ void testeventprincipal::getProvenanceTest() {
   edm::EventID col(1L);
   edm::Timestamp fakeTime;
   edm::EventPrincipal ep(col, fakeTime, preg);
-  ep.addToProcessHistory("PROD");
+  ep.addToProcessHistory(edm::ProcessHistoryItem("PROD", edm::ParameterSetID(), edm::getReleaseVersion(), edm::getPassID()));
 
   ep.put(pprod, pprov);
 
@@ -503,7 +506,7 @@ void testeventprincipal::getAllProvenanceTest() {
   edm::EventID col(1L);
   edm::Timestamp fakeTime;
   edm::EventPrincipal ep(col, fakeTime, preg);
-  ep.addToProcessHistory("PROD");
+  ep.addToProcessHistory(edm::ProcessHistoryItem("PROD", edm::ParameterSetID(), edm::getReleaseVersion(), edm::getPassID()));
 
   ep.put(pprod, pprov);
 

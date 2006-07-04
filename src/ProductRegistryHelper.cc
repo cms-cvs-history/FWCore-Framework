@@ -1,6 +1,6 @@
 /*----------------------------------------------------------------------
   
-$Id: ProductRegistryHelper.cc,v 1.8.2.1 2006/06/27 02:14:12 wmtan Exp $
+$Id: ProductRegistryHelper.cc,v 1.8.2.2 2006/06/30 04:31:26 wmtan Exp $
 
 ----------------------------------------------------------------------*/
 
@@ -30,7 +30,7 @@ namespace edm {
                               p->typeID_.friendlyClassName(), 
                               p->productInstanceName_,
                               iDesc.id());
-      pdesc.psetIDs_.insert(iDesc.pid);
+      pdesc.psetIDs_.insert(iDesc.parameterSetID_);
       pdesc.branchAliases_.insert(p->branchAlias_);
       iReg.addProduct(pdesc, iIsListener);
       ModuleDescriptionRegistry::instance()->insertMapped(iDesc);

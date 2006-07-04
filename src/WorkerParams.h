@@ -7,6 +7,10 @@ This struct is used to communication parameters into the worker factory.
 
 ---------------------- **/
 
+#include "DataFormats/Common/interface/PassID.h"
+#include "DataFormats/Common/interface/ReleaseVersion.h"
+#include "FWCore/Utilities/interface/GetPassID.h"
+#include "FWCore/Utilities/interface/GetReleaseVersion.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 
 #include <string>
@@ -20,22 +24,23 @@ namespace edm
   {
     WorkerParams(): 
       pset_(),reg_(),actions_(),
-      processName_(),versionNumber__(),pass_() { }
+      processName_(),releaseVersion_(),passID_() { }
 
     WorkerParams(ParameterSet const& pset,
 		 ProductRegistry& reg,
 		 ActionTable& actions,
-		 const std::string& pn,
-		 unsigned long vn=0, unsigned long pass=0):
+		 std::string const& processName,
+		 std::string releaseVersion=getReleaseVersion(),
+		 std::string passID=getPassID()):
       pset_(&pset),reg_(&reg),actions_(&actions),
-      processName_(pn),versionNumber__(vn),pass_(pass) { }
+      processName_(processName),releaseVersion_(releaseVersion),passID_(passID) { }
 
-    const ParameterSet* pset_;
+    ParameterSet const* pset_;
     ProductRegistry* reg_;
     ActionTable* actions_;
     std::string processName_;
-    unsigned long versionNumber__;
-    unsigned long pass_;
+    ReleaseVersion releaseVersion_;
+    PassID passID_;
   };
 }
 

@@ -62,12 +62,12 @@ namespace edm {
 
     const ParameterSet& conf = *p.pset_;
     ModuleDescription md;
-    md.pid = conf.id();
+    md.parameterSetID_ = conf.id();
     md.moduleName_ = conf.template getParameter<std::string>("@module_type");
     md.moduleLabel_ = conf.template getParameter<std::string>("@module_label");
-    md.versionNumber_ = p.versionNumber__;
+    md.releaseVersion_ = p.releaseVersion_;
     md.processName_ = p.processName_;;
-    md.pass = p.pass_; 
+    md.passID_ = p.passID_; 
 
     std::auto_ptr<Worker> worker;
     try {

@@ -3,7 +3,7 @@
    test for ProductRegistry 
 
    \author Stefano ARGIRO
-   \version $Id: edproducer_productregistry_callback.cc,v 1.7 2006/06/24 01:46:35 wmtan Exp $
+   \version $Id: edproducer_productregistry_callback.cc,v 1.7.2.1 2006/07/01 06:23:37 wmtan Exp $
    \date 21 July 2005
 */
 
@@ -11,6 +11,8 @@
 #include <iostream>
 #include <cppunit/extensions/HelperMacros.h>
 #include "FWCore/Utilities/interface/Exception.h"
+#include "FWCore/Utilities/interface/GetPassID.h"
+#include "FWCore/Utilities/interface/GetReleaseVersion.h"
 
 #include "FWCore/Framework/src/SignallingProductRegistry.h"
 #include "FWCore/Framework/interface/ConstProductRegistry.h"
@@ -153,8 +155,8 @@ void  testEDProducerProductRegistryCallback::testCircularRef(){
    
    edm::ActionTable table;
    
-   edm::WorkerParams params1(p1, preg, table, "PROD", 0, 0);
-   edm::WorkerParams params2(p2, preg, table, "PROD", 0, 0);
+   edm::WorkerParams params1(p1, preg, table, "PROD", edm::getReleaseVersion(), edm::getPassID());
+   edm::WorkerParams params2(p2, preg, table, "PROD", edm::getReleaseVersion(), edm::getPassID());
 
    
    auto_ptr<Maker> lM(new WorkerMaker<ListenMod>);
@@ -166,8 +168,8 @@ void  testEDProducerProductRegistryCallback::testCircularRef(){
    l2.addParameter("@module_type",std::string("ListenMod") );
    l2.addParameter("@module_label",std::string("l2") );
 
-   edm::WorkerParams paramsl1(l1, preg, table, "PROD", 0, 0);
-   edm::WorkerParams paramsl2(l2, preg, table, "PROD", 0, 0);
+   edm::WorkerParams paramsl1(l1, preg, table, "PROD", edm::getReleaseVersion(), edm::getPassID());
+   edm::WorkerParams paramsl2(l2, preg, table, "PROD", edm::getReleaseVersion(), edm::getPassID());
 
    boost::signal<void (const ModuleDescription&)> aSignal;
 
@@ -214,8 +216,8 @@ void  testEDProducerProductRegistryCallback::testCircularRef2(){
    
    edm::ActionTable table;
    
-   edm::WorkerParams params1(p1, preg, table, "PROD", 0, 0);
-   edm::WorkerParams params2(p2, preg, table, "PROD", 0, 0);
+   edm::WorkerParams params1(p1, preg, table, "PROD", edm::getReleaseVersion(), edm::getPassID());
+   edm::WorkerParams params2(p2, preg, table, "PROD", edm::getReleaseVersion(), edm::getPassID());
    
    
    auto_ptr<Maker> lM(new WorkerMaker<ListenMod>);
@@ -227,8 +229,8 @@ void  testEDProducerProductRegistryCallback::testCircularRef2(){
    l2.addParameter("@module_type",std::string("ListenMod") );
    l2.addParameter("@module_label",std::string("l2") );
    
-   edm::WorkerParams paramsl1(l1, preg, table, "PROD", 0, 0);
-   edm::WorkerParams paramsl2(l2, preg, table, "PROD", 0, 0);
+   edm::WorkerParams paramsl1(l1, preg, table, "PROD", edm::getReleaseVersion(), edm::getPassID());
+   edm::WorkerParams paramsl2(l2, preg, table, "PROD", edm::getReleaseVersion(), edm::getPassID());
    
    
    boost::signal<void (const ModuleDescription&)> aSignal;
@@ -275,8 +277,8 @@ void  testEDProducerProductRegistryCallback::testTwoListeners(){
    
    edm::ActionTable table;
    
-   edm::WorkerParams params1(p1, preg, table, "PROD", 0, 0);
-   edm::WorkerParams params2(p2, preg, table, "PROD", 0, 0);
+   edm::WorkerParams params1(p1, preg, table, "PROD", edm::getReleaseVersion(), edm::getPassID());
+   edm::WorkerParams params2(p2, preg, table, "PROD", edm::getReleaseVersion(), edm::getPassID());
    
    
    auto_ptr<Maker> lM(new WorkerMaker<ListenMod>);
@@ -289,8 +291,8 @@ void  testEDProducerProductRegistryCallback::testTwoListeners(){
    l2.addParameter("@module_type",std::string("ListenMod") );
    l2.addParameter("@module_label",std::string("l2") );
    
-   edm::WorkerParams paramsl1(l1, preg, table, "PROD", 0, 0);
-   edm::WorkerParams paramsl2(l2, preg, table, "PROD", 0, 0);
+   edm::WorkerParams paramsl1(l1, preg, table, "PROD", edm::getReleaseVersion(), edm::getPassID());
+   edm::WorkerParams paramsl2(l2, preg, table, "PROD", edm::getReleaseVersion(), edm::getPassID());
    
    
    boost::signal<void (const ModuleDescription&)> aSignal;

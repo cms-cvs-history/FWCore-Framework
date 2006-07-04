@@ -5,7 +5,7 @@
   
 Forward declarations of types in the EDM.
 
-$Id: Frameworkfwd.h,v 1.24 2006/06/20 23:13:27 paterno Exp $
+$Id: Frameworkfwd.h,v 1.24.2.1 2006/06/29 19:00:18 paterno Exp $
 
 ----------------------------------------------------------------------*/
 
@@ -60,6 +60,6 @@ namespace edm {
 // The following are trivial enough so that the real headers can be included.
 #include "DataFormats/Common/interface/ConditionsID.h"
 #include "DataFormats/Common/interface/PassID.h"
-#include "DataFormats/Common/interface/VersionNumber.h"
+#include "DataFormats/Common/interface/ReleaseVersion.h"
 
 #endif

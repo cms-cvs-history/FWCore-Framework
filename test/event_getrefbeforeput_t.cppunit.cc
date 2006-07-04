@@ -2,7 +2,7 @@
 
 Test of the EventPrincipal class.
 
-$Id: event_getrefbeforeput_t.cppunit.cc,v 1.1 2006/04/27 21:24:55 chrjones Exp $
+$Id: event_getrefbeforeput_t.cppunit.cc,v 1.1.2.1 2006/06/27 21:32:08 wmtan Exp $
 
 ----------------------------------------------------------------------*/  
 #include <cassert>
@@ -13,6 +13,8 @@ $Id: event_getrefbeforeput_t.cppunit.cc,v 1.1 2006/04/27 21:24:55 chrjones Exp $
 #include <typeinfo>
 
 #include "FWCore/Utilities/interface/EDMException.h"
+#include "FWCore/Utilities/interface/GetPassID.h"
+#include "FWCore/Utilities/interface/GetReleaseVersion.h"
 #include "DataFormats/Common/interface/ProductID.h"
 #include "FWCore/Framework/interface/BasicHandle.h"
 #include "DataFormats/Common/interface/ProductRegistry.h"
@@ -54,7 +56,7 @@ void testEventGetRefBeforePut::failGetProductNotRegisteredTest() {
   edm::EventID col(1L);
   edm::Timestamp fakeTime;
   edm::EventPrincipal ep(col, fakeTime, preg);
-  ep.addToProcessHistory("PROD");
+  ep.addToProcessHistory(edm::ProcessHistoryItem("PROD", edm::ParameterSetID(), edm::getReleaseVersion(), edm::getPassID()));
 
   try {
      edm::ModuleDescription modDesc;
@@ -101,7 +103,7 @@ void testEventGetRefBeforePut::getRefTest() {
   edm::EventID col(1L);
   edm::Timestamp fakeTime;
   edm::EventPrincipal ep(col, fakeTime, preg);
-  ep.addToProcessHistory(processName);
+  ep.addToProcessHistory(edm::ProcessHistoryItem(processName, edm::ParameterSetID(), edm::getReleaseVersion(), edm::getPassID()));
 
   edm::RefProd<edmtest::IntProduct> refToProd;
   try {

@@ -15,7 +15,7 @@ through shared pointers.
 The EventPrincipal returns BasicHandle, rather than a shared
 pointer to a Group, when queried.
 
-$Id: EventPrincipal.h,v 1.30.2.3 2006/06/27 21:06:13 paterno Exp $
+$Id: EventPrincipal.h,v 1.30.2.4 2006/06/30 04:31:25 wmtan Exp $
 
 ----------------------------------------------------------------------*/
 #include <map>
@@ -34,7 +34,7 @@ $Id: EventPrincipal.h,v 1.30.2.3 2006/06/27 21:06:13 paterno Exp $
 #include "DataFormats/Common/interface/EDProduct.h"
 #include "DataFormats/Common/interface/EDProductGetter.h"
 #include "DataFormats/Common/interface/EventAux.h"
-#include "DataFormats/Common/interface/ProcessNameList.h"
+#include "DataFormats/Common/interface/ProcessHistory.h"
 #include "FWCore/Framework/interface/BasicHandle.h"
 #include "FWCore/Framework/interface/NoDelayedReader.h"
 #include "FWCore/Framework/interface/DelayedReader.h"
@@ -51,7 +51,7 @@ namespace edm {
   public:
     typedef std::vector<boost::shared_ptr<Group> > GroupVec;
     typedef GroupVec::const_iterator               const_iterator;
-    typedef ProcessNameList::const_iterator        ProcessNameConstIterator;
+    typedef ProcessHistory::const_iterator        ProcessNameConstIterator;
     typedef boost::shared_ptr<Group>               SharedGroupPtr;
     typedef std::vector<BasicHandle>               BasicHandleVec;
 
@@ -64,7 +64,7 @@ namespace edm {
                    Timestamp const& time,
                    ProductRegistry const& reg,
 		   LuminosityBlockID const& lb = LuminosityBlockID(),
-                   ProcessNameListID const& hist = ProcessNameListID(),
+                   ProcessHistoryID const& hist = ProcessHistoryID(),
                    boost::shared_ptr<DelayedReader> rtrv = boost::shared_ptr<DelayedReader>(new NoDelayedReader));
 
     virtual ~EventPrincipal();
@@ -120,9 +120,9 @@ namespace edm {
       return aux_.processHistory().end();
     }
 
-    ProcessNameList const& processHistory() const;    
+    ProcessHistory const& processHistory() const;    
 
-    ProcessNameListID const& processHistoryID() const {
+    ProcessHistoryID const& processHistoryID() const {
       return aux_.processHistoryID();   
     }
 
@@ -136,7 +136,7 @@ namespace edm {
 
     // ----- Mark this EventPrincipal as having been updated in the
     // given Process.
-    void addToProcessHistory(std::string const& processName);
+    void addToProcessHistory(ProcessHistoryItem const& processHistoryItem);
 
     void setUnscheduledHandler(boost::shared_ptr<UnscheduledHandler>);
     

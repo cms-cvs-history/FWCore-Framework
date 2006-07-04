@@ -4,7 +4,7 @@
 /*
   Author: Jim Kowalkowski  28-01-06
 
-  $Id: Schedule.h,v 1.15 2006/06/08 21:54:16 paterno Exp $
+  $Id: Schedule.h,v 1.16 2006/06/20 23:13:27 paterno Exp $
 
   A class for creating a schedule based on paths in the configuration file.
   The schedule is maintained as a sequence of paths.
@@ -216,7 +216,7 @@ namespace edm
     WorkerRegistry*     worker_reg_;
     ProductRegistry*    prod_reg_;
     ActionTable*        act_table_;
-    std::string         proc_name_;
+    std::string         processName_;
     ParameterSet        trig_pset_;  // why is this kept?
     ActivityRegistryPtr act_reg_;
 

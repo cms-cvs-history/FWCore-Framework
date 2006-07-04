@@ -3,11 +3,11 @@
    Implementation of class ScheduleBuilder
 
    \author Stefano ARGIRO
-   \version $Id: ScheduleBuilder.cc,v 1.18 2006/01/24 16:46:03 wmtan Exp $
+   \version $Id: ScheduleBuilder.cc,v 1.19 2006/02/08 00:44:25 wmtan Exp $
    \date 18 May 2005
 */
 
-static const char CVSId[] = "$Id: ScheduleBuilder.cc,v 1.18 2006/01/24 16:46:03 wmtan Exp $";
+static const char CVSId[] = "$Id: ScheduleBuilder.cc,v 1.19 2006/02/08 00:44:25 wmtan Exp $";
 
 
 #include "FWCore/Framework/interface/ScheduleBuilder.h"
@@ -16,8 +16,11 @@ static const char CVSId[] = "$Id: ScheduleBuilder.cc,v 1.18 2006/01/24 16:46:03 
 #include "FWCore/Framework/src/WorkerParams.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "FWCore/Utilities/interface/EDMException.h"
+#include "FWCore/Utilities/interface/GetPassID.h"
+#include "FWCore/Utilities/interface/GetReleaseVersion.h"
 #include "PluginManager/PluginManager.h"
 
+#include <cstdlib>
 #include <iostream>
 
 using namespace edm;
@@ -60,12 +63,9 @@ ScheduleBuilder::ScheduleBuilder(ParameterSet const& processDesc,
         <<*pathIt<<"'.\n Please check spelling.";
       }
       ParameterSet const& module_pset= m_processDesc.getParameter<ParameterSet>(*nameIt);
-//#warning version and pass are hardcoded
-      unsigned long version = 1;
-      unsigned long pass    = 1;
 
       WorkerParams params(module_pset, pregistry, actions,
-			  processName, version, pass);
+			  processName, getReleaseVersion(), getPassID());
     
       Worker* worker= wregistry.getWorker(params);
       
