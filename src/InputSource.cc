@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------
-$Id: InputSource.cc,v 1.12 2006/06/06 21:25:21 wmtan Exp $
+$Id: InputSource.cc,v 1.12.2.1 2006/07/04 14:03:43 wmtan Exp $
 ----------------------------------------------------------------------*/
 #include <cassert> 
 #include "FWCore/Framework/interface/InputSource.h"
@@ -58,7 +58,7 @@ namespace edm {
     // Do we need any error handling (e.g. exception translation) here?
     std::auto_ptr<EventPrincipal> ep(readEvent_());
     if (ep.get()) {
-	ep->addToProcessHistory(isDesc_.processHistoryItem_);
+	ep->addToProcessHistory(isDesc_.moduleDescription_.processConfiguration());
     }
     return ep;
   }
@@ -85,7 +85,7 @@ namespace edm {
     // Do we need any error handling (e.g. exception translation) here?
     std::auto_ptr<EventPrincipal> ep(readEvent_(eventID));
     if (ep.get()) {
-	ep->addToProcessHistory(isDesc_.processHistoryItem_);
+	ep->addToProcessHistory(isDesc_.moduleDescription_.processConfiguration());
     }
     return ep;
   }

@@ -98,21 +98,20 @@ namespace edm
     // probably be a utility in the WorkerRegistry or elsewhere.
 
     Schedule::WorkerPtr 
-    makeInserter(const ParameterSet& trig_pset,
+    makeInserter(const ParameterSet& proc_pset,
+		 const ParameterSet& trig_pset,
 		 const string& proc_name,
 		 ProductRegistry& preg,
 		 ActionTable& actions,
 		 Schedule::TrigResPtr trptr)
     {
 #if 1
-      WorkerParams work_args(trig_pset,preg,actions,proc_name);
+      WorkerParams work_args(proc_pset,trig_pset,preg,actions,proc_name);
       ModuleDescription md;
       md.parameterSetID_ = trig_pset.id();
       md.moduleName_ = "TriggerResultInserter";
       md.moduleLabel_ = "TriggerResults";
-      md.processName_ = proc_name;
-      md.releaseVersion_ = getReleaseVersion();
-      md.passID_ = getPassID();
+      md.processConfiguration_ = ProcessConfiguration(proc_name, proc_pset.id(), getReleaseVersion(), getPassID());
 
       auto_ptr<EDProducer> producer(new TriggerResultInserter(trig_pset,trptr));
 
@@ -246,7 +245,7 @@ namespace edm
 
     // the results inserter stands alone
     if(hasFilter || makeTriggerResults_) {
-      results_inserter_=makeInserter(trig_pset_,processName_,
+      results_inserter_=makeInserter(pset_,trig_pset_,processName_,
 				     preg,actions,results_);
       all_workers_.insert(results_inserter_.get());
     }
@@ -297,7 +296,7 @@ namespace edm
 	  unscheduledLabels.insert(*itLabel);
 	  //Need to hold onto the parameters long enough to make the call to getWorker
 	  ParameterSet workersParams(proc_pset.getParameter<ParameterSet>(*itLabel));
-	  WorkerParams params(workersParams,
+	  WorkerParams params(proc_pset, workersParams,
 			      *prod_reg_, *act_table_,
 			      processName_, getReleaseVersion(), getPassID());
 	  Worker* newWorker(wreg.getWorker(params));
@@ -383,7 +382,7 @@ namespace edm
         throw edm::Exception(edm::errors::Configuration)<<"The unknown module label \""<<realname<<"\" appears in "<<pathType<<" \""<<name
 							<<"\"\n please check spelling or remove that label from the path.";
       }
-      WorkerParams params(modpset, *prod_reg_, *act_table_,
+      WorkerParams params(pset_, modpset, *prod_reg_, *act_table_,
 			  processName_, getReleaseVersion(), getPassID());
       WorkerInPath w(worker_reg_->getWorker(params),state);
       tmpworkers.push_back(w);

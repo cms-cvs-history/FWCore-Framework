@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------
-$Id: Event.cc,v 1.24 2006/02/18 00:02:19 wmtan Exp $
+$Id: Event.cc,v 1.24.2.1 2006/06/30 04:31:26 wmtan Exp $
 ----------------------------------------------------------------------*/
 
 #include <memory>
@@ -128,7 +128,7 @@ namespace edm {
   BranchDescription const&
   Event::getBranchDescription(std::string const& friendlyClassName,
                       std::string const& productInstanceName) const {
-    BranchKey const bk(friendlyClassName, md_.moduleLabel_, productInstanceName, md_.processName_);
+    BranchKey const bk(friendlyClassName, md_.moduleLabel(), productInstanceName, md_.processName());
     ProductRegistry::ProductList const& pl = ep_.productRegistry().productList();
     ProductRegistry::ProductList::const_iterator it = pl.find(bk);
     if (it == pl.end()) {

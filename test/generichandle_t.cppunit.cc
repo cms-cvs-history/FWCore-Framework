@@ -2,7 +2,7 @@
 
 Test of the EventPrincipal class.
 
-$Id: generichandle_t.cppunit.cc,v 1.9.2.1 2006/06/27 21:32:08 wmtan Exp $
+$Id: generichandle_t.cppunit.cc,v 1.9.2.2 2006/07/04 14:03:44 wmtan Exp $
 
 ----------------------------------------------------------------------*/  
 #include <string>
@@ -55,7 +55,7 @@ void testGenericHandle::failWrongType() {
 void testGenericHandle::failgetbyLabelTest() {
 
   edm::EventPrincipal ep;
-  ep.addToProcessHistory(edm::ProcessHistoryItem("PROD", edm::ParameterSetID(), edm::getReleaseVersion(), edm::getPassID()));
+  ep.addToProcessHistory(edm::ProcessConfiguration("PROD", edm::ParameterSetID(), edm::getReleaseVersion(), edm::getPassID()));
   edm::GenericHandle h("edmtest::DummyProduct");
   try {
      edm::ModuleDescription modDesc;
@@ -106,7 +106,7 @@ void testGenericHandle::getbyLabelTest() {
   edm::EventID col(1L);
   edm::Timestamp fakeTime;
   edm::EventPrincipal ep(col, fakeTime, preg);
-  ep.addToProcessHistory(edm::ProcessHistoryItem("PROD", edm::ParameterSetID(), edm::getReleaseVersion(), edm::getPassID()));
+  ep.addToProcessHistory(edm::ProcessConfiguration("PROD", edm::ParameterSetID(), edm::getReleaseVersion(), edm::getPassID()));
 
   ep.put(pprod, pprov);
   

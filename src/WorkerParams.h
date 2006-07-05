@@ -23,18 +23,20 @@ namespace edm
   struct WorkerParams
   {
     WorkerParams(): 
-      pset_(),reg_(),actions_(),
+      procPset_(0), pset_(0),reg_(0),actions_(0),
       processName_(),releaseVersion_(),passID_() { }
 
-    WorkerParams(ParameterSet const& pset,
+    WorkerParams(ParameterSet const& procPset,
+		 ParameterSet const& pset,
 		 ProductRegistry& reg,
 		 ActionTable& actions,
 		 std::string const& processName,
 		 std::string releaseVersion=getReleaseVersion(),
 		 std::string passID=getPassID()):
-      pset_(&pset),reg_(&reg),actions_(&actions),
+      procPset_(&procPset),pset_(&pset),reg_(&reg),actions_(&actions),
       processName_(processName),releaseVersion_(releaseVersion),passID_(passID) { }
 
+    ParameterSet const* procPset_;
     ParameterSet const* pset_;
     ProductRegistry* reg_;
     ActionTable* actions_;

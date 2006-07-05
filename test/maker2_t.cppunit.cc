@@ -76,8 +76,8 @@ void testmaker2::maker2Test()
   edm::ActionTable table;
 
   edm::ProductRegistry preg;
-  edm::WorkerParams params1(p1, preg, table, "PROD", edm::getReleaseVersion(), edm::getPassID());
-  edm::WorkerParams params2(p2, preg, table, "PROD", edm::getReleaseVersion(), edm::getPassID());
+  edm::WorkerParams params1(p1, p1, preg, table, "PROD", edm::getReleaseVersion(), edm::getPassID());
+  edm::WorkerParams params2(p2, p2, preg, table, "PROD", edm::getReleaseVersion(), edm::getPassID());
 
   boost::signal<void (const ModuleDescription&)> aSignal;
   auto_ptr<Worker> w1 = f->makeWorker(params1,aSignal,aSignal);

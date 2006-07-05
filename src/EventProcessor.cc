@@ -17,7 +17,7 @@
 
 #include "PluginManager/PluginManager.h"
 
-#include "DataFormats/Common/interface/ProcessHistoryItem.h"
+#include "DataFormats/Common/interface/ProcessConfiguration.h"
 #include "FWCore/Utilities/interface/DebugMacros.h"
 #include "FWCore/Utilities/interface/EDMException.h"
 #include "FWCore/Utilities/interface/GetReleaseVersion.h"
@@ -309,14 +309,11 @@ namespace edm {
       // There is no module label for the unnamed input source, so 
       // just use "source".
       md.moduleLabel_ = "source";
-      md.processName_ = common.processName_; 
-     // warning version and pass are hardcoded
-      md.releaseVersion_ = getReleaseVersion();
-      md.passID_ = getPassID(); 
-      ProcessHistoryItem phItem(common.processName_, params.id(), md.releaseVersion_, md.passID_);
+      md.processConfiguration_ = ProcessConfiguration(common.processName_,
+				params.id(), getReleaseVersion(), getPassID());
 
       sourceSpecified = true;
-      InputSourceDescription isdesc(md, phItem, preg);
+      InputSourceDescription isdesc(md, preg);
       areg.preSourceConstructionSignal_(md);
       shared_ptr<InputSource> input(InputSourceFactory::get()->makeInputSource(main_input, isdesc).release());
       areg.postSourceConstructionSignal_(md);

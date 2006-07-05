@@ -3,7 +3,7 @@
    test for ProductRegistry 
 
    \author Stefano ARGIRO
-   \version $Id: edproducer_productregistry_callback.cc,v 1.7.2.1 2006/07/01 06:23:37 wmtan Exp $
+   \version $Id: edproducer_productregistry_callback.cc,v 1.7.2.2 2006/07/04 14:03:44 wmtan Exp $
    \date 21 July 2005
 */
 
@@ -155,8 +155,8 @@ void  testEDProducerProductRegistryCallback::testCircularRef(){
    
    edm::ActionTable table;
    
-   edm::WorkerParams params1(p1, preg, table, "PROD", edm::getReleaseVersion(), edm::getPassID());
-   edm::WorkerParams params2(p2, preg, table, "PROD", edm::getReleaseVersion(), edm::getPassID());
+   edm::WorkerParams params1(p1, p1, preg, table, "PROD", edm::getReleaseVersion(), edm::getPassID());
+   edm::WorkerParams params2(p2, p2, preg, table, "PROD", edm::getReleaseVersion(), edm::getPassID());
 
    
    auto_ptr<Maker> lM(new WorkerMaker<ListenMod>);
@@ -168,8 +168,8 @@ void  testEDProducerProductRegistryCallback::testCircularRef(){
    l2.addParameter("@module_type",std::string("ListenMod") );
    l2.addParameter("@module_label",std::string("l2") );
 
-   edm::WorkerParams paramsl1(l1, preg, table, "PROD", edm::getReleaseVersion(), edm::getPassID());
-   edm::WorkerParams paramsl2(l2, preg, table, "PROD", edm::getReleaseVersion(), edm::getPassID());
+   edm::WorkerParams paramsl1(l1, l1, preg, table, "PROD", edm::getReleaseVersion(), edm::getPassID());
+   edm::WorkerParams paramsl2(l2, l2, preg, table, "PROD", edm::getReleaseVersion(), edm::getPassID());
 
    boost::signal<void (const ModuleDescription&)> aSignal;
 
@@ -216,8 +216,8 @@ void  testEDProducerProductRegistryCallback::testCircularRef2(){
    
    edm::ActionTable table;
    
-   edm::WorkerParams params1(p1, preg, table, "PROD", edm::getReleaseVersion(), edm::getPassID());
-   edm::WorkerParams params2(p2, preg, table, "PROD", edm::getReleaseVersion(), edm::getPassID());
+   edm::WorkerParams params1(p1, p1, preg, table, "PROD", edm::getReleaseVersion(), edm::getPassID());
+   edm::WorkerParams params2(p2, p2, preg, table, "PROD", edm::getReleaseVersion(), edm::getPassID());
    
    
    auto_ptr<Maker> lM(new WorkerMaker<ListenMod>);
@@ -229,8 +229,8 @@ void  testEDProducerProductRegistryCallback::testCircularRef2(){
    l2.addParameter("@module_type",std::string("ListenMod") );
    l2.addParameter("@module_label",std::string("l2") );
    
-   edm::WorkerParams paramsl1(l1, preg, table, "PROD", edm::getReleaseVersion(), edm::getPassID());
-   edm::WorkerParams paramsl2(l2, preg, table, "PROD", edm::getReleaseVersion(), edm::getPassID());
+   edm::WorkerParams paramsl1(l1, l1, preg, table, "PROD", edm::getReleaseVersion(), edm::getPassID());
+   edm::WorkerParams paramsl2(l2, l2, preg, table, "PROD", edm::getReleaseVersion(), edm::getPassID());
    
    
    boost::signal<void (const ModuleDescription&)> aSignal;
@@ -277,8 +277,8 @@ void  testEDProducerProductRegistryCallback::testTwoListeners(){
    
    edm::ActionTable table;
    
-   edm::WorkerParams params1(p1, preg, table, "PROD", edm::getReleaseVersion(), edm::getPassID());
-   edm::WorkerParams params2(p2, preg, table, "PROD", edm::getReleaseVersion(), edm::getPassID());
+   edm::WorkerParams params1(p1, p1, preg, table, "PROD", edm::getReleaseVersion(), edm::getPassID());
+   edm::WorkerParams params2(p2, p2, preg, table, "PROD", edm::getReleaseVersion(), edm::getPassID());
    
    
    auto_ptr<Maker> lM(new WorkerMaker<ListenMod>);
@@ -291,8 +291,8 @@ void  testEDProducerProductRegistryCallback::testTwoListeners(){
    l2.addParameter("@module_type",std::string("ListenMod") );
    l2.addParameter("@module_label",std::string("l2") );
    
-   edm::WorkerParams paramsl1(l1, preg, table, "PROD", edm::getReleaseVersion(), edm::getPassID());
-   edm::WorkerParams paramsl2(l2, preg, table, "PROD", edm::getReleaseVersion(), edm::getPassID());
+   edm::WorkerParams paramsl1(l1, l1, preg, table, "PROD", edm::getReleaseVersion(), edm::getPassID());
+   edm::WorkerParams paramsl2(l2, l2, preg, table, "PROD", edm::getReleaseVersion(), edm::getPassID());
    
    
    boost::signal<void (const ModuleDescription&)> aSignal;

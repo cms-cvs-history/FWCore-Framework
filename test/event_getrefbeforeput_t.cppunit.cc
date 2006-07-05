@@ -2,7 +2,7 @@
 
 Test of the EventPrincipal class.
 
-$Id: event_getrefbeforeput_t.cppunit.cc,v 1.1.2.1 2006/06/27 21:32:08 wmtan Exp $
+$Id: event_getrefbeforeput_t.cppunit.cc,v 1.1.2.2 2006/07/04 14:03:44 wmtan Exp $
 
 ----------------------------------------------------------------------*/  
 #include <cassert>
@@ -56,7 +56,7 @@ void testEventGetRefBeforePut::failGetProductNotRegisteredTest() {
   edm::EventID col(1L);
   edm::Timestamp fakeTime;
   edm::EventPrincipal ep(col, fakeTime, preg);
-  ep.addToProcessHistory(edm::ProcessHistoryItem("PROD", edm::ParameterSetID(), edm::getReleaseVersion(), edm::getPassID()));
+  ep.addToProcessHistory(edm::ProcessConfiguration("PROD", edm::ParameterSetID(), edm::getReleaseVersion(), edm::getPassID()));
 
   try {
      edm::ModuleDescription modDesc;
@@ -103,14 +103,14 @@ void testEventGetRefBeforePut::getRefTest() {
   edm::EventID col(1L);
   edm::Timestamp fakeTime;
   edm::EventPrincipal ep(col, fakeTime, preg);
-  ep.addToProcessHistory(edm::ProcessHistoryItem(processName, edm::ParameterSetID(), edm::getReleaseVersion(), edm::getPassID()));
+  ep.addToProcessHistory(edm::ProcessConfiguration(processName, edm::ParameterSetID(), edm::getReleaseVersion(), edm::getPassID()));
 
   edm::RefProd<edmtest::IntProduct> refToProd;
   try {
     edm::ModuleDescription modDesc;
     modDesc.moduleName_="Blah";
     modDesc.moduleLabel_=label; 
-    modDesc.processName_ = processName;
+    modDesc.processConfiguration_.processName_ = processName;
 
     edm::Event event(ep, modDesc);
     std::auto_ptr<edmtest::IntProduct> pr(new edmtest::IntProduct);

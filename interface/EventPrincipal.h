@@ -15,7 +15,7 @@ through shared pointers.
 The EventPrincipal returns BasicHandle, rather than a shared
 pointer to a Group, when queried.
 
-$Id: EventPrincipal.h,v 1.30.2.4 2006/06/30 04:31:25 wmtan Exp $
+$Id: EventPrincipal.h,v 1.30.2.5 2006/07/04 14:03:43 wmtan Exp $
 
 ----------------------------------------------------------------------*/
 #include <map>
@@ -136,7 +136,7 @@ namespace edm {
 
     // ----- Mark this EventPrincipal as having been updated in the
     // given Process.
-    void addToProcessHistory(ProcessHistoryItem const& processHistoryItem);
+    void addToProcessHistory(ProcessConfiguration const& processConfiguration);
 
     void setUnscheduledHandler(boost::shared_ptr<UnscheduledHandler>);
     

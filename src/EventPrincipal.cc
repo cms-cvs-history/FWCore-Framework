@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------
-$Id: EventPrincipal.cc,v 1.41.2.6 2006/07/03 03:30:48 wmtan Exp $
+$Id: EventPrincipal.cc,v 1.41.2.7 2006/07/04 14:03:43 wmtan Exp $
 ----------------------------------------------------------------------*/
 //#include <iostream>
 #include <memory>
@@ -134,9 +134,9 @@ private:
   }
 
   void
-  EventPrincipal::addToProcessHistory(ProcessHistoryItem const& processHistoryItem) {
+  EventPrincipal::addToProcessHistory(ProcessConfiguration const& processConfiguration) {
     ProcessHistory& ph = aux_.processHistory();
-    std::string const& processName = processHistoryItem.processName();
+    std::string const& processName = processConfiguration.processName();
     for (ProcessHistory::const_iterator it = ph.begin(); it != ph.end(); ++it) {
       if (processName == it->processName()) {
 	throw edm::Exception(errors::Configuration, "Duplicate Process")
@@ -144,7 +144,7 @@ private:
 	  << "Please modify the configuration file to use a distinct process name.";
       }
     }
-    ph.push_back(processHistoryItem);
+    ph.push_back(processConfiguration);
     ProcessHistoryRegistry::instance()->insertMapped(ph);
     aux_.processHistoryID_ = ph.id();
   }
