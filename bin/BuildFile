@@ -2,5 +2,5 @@
  <use name=boost>
  <use name=FWCore/Framework>
  <use name=FWCore/MessageLogger>
- <lib name=boost_program_options-gcc-mt> 
+ <use name=boost_program_options> 
 </bin>

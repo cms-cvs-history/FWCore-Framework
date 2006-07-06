@@ -3,9 +3,6 @@
 <use name=FWCore/Framework>
 <use name=DataFormats/TestObjects>
 
-#Had to hard code in the -gcc-mt because I could find no
-# option in scram to tell it just to use boost_unit_test_framework
-
 <library file="DummyData.cc,DummyRecord.cc,DepRecord.cc,Dummy2Record.cc,DepOn2Record.cc" name=DummyForEventSetupTest>
 </library>
 
@@ -72,7 +69,7 @@
 
 <bin name=testFramework file=testRunner.cpp,callback_t.cppunit.cc,datakey_t.cppunit.cc,dependentrecord_t.cppunit.cc,esproducer_t.cppunit.cc,esproducts_t.cppunit.cc,eventsetupplugin_t.cppunit.cc,eventsetuprecord_t.cppunit.cc,eventsetup_t.cppunit.cc,fullchain_t.cppunit.cc,interval_t.cppunit.cc,proxyfactoryproducer_t.cppunit.cc,typeid_t.cppunit.cc,eventprocessor_t.cppunit.cc,eventprocessor2_t.cppunit.cc,maker2_t.cppunit.cc,maker_t.cppunit.cc,eventprincipal_t.cppunit.cc,iovsyncvalue_t.cppunit.cc,productregistry.cppunit.cc,edproducer_productregistry_callback.cc,generichandle_t.cppunit.cc,event_getrefbeforeput_t.cppunit.cc,friendlyname_t.cppunit.cc>
   <lib name=DummyForEventSetupTest> 
-  <lib name=boost_regex-gcc-mt>
+  <use name=boost_regex>
   <lib name=FWCoreFrameworkTestBeginEndJobAnalyzer> 
   <lib name=DummySource> 
 </bin>
