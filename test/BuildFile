@@ -89,3 +89,6 @@
 
 <bin file=CPCSentry_t.cpp>
 </bin>
+
+<bin file=RegistryTemplate_t.cpp>
+</bin>

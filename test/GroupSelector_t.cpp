@@ -7,8 +7,8 @@
 
 #include "FWCore/Framework/interface/GroupSelector.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
-#include "DataFormats/Common/interface/ModuleDescription.h"
 #include "DataFormats/Common/interface/BranchDescription.h"
+#include "DataFormats/Common/interface/ModuleDescriptionID.h"
 #include "FWCore/Utilities/interface/EDMException.h"
 
 using std::string;
@@ -50,54 +50,35 @@ int doTest(edm::ParameterSet const& params,
 
 int work()
 {
+  edm::ModuleDescriptionID md;
+
   int rc = 0;
   // We pretend to have one module, with two products. The products
   // are of the same and, type differ in instance name.
-  edm::ModuleDescription modA;
+  std::set<edm::ParameterSetID> psetsA;
   edm::ParameterSet modAparams;
   modAparams.addParameter<int>("i", 2112);
   modAparams.addParameter<string>("s", "hi");
-  modA.pid = modAparams.id();
-  modA.moduleName_    = "typeA";
-  modA.moduleLabel_   = "modA";
-  modA.versionNumber_ = 3UL;
-  modA.processName_   = "PROD";
-  modA.pass           = 1UL;
+  psetsA.insert(modAparams.id());
 
-  // The trailing argument is a null EDProduct pointer. Sure hope it ain't
-  // used!
-  boost::shared_ptr<edm::EDProduct const> null;
-
-  edm::BranchDescription b1(modA, "UglyProdTypeA", "ProdTypeA", "i1", "i1");
-  edm::BranchDescription b2(modA, "UglyProdTypeA", "ProdTypeA", "i2", "i2");
+  edm::BranchDescription b1("modA", "PROD", "UglyProdTypeA", "ProdTypeA", "i1", md, psetsA);
+  edm::BranchDescription b2("modA", "PROD", "UglyProdTypeA", "ProdTypeA", "i2", md, psetsA);
 
 
   // Our second pretend module has only one product, and gives it no
   // instance name.
-  edm::ModuleDescription modB;
+  std::set<edm::ParameterSetID> psetsB;
   edm::ParameterSet modBparams;
   modBparams.addParameter<double>("d", 2.5);
-  modB.pid = modBparams.id();
-  modB.moduleName_    = "typeB";
-  modB.moduleLabel_   = "modB";
-  modB.versionNumber_ = 1UL;
-  modB.processName_   = "HLT";
-  modB.pass           = 1UL;
+  psetsB.insert(modBparams.id());
 
-  edm::BranchDescription b3(modB, "UglyProdTypeB", "ProdTypeB", "", "modB");
+  edm::BranchDescription b3("modB", "HLT", "UglyProdTypeB", "ProdTypeB", "", md, psetsB);
 
   // Our third pretend is like modA, except it hass processName_ of
   // "USER"
-  edm::ModuleDescription modC;
-  modC.pid            = modA.pid;
-  modC.moduleName_    = modA.moduleName_;
-  modC.moduleLabel_   = modA.moduleLabel_;
-  modC.versionNumber_ = modA.versionNumber_;
-  modC.processName_   = "USER";
-  modC.pass           = modA.pass;
 
-  edm::BranchDescription b4(modC, "UglyProdTypeA", "ProdTypeA", "i1", "i1");
-  edm::BranchDescription b5(modC, "UglyProdTypeA", "ProdTypeA", "i2", "i2");
+  edm::BranchDescription b4("modA", "USER", "UglyProdTypeA", "ProdTypeA", "i1", md, psetsA);
+  edm::BranchDescription b5("modA", "USER", "UglyProdTypeA", "ProdTypeA", "i2", md, psetsA);
 
   // These are pointers to all the branches that are available. In a
   // framework program, these would come from the ProductRegistry
