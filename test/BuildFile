@@ -50,6 +50,11 @@
   <lib name=DummyForEventSetupTest>
 </library>
 
+<library file=stubs/DummyLooper.cc name=FWCoreFrameworkTestDummyLooper>
+  <flags SEAL_PLUGIN_NAME="FWCoreFrameworkTestDummyLooper">
+  <lib name=DummyForEventSetupTest>
+</library>
+
 <library file=stubs/TestESDummyDataAnalyzer.cc name=FWCoreFrameworkTestESDummyDataAnalyzer>
   <flags SEAL_PLUGIN_NAME="FWCoreFrameworkTestESDummyDataAnalyzer">
   <lib name=DummyForEventSetupTest>
@@ -75,7 +80,7 @@
 </bin>
 
 <bin file=TestDriver.cpp>
-  <flags TEST_RUNNER_ARGS=" /bin/bash FWCore/Framework/test run_cmsRun.sh run_es_refer_tests.sh run_trigbit.sh run_unscheduled.sh run_replace_tests.sh run_cpc_test.sh">
+  <flags TEST_RUNNER_ARGS=" /bin/bash FWCore/Framework/test run_cmsRun.sh run_es_refer_tests.sh run_trigbit.sh run_unscheduled.sh run_replace_tests.sh run_cpc_test.sh run_esproducerlooper.sh">
 </bin>
 
 <bin file=GroupSelector_t.cpp>
