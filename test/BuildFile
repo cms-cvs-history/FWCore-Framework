@@ -10,6 +10,10 @@
  <flags SEAL_PLUGIN_NAME="DummySource">
 </library>
 
+<library file=stubs/TestOutputModule.cc name=TestOutputModule>
+ <flags SEAL_PLUGIN_NAME="TestOutputModule">
+</library>
+
 <library file=stubs/TestFilterModule.cc name=TestFilterModule>
  <flags SEAL_PLUGIN_NAME="TestFilterModule">
 </library>
@@ -80,7 +84,7 @@
 </bin>
 
 <bin file=TestDriver.cpp>
-  <flags TEST_RUNNER_ARGS=" /bin/bash FWCore/Framework/test run_cmsRun.sh run_es_refer_tests.sh run_trigbit.sh run_unscheduled.sh run_replace_tests.sh run_cpc_test.sh run_esproducerlooper.sh">
+  <flags TEST_RUNNER_ARGS=" /bin/bash FWCore/Framework/test run_cmsRun.sh run_es_refer_tests.sh run_trigbit.sh run_trigmask.sh run_unscheduled.sh run_replace_tests.sh run_cpc_test.sh run_esproducerlooper.sh">
 </bin>
 
 <bin file=GroupSelector_t.cpp>
