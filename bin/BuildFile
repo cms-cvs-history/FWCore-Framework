@@ -1,4 +1,5 @@
-<bin file=cmsRun.cpp>
+<bin name=cmsRun file=cmsRun.cpp,pythonFileToConfigure.cpp>
+ <use name=boost_python>
  <use name=boost>
  <use name=FWCore/Framework>
  <use name=FWCore/MessageLogger>
