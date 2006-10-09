@@ -76,28 +76,28 @@
   <flags SEAL_PLUGIN_NAME="FWCoreFrameworkTestFailuresAnalyzer" >
 </library>
 
-<bin name=testFramework file=testRunner.cpp,callback_t.cppunit.cc,datakey_t.cppunit.cc,dependentrecord_t.cppunit.cc,esproducer_t.cppunit.cc,esproducts_t.cppunit.cc,eventsetupplugin_t.cppunit.cc,eventsetuprecord_t.cppunit.cc,eventsetup_t.cppunit.cc,fullchain_t.cppunit.cc,interval_t.cppunit.cc,proxyfactoryproducer_t.cppunit.cc,typeid_t.cppunit.cc,eventprocessor_t.cppunit.cc,eventprocessor2_t.cppunit.cc,maker2_t.cppunit.cc,maker_t.cppunit.cc,eventprincipal_t.cppunit.cc,iovsyncvalue_t.cppunit.cc,productregistry.cppunit.cc,edproducer_productregistry_callback.cc,generichandle_t.cppunit.cc,event_getrefbeforeput_t.cppunit.cc,friendlyname_t.cppunit.cc>
+<bin name=TestFWCoreFramework file=testRunner.cpp,callback_t.cppunit.cc,datakey_t.cppunit.cc,dependentrecord_t.cppunit.cc,esproducer_t.cppunit.cc,esproducts_t.cppunit.cc,eventsetupplugin_t.cppunit.cc,eventsetuprecord_t.cppunit.cc,eventsetup_t.cppunit.cc,fullchain_t.cppunit.cc,interval_t.cppunit.cc,proxyfactoryproducer_t.cppunit.cc,typeid_t.cppunit.cc,eventprocessor_t.cppunit.cc,eventprocessor2_t.cppunit.cc,maker2_t.cppunit.cc,maker_t.cppunit.cc,eventprincipal_t.cppunit.cc,iovsyncvalue_t.cppunit.cc,productregistry.cppunit.cc,edproducer_productregistry_callback.cc,generichandle_t.cppunit.cc,event_getrefbeforeput_t.cppunit.cc,friendlyname_t.cppunit.cc>
   <lib name=DummyForEventSetupTest> 
   <use name=boost_regex>
   <lib name=FWCoreFrameworkTestBeginEndJobAnalyzer> 
   <lib name=DummySource> 
 </bin>
 
-<bin file=TestDriver.cpp>
+<bin name=TestFWCoreFrameworkDriver file=TestDriver.cpp>
   <flags TEST_RUNNER_ARGS=" /bin/bash FWCore/Framework/test run_cmsRun.sh run_es_refer_tests.sh run_trigbit.sh run_trigmask.sh run_unscheduled.sh run_replace_tests.sh run_cpc_test.sh run_esproducerlooper.sh">
 </bin>
 
-<bin file=GroupSelector_t.cpp>
+<bin name=TestFWCoreFrameworkGroupSelector file=GroupSelector_t.cpp>
 </bin>
 
-<bin file=EventSelector_t.cpp>
+<bin name=TestFWCoreFrameworkEventSelector file=EventSelector_t.cpp>
 </bin>
 
-<bin file=CurrentProcessingContext_t.cpp>
+<bin name=TestFWCoreFrameworkCurrentProcessingContext file=CurrentProcessingContext_t.cpp>
 </bin>
 
-<bin file=CPCSentry_t.cpp>
+<bin name=TestFWCoreFrameworkCPCSentry file=CPCSentry_t.cpp>
 </bin>
 
-<bin file=RegistryTemplate_t.cpp>
+<bin name=TestFWCoreFrameworkRegistryTemplate file=RegistryTemplate_t.cpp>
 </bin>
