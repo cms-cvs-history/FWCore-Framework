@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------
-$Id: DummySource.cc,v 1.2 2005/12/28 00:51:28 wmtan Exp $
+$Id: DummySource.cc,v 1.3 2005/12/28 21:49:52 wmtan Exp $
 ----------------------------------------------------------------------*/
 
 #include <stdexcept>
@@ -24,5 +24,5 @@ namespace edm {
   }
 }
 using edm::DummySource;
-DEFINE_FWK_INPUT_SOURCE(DummySource)
+DEFINE_FWK_INPUT_SOURCE(DummySource);
 
