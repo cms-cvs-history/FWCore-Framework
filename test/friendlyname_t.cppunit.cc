@@ -49,6 +49,8 @@ void testfriendlyName::test()
   classToFriendly.insert( Values("edm::Wrapper<MuonDigiCollection<CSCDetId,CSCALCTDigi> >","CSCDetIdCSCALCTDigiMuonDigiCollection") );
   classToFriendly.insert( Values("edm::AssociationMap<std::vector<CaloJet>, std::vector<reco::Track>, edm::OneToMany, unsigned long>","CaloJetsToManyrecoTracksAssociation") );
   classToFriendly.insert( Values("edm::AssociationMap<std::vector<CaloJet>, std::vector<reco::Track>, edm::OneToOne, unsigned long>","CaloJetsToOnerecoTracksAssociation") );
+  classToFriendly.insert( Values("edm::AssociationVector<std::vector<CaloJet>, std::vector<reco::Track> >","CaloJetsTorecoTracksAssociationVector") );
+  classToFriendly.insert( Values("edm::AssociationVector<edm::OwnVector<reco::Candidate, edm::ClonePolicy<reco::Candidate> >, std::vector<double> >","recoCandidatesOwnedTodoublesAssociationVector") );
   classToFriendly.insert( Values("A<B<C>, D<E> >","CBEDA"));
   classToFriendly.insert( Values("A<B<C<D> > >","DCBA"));
   classToFriendly.insert( Values("A<B<C,D>, E<F> >","CDBFEA"));
