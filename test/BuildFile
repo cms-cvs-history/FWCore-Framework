@@ -101,3 +101,7 @@
 
 <bin name=TestFWCoreFrameworkRegistryTemplate file=RegistryTemplate_t.cpp>
 </bin>
+
+<bin name=TestFWCoreOutputModuleUtilities file=OutputModuleUtilities_t.cpp>
+</bin>
+
