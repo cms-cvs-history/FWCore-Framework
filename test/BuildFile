@@ -83,6 +83,8 @@
   <lib name=DummySource> 
 </bin>
 
+<bin name=TestFWCoreFrameworkEvent file=Event_t.cpp></bin>
+
 <bin name=TestFWCoreFrameworkDriver file=TestDriver.cpp>
   <flags TEST_RUNNER_ARGS=" /bin/bash FWCore/Framework/test run_cmsRun.sh run_es_refer_tests.sh run_trigbit.sh run_trigmask.sh run_unscheduled.sh run_replace_tests.sh run_cpc_test.sh run_esproducerlooper.sh">
 </bin>
