@@ -8,6 +8,7 @@
 #include "FWCore/Framework/interface/GroupSelector.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "DataFormats/Common/interface/BranchDescription.h"
+#include "DataFormats/Common/interface/ModuleDescription.h"
 #include "DataFormats/Common/interface/ModuleDescriptionID.h"
 #include "FWCore/Utilities/interface/EDMException.h"
 
@@ -50,7 +51,8 @@ int doTest(edm::ParameterSet const& params,
 
 int work()
 {
-  edm::ModuleDescriptionID md;
+  edm::ModuleDescription mod;
+  edm::ModuleDescriptionID mdid = mod.id();
 
   int rc = 0;
   // We pretend to have one module, with two products. The products
@@ -61,9 +63,12 @@ int work()
   modAparams.addParameter<string>("s", "hi");
   psetsA.insert(modAparams.id());
 
-  edm::BranchDescription b1(edm::InEvent, "modA", "PROD", "UglyProdTypeA", "ProdTypeA", "i1", md, psetsA);
-  edm::BranchDescription b2(edm::InEvent, "modA", "PROD", "UglyProdTypeA", "ProdTypeA", "i2", md, psetsA);
-
+  //edm::BranchDescription b1(edm::InEvent, "modA", "PROD", "UglyProdTypeA", "ProdTypeA", "i1", md, psetsA);
+  //edm::BranchDescription b2(edm::InEvent, "modA", "PROD", "UglyProdTypeA", "ProdTypeA", "i2", md, psetsA);
+  edm::BranchDescription b1(edm::InEvent, "modA", "PROD", "UglyProdTypeA", "ProdTypeA", "i1", 
+			    mod);
+  edm::BranchDescription b2(edm::InEvent, "modA", "PROD", "UglyProdTypeA", "ProdTypeA", "i2", 
+			    mod);
 
   // Our second pretend module has only one product, and gives it no
   // instance name.
@@ -72,13 +77,20 @@ int work()
   modBparams.addParameter<double>("d", 2.5);
   psetsB.insert(modBparams.id());
 
-  edm::BranchDescription b3(edm::InEvent, "modB", "HLT", "UglyProdTypeB", "ProdTypeB", "", md, psetsB);
+  //edm::BranchDescription b3(edm::InEvent, "modB", "HLT", "UglyProdTypeB", "ProdTypeB", "", md, psetsB);
+  edm::BranchDescription b3(edm::InEvent, "modB", "HLT", "UglyProdTypeB", "ProdTypeB", "", 
+			    mod);
 
   // Our third pretend is like modA, except it hass processName_ of
   // "USER"
 
-  edm::BranchDescription b4(edm::InEvent, "modA", "USER", "UglyProdTypeA", "ProdTypeA", "i1", md, psetsA);
-  edm::BranchDescription b5(edm::InEvent, "modA", "USER", "UglyProdTypeA", "ProdTypeA", "i2", md, psetsA);
+  //edm::BranchDescription b4(edm::InEvent, "modA", "USER", "UglyProdTypeA", "ProdTypeA", "i1", md, psetsA);
+  //edm::BranchDescription b5(edm::InEvent, "modA", "USER", "UglyProdTypeA", "ProdTypeA", "i2", md, psetsA);
+
+  edm::BranchDescription b4(edm::InEvent, "modA", "USER", "UglyProdTypeA", 
+			    "ProdTypeA", "i1", mod);
+  edm::BranchDescription b5(edm::InEvent, "modA", "USER", "UglyProdTypeA",
+			    "ProdTypeA", "i2", mod);
 
   // These are pointers to all the branches that are available. In a
   // framework program, these would come from the ProductRegistry
