@@ -1,12 +1,11 @@
 /*----------------------------------------------------------------------
-$Id: DummySource.cc,v 1.3 2005/12/28 21:49:52 wmtan Exp $
+$Id: DummySource.cc,v 1.4 2006/10/21 17:18:56 wmtan Exp $
 ----------------------------------------------------------------------*/
 
 #include <stdexcept>
 #include <memory>
 
 #include "FWCore/Framework/test/DummySource.h"
-#include "PluginManager/ModuleDef.h"
 #include "FWCore/Framework/interface/InputSourceMacros.h"
 
 namespace edm {
