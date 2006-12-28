@@ -84,10 +84,39 @@
 </bin>
 
 <bin name=TestFWCoreFrameworkEvent file=Event_t.cpp></bin>
+
 <bin name=TestFWCoreFrameworkView file=View_t.cpp></bin>
 
-<bin name=TestFWCoreFrameworkDriver file=TestDriver.cpp>
-  <flags TEST_RUNNER_ARGS=" /bin/bash FWCore/Framework/test run_cmsRun.sh run_es_refer_tests.sh run_trigbit.sh run_trigmask.sh run_unscheduled.sh run_replace_tests.sh run_cpc_test.sh run_esproducerlooper.sh">
+<bin name=TestFWCoreFrameworkCmsRun file=TestDriver.cpp>
+  <flags TEST_RUNNER_ARGS=" /bin/bash FWCore/Framework/test run_cmsRun.sh">
+</bin>
+
+<bin name=TestFWCoreFrameworkESRefer file=TestDriver.cpp>
+  <flags TEST_RUNNER_ARGS=" /bin/bash FWCore/Framework/test run_es_refer_tests.sh">
+</bin>
+
+<bin name=TestFWCoreFrameworkUnscheduled file=TestDriver.cpp>
+  <flags TEST_RUNNER_ARGS=" /bin/bash FWCore/Framework/test run_unscheduled.sh">
+</bin>
+
+<bin name=TestFWCoreFrameworkReplace file=TestDriver.cpp>
+  <flags TEST_RUNNER_ARGS=" /bin/bash FWCore/Framework/test run_replace_tests.sh">
+</bin>
+
+<bin name=TestFWCoreFrameworkCPC file=TestDriver.cpp>
+  <flags TEST_RUNNER_ARGS=" /bin/bash FWCore/Framework/test run_cpc_test.sh">
+</bin>
+
+<bin name=TestFWCoreFrameworkESProducerLooper file=TestDriver.cpp>
+  <flags TEST_RUNNER_ARGS=" /bin/bash FWCore/Framework/test run_esproducerlooper.sh">
+</bin>
+
+<bin name=TestFWCoreFrameworkTrigBit file=TestDriver.cpp>
+  <flags TEST_RUNNER_ARGS=" /bin/bash FWCore/Framework/test run_trigbit.sh">
+</bin>
+
+<bin name=TestFWCoreFrameworkTrigMask file=TestDriver.cpp>
+  <flags TEST_RUNNER_ARGS=" /bin/bash FWCore/Framework/test run_trigmask.sh">
 </bin>
 
 <bin name=TestFWCoreFrameworkGroupSelector file=GroupSelector_t.cpp>

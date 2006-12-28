@@ -1,21 +1,3 @@
 	untracked PSet options = {
-	    untracked vstring Rethrow = {
-		"Unknown",
-		"ProductNotFound",
-		"InsertFailure",
-		"Configuration",
-		"LogicError",
-		"UnimplementedFeature",
-		"InvalidReference",
-		"NullPointerError",
-		"NoProductSpecified",
-		"EventTimeout",
-		"EventCorruption",
-		"ModuleFailure",
-		"ScheduleExecutionFailure",
-		"EventProcessorFailure",
-		"FileInPathError",
-		"FatalRootError",
-		"NotFound"
-	    }
+		include "FWCore/Framework/test/cmsExceptionsFatalOption.cff"
 	}
