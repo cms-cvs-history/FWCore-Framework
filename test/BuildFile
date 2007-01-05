@@ -119,6 +119,10 @@
   <flags TEST_RUNNER_ARGS=" /bin/bash FWCore/Framework/test run_trigmask.sh">
 </bin>
 
+<bin name=TestFWCoreFrameworkSelectEvents file=TestDriver.cpp>
+  <flags TEST_RUNNER_ARGS=" /bin/bash FWCore/Framework/test run_SelectEvents.sh">
+</bin>
+
 <bin name=TestFWCoreFrameworkGroupSelector file=GroupSelector_t.cpp>
 </bin>
 
