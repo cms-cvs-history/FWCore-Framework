@@ -234,6 +234,26 @@ int work()
 		 allbranches, expected);
   }
 
+  // Exercise the wildcards * and ?
+  {
+    bool wanted[] = { true, true, true, false, false };
+    vector<bool> expected(wanted, wanted+sizeof(wanted)/sizeof(bool));
+
+    edm::ParameterSet params;
+    const string rule1 = "drop *";
+    const string rule2 = "keep Pr*A_m?dA_??_P?O*";
+    const string rule3 = "keep *?*?***??*????*?***_??***?__*?***T";
+    vector<string> cmds;
+    cmds.push_back(rule1);
+    cmds.push_back(rule2);
+    cmds.push_back(rule3);
+    params.addUntrackedParameter<vector<string> >("outputCommands", cmds);
+
+    rc += doTest(params,
+		 "excercise wildcards1",
+		 allbranches, expected);
+  }
+
   {
     // Now try an illegal specification: not starting with 'keep' or 'drop'
     try {
