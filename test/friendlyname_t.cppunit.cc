@@ -60,8 +60,9 @@ void testfriendlyName::test()
   classToFriendly.insert( Values("Aa<Bb<Cc,Dd>, Ee<Ff,Gg> >","CcDdBbFfGgEeAa"));
   classToFriendly.insert( Values("edm::RangeMap<DetId,edm::OwnVector<SiPixelRecHit,edm::ClonePolicy<SiPixelRecHit> >,edm::ClonePolicy<SiPixelRecHit> >","DetIdSiPixelRecHitsOwnedRangeMap"));
   classToFriendly.insert( Values("std::vector<edm::RangeMap<DetId,edm::OwnVector<SiPixelRecHit,edm::ClonePolicy<SiPixelRecHit> >,edm::ClonePolicy<SiPixelRecHit> > >","DetIdSiPixelRecHitsOwnedRangeMaps"));
-  for(std::map<std::string, std::string>::iterator itInfo = classToFriendly.begin();
-      itInfo != classToFriendly.end();
+  for(std::map<std::string, std::string>::iterator itInfo = classToFriendly.begin(),
+      itInfoEnd = classToFriendly.end();
+      itInfo != itInfoEnd;
       ++itInfo) {
     //std::cout <<itInfo->first<<std::endl;
     if( itInfo->second != edm::friendlyname::friendlyName(itInfo->first) ) {
