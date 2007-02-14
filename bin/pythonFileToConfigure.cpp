@@ -45,7 +45,7 @@ pythonToCppException(const std::string& iType)
 std::string edm::pythonFileToConfigure(const std::string& iPythonFileName)
 {
   std::string returnValue;
-  std::string initCommand("import cmsconfigure as cms\n"
+  std::string initCommand("import FWCore.ParameterSet.Config as cms\n"
                           "fileDict = dict()\n"
                           "execfile('");
   initCommand += iPythonFileName+"',fileDict)";
