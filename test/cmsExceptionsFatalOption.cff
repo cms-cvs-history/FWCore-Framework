@@ -1,6 +1,7 @@
 	    untracked vstring Rethrow = {
 		"Unknown",
 		"ProductNotFound",
+		"DictionaryNotFound",
 		"InsertFailure",
 		"Configuration",
 		"LogicError",
