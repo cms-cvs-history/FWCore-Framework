@@ -9,7 +9,7 @@
 
 #include <cppunit/extensions/HelperMacros.h>
 #include <iostream>
-#include "FWCore/Framework/src/FriendlyName.h"
+#include "FWCore/Utilities/interface/FriendlyName.h"
 
 using namespace edm;
 

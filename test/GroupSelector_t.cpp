@@ -7,9 +7,9 @@
 
 #include "FWCore/Framework/interface/GroupSelector.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
-#include "DataFormats/Common/interface/BranchDescription.h"
-#include "DataFormats/Common/interface/ModuleDescription.h"
-#include "DataFormats/Common/interface/ModuleDescriptionID.h"
+#include "DataFormats/Provenance/interface/BranchDescription.h"
+#include "DataFormats/Provenance/interface/ModuleDescription.h"
+#include "DataFormats/Provenance/interface/ModuleDescriptionID.h"
 #include "FWCore/Utilities/interface/EDMException.h"
 
 using std::string;
