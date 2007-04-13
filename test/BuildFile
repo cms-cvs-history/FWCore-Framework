@@ -4,11 +4,10 @@
 <use name=FWCore/PluginManager>
 <use name=DataFormats/TestObjects>
 
-<library file="DummyData.cc,DummyRecord.cc,DepRecord.cc,Dummy2Record.cc,DepOn2Record.cc" name=DummyForEventSetupTest>
+<library file="DummyData.cc,DummyRecord.cc,DepRecord.cc,Dummy2Record.cc,DepOn2Record.cc" name=FWCoreFrameworkTestDummyForEventSetup>
 </library>
 
-<library file=DummySource.cc name=DummySource>
- <flags EDM_PLUGIN=1>
+<library file=DummySource.cc name=FWCoreFrameworkTestDummySource>
 </library>
 
 <library file=stubs/TestOutputModule.cc name=TestOutputModule>
@@ -37,12 +36,12 @@
 
 <library file=stubs/LoadableDummyFinder.cc name=TestLoadableDummyFinder>
   <flags EDM_PLUGIN=1>
-  <lib name=DummyForEventSetupTest>
+  <lib name=FWCoreFrameworkTestDummyForEventSetup>
 </library>
 
 <library file=stubs/LoadableDummyESSource.cc name=TestLoadableDummyESSource>
   <flags EDM_PLUGIN=1>
-  <lib name=DummyForEventSetupTest>
+  <lib name=FWCoreFrameworkTestDummyForEventSetup>
 </library>
 
 <library file=stubs/LoadableDummyEventSetupRecordRetriever.cc name=TestLoadableDummyEventSetupRecordRetriever>
@@ -52,17 +51,17 @@
 
 <library file=stubs/LoadableDummyProvider.cc name=TestLoadableDummyProvider>
   <flags EDM_PLUGIN=1>
-  <lib name=DummyForEventSetupTest>
+  <lib name=FWCoreFrameworkTestDummyForEventSetup>
 </library>
 
 <library file=stubs/DummyLooper.cc name=FWCoreFrameworkTestDummyLooper>
   <flags EDM_PLUGIN=1>
-  <lib name=DummyForEventSetupTest>
+  <lib name=FWCoreFrameworkTestDummyForEventSetup>
 </library>
 
 <library file=stubs/TestESDummyDataAnalyzer.cc name=FWCoreFrameworkTestESDummyDataAnalyzer>
   <flags EDM_PLUGIN=1>
-  <lib name=DummyForEventSetupTest>
+  <lib name=FWCoreFrameworkTestDummyForEventSetup>
 </library>
 
 <library file=stubs/TestPRegisterModule2.cc,stubs/TestPRegisterModule1.cc,stubs/TestPRegisterSealModules.cc name=FWCoreFrameworkTestPRegisterModules >
@@ -70,7 +69,6 @@
 </library>
 
 <library file=stubs/TestBeginEndJobAnalyzer.cc name=FWCoreFrameworkTestBeginEndJobAnalyzer >
-  <flags EDM_PLUGIN=1 >
 </library>
 
 <library file=stubs/TestFailuresAnalyzer.cc name=FWCoreFrameworkTestFailuresAnalyzer >
@@ -78,10 +76,10 @@
 </library>
 
 <bin name=TestFWCoreFramework file=testRunner.cpp,callback_t.cppunit.cc,datakey_t.cppunit.cc,dependentrecord_t.cppunit.cc,esproducer_t.cppunit.cc,esproducts_t.cppunit.cc,eventsetupplugin_t.cppunit.cc,eventsetuprecord_t.cppunit.cc,eventsetup_t.cppunit.cc,fullchain_t.cppunit.cc,interval_t.cppunit.cc,proxyfactoryproducer_t.cppunit.cc,eventprocessor_t.cppunit.cc,eventprocessor2_t.cppunit.cc,maker2_t.cppunit.cc,maker_t.cppunit.cc,eventprincipal_t.cppunit.cc,iovsyncvalue_t.cppunit.cc,productregistry.cppunit.cc,edproducer_productregistry_callback.cc,generichandle_t.cppunit.cc,event_getrefbeforeput_t.cppunit.cc>
-  <lib name=DummyForEventSetupTest> 
+  <lib name=FWCoreFrameworkTestDummyForEventSetup> 
   <use name=boost_regex>
   <lib name=FWCoreFrameworkTestBeginEndJobAnalyzer> 
-  <lib name=DummySource> 
+  <lib name=FWCoreFrameworkTestDummySource> 
 </bin>
 
 <bin name=TestFWCoreFrameworkEvent file=Event_t.cpp></bin>
