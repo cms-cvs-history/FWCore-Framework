@@ -1,14 +1,14 @@
 // -*- C++ -*-
 //
 // Package:     test
-// Class  :     TestPRegisterSealModules
+// Class  :     TestPRegisterModules
 // 
 // Implementation:
 //     <Notes on implementation>
 //
 // Original Author:  Chris Jones
 //         Created:  Sat Sep 24 10:58:40 CEST 2005
-// $Id: TestPRegisterSealModules.cc,v 1.4 2007/04/09 23:13:20 chrjones Exp $
+// $Id: TestPRegisterModules.cc,v 1.5 2007/04/12 12:00:33 wmtan Exp $
 //
 
 // system include files
