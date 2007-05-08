@@ -64,7 +64,7 @@
   <lib name=FWCoreFrameworkTestDummyForEventSetup>
 </library>
 
-<library file=stubs/TestPRegisterModule2.cc,stubs/TestPRegisterModule1.cc,stubs/TestPRegisterSealModules.cc name=FWCoreFrameworkTestPRegisterModules >
+<library file=stubs/TestPRegisterModule2.cc,stubs/TestPRegisterModule1.cc,stubs/TestPRegisterModules.cc name=FWCoreFrameworkTestPRegisterModules >
   <flags EDM_PLUGIN=1 >
 </library>
 
