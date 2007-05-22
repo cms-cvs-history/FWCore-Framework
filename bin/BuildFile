@@ -7,4 +7,5 @@
  <use name=FWCore/PluginManager>
  <use name=FWCore/ServiceRegistry>
  <use name=FWCore/Utilities>
+ <use name=Foundation/SealBase>
 </bin>
