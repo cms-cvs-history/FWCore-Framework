@@ -32,8 +32,6 @@
 #include "FWCore/Framework/interface/ModuleFactory.h"
 #include "FWCore/Framework/interface/LooperFactory.h"
 #include "FWCore/Framework/interface/EventPrincipal.h"
-#include "FWCore/Framework/interface/LuminosityBlockPrincipal.h"
-#include "FWCore/Framework/interface/RunPrincipal.h"
 #include "FWCore/Framework/interface/ConstProductRegistry.h"
 #include "FWCore/Framework/interface/TriggerNamesService.h"
 
@@ -49,7 +47,6 @@
 
 #include "FWCore/ServiceRegistry/interface/ActivityRegistry.h"
 #include "FWCore/Framework/interface/Schedule.h"
-#include "FWCore/Framework/src/Path.h"
 #include "FWCore/Framework/interface/EDLooperHelper.h"
 #include "FWCore/Framework/interface/EDLooper.h"
 
@@ -745,7 +742,7 @@ namespace edm {
     IOVSyncValue ts(pep->id(), pep->time());
     EventSetup const& es = esp_->eventSetupForInstance(ts);
     
-    schedule_->runOneEvent(*pep, es, BranchActionEvent);
+    schedule_->runOneEvent(*pep.get(), es, BranchActionEvent);
     toerror.succeeded();
     return EventHelperDescription(pep,&es);
   }
@@ -755,12 +752,10 @@ namespace edm {
     IOVSyncValue ts(ep.id(), ep.time());
     input_->doFinishLumi();
     EventSetup const& es = esp_->eventSetupForInstance(ts);
-    LuminosityBlockPrincipal & lbp = const_cast<LuminosityBlockPrincipal&>(ep.luminosityBlockPrincipal());
-    schedule_->runOneEvent(lbp, es, BranchActionEnd);
+    schedule_->runOneEvent(ep, es, BranchActionEndLumi);
     if (isNewRun) {
       input_->doFinishRun();
-      RunPrincipal & rp = const_cast<RunPrincipal&>(ep.luminosityBlockPrincipal().runPrincipal());
-      schedule_->runOneEvent(rp, es, BranchActionEnd);
+      schedule_->runOneEvent(ep, es, BranchActionEndRun);
     }
   }
 
@@ -786,7 +781,7 @@ namespace edm {
       {
         boost::mutex::scoped_lock sl(usr2_lock);
         if(edm::shutdown_flag) {
-          if (previousPep.get() != 0) endLumiAndRun(*previousPep);
+          if (previousPep.get() != 0) endLumiAndRun(*previousPep.get());
           changeState(mShutdownSignal);
           rc = epSignal;
           got_sig = true;
@@ -796,7 +791,7 @@ namespace edm {
 
       if(!runforever && eventcount >= numberToProcess) {
 	if (previousPep.get() != 0) {
-	  endLumiAndRun(*previousPep);
+	  endLumiAndRun(*previousPep.get());
 	}
 	changeState(mCountComplete);
 	continue;
@@ -811,7 +806,7 @@ namespace edm {
       }
         
       if (pep.get() == 0) {
-	if (previousPep.get() != 0) endLumiAndRun(*previousPep);
+	if (previousPep.get() != 0) endLumiAndRun(*previousPep.get());
 	changeState(mInputExhausted);
 	rc = epInputComplete;
 	continue;
@@ -820,7 +815,7 @@ namespace edm {
       bool isANewLumi = !isSameLumi(previousPep.get(), pep.get());
       bool isANewRun = !isSameRun(previousPep.get(), pep.get());
       if(isANewLumi) {
-      if (previousPep.get() != 0) endLumiAndRun(*previousPep, isANewRun);
+      if (previousPep.get() != 0) endLumiAndRun(*previousPep.get(), isANewRun);
       }
 
       IOVSyncValue ts(pep->id(), pep->time());
@@ -828,15 +823,13 @@ namespace edm {
 	
       if (isANewLumi) {
         if (isANewRun) {
-          RunPrincipal & rp = const_cast<RunPrincipal&>(pep->luminosityBlockPrincipal().runPrincipal());
-	  schedule_->runOneEvent(rp, es, BranchActionBegin);
+	  schedule_->runOneEvent(*pep.get(), es, BranchActionBeginRun);
         }
-        LuminosityBlockPrincipal & lbp = const_cast<LuminosityBlockPrincipal&>(pep->luminosityBlockPrincipal());
-	schedule_->runOneEvent(lbp, es, BranchActionBegin);
+	schedule_->runOneEvent(*pep.get(), es, BranchActionBeginLumi);
       }
-      schedule_->runOneEvent(*pep, es, BranchActionEvent);
+      schedule_->runOneEvent(*pep.get(), es, BranchActionEvent);
       if (schedule_->terminate()) {
-        endLumiAndRun(*pep, true);
+        endLumiAndRun(*pep.get(), true);
 	changeState(mCountComplete);
       }
 
@@ -899,7 +892,7 @@ namespace edm {
 	IOVSyncValue ts(pep->id(), pep->time());
 	EventSetup const& es = esp_->eventSetupForInstance(ts);
 
-	schedule_->runOneEvent(*pep, es, BranchActionEvent);
+	schedule_->runOneEvent(*pep.get(), es, BranchActionEvent);
 	changeState(mCountComplete);
     }
 
