@@ -14,7 +14,6 @@ Toy EDProducers and EDProducts for testing purposes only.
 #include "DataFormats/Common/interface/EDProduct.h"
 #include "DataFormats/Common/interface/Handle.h"
 #include "DataFormats/Common/interface/Ref.h"
-#include "DataFormats/Common/interface/FillView.h"
 #include "DataFormats/Common/interface/RefVector.h"
 #include "DataFormats/TestObjects/interface/ToyProducts.h"
 
@@ -739,21 +738,21 @@ using edmtest::IntListProducer;
 using edmtest::IntDequeProducer;
 using edmtest::IntSetProducer;
 using edmtest::IntVecRefVectorProducer;
-DEFINE_FWK_MODULE(FailingProducer);
-DEFINE_FWK_MODULE(IntProducer);
-DEFINE_FWK_MODULE(DoubleProducer);
-DEFINE_FWK_MODULE(SCSimpleProducer);
-DEFINE_FWK_MODULE(OVSimpleProducer);
-DEFINE_FWK_MODULE(VSimpleProducer);
-DEFINE_FWK_MODULE(AVSimpleProducer);
-DEFINE_FWK_MODULE(DSVProducer);
-DEFINE_FWK_MODULE(IntTestAnalyzer);
-DEFINE_FWK_MODULE(SCSimpleAnalyzer);
-DEFINE_FWK_MODULE(DSVAnalyzer);
-DEFINE_FWK_MODULE(AddIntsProducer);
-DEFINE_FWK_MODULE(IntVectorProducer);
-DEFINE_FWK_MODULE(IntListProducer);
-DEFINE_FWK_MODULE(IntDequeProducer);
-DEFINE_FWK_MODULE(IntSetProducer);
-DEFINE_FWK_MODULE(IntVecRefVectorProducer);
 
+DEFINE_SEAL_MODULE();
+DEFINE_ANOTHER_FWK_MODULE(FailingProducer);
+DEFINE_ANOTHER_FWK_MODULE(IntProducer);
+DEFINE_ANOTHER_FWK_MODULE(DoubleProducer);
+DEFINE_ANOTHER_FWK_MODULE(SCSimpleProducer);
+DEFINE_ANOTHER_FWK_MODULE(OVSimpleProducer);
+DEFINE_ANOTHER_FWK_MODULE(AVSimpleProducer);
+DEFINE_ANOTHER_FWK_MODULE(DSVProducer);
+DEFINE_ANOTHER_FWK_MODULE(IntTestAnalyzer);
+DEFINE_ANOTHER_FWK_MODULE(SCSimpleAnalyzer);
+DEFINE_ANOTHER_FWK_MODULE(DSVAnalyzer);
+DEFINE_ANOTHER_FWK_MODULE(AddIntsProducer);
+DEFINE_ANOTHER_FWK_MODULE(IntVectorProducer);
+DEFINE_ANOTHER_FWK_MODULE(IntListProducer);
+DEFINE_ANOTHER_FWK_MODULE(IntDequeProducer);
+DEFINE_ANOTHER_FWK_MODULE(IntSetProducer);
+DEFINE_ANOTHER_FWK_MODULE(IntVecRefVectorProducer);
