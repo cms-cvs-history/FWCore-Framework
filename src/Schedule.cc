@@ -259,10 +259,10 @@ namespace edm {
 	    ++itLabel) {
 	  unusedStream <<",'" << *itLabel<<"'";
 	}
-	LogWarning("path")
+	LogInfo("path")
 	  << "The following module labels are not assigned to any path:\n"
-	  <<unusedStream.str()
-	  <<"\n";
+	  << unusedStream.str()
+	  << "\n";
       }
     }
     prod_reg_->setProductIDs();
