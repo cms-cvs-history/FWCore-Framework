@@ -515,6 +515,8 @@ namespace edm {
     id_set_(false),
     event_loop_id_(),
     my_sig_num_(getSigNum()),
+    rp_(),
+    lbp_(),
     looper_()
   {
     init(config, iToken, iLegacy, defaultServices, forcedServices);
@@ -547,6 +549,8 @@ namespace edm {
     id_set_(false),
     event_loop_id_(),
     my_sig_num_(getSigNum()),
+    rp_(),
+    lbp_(),
     looper_()
   {
     init(config, ServiceToken(), serviceregistry::kOverlapIsError, defaultServices, forcedServices);
@@ -727,7 +731,7 @@ namespace edm {
       }
     }
 
-    if( rp.get() == 0) {
+    if(!rp) {
       //must be first time
       bool foundLumi = false;
       while(not foundLumi) {
@@ -735,26 +739,29 @@ namespace edm {
           CallPrePost holder(*actReg_);
           rp = input_->readRun();
         }
-        if( rp.get() == 0) {
+        if(!rp) {
           //reached end
           changeState(mInputExhausted);
           toerror.succeeded();
           return evtDesc;
         }
-        // Run principal needs a timestamp!
-        IOVSyncValue ts(EventID(rp->run(),0), Timestamp::invalidTimestamp());
-        EventSetup const& es = esp_->eventSetupForInstance(ts);
-        schedule_->runOneEvent(*rp, es, BranchActionBegin);
-        {
+	{
+          IOVSyncValue ts(EventID(rp->run(),0), rp->beginTime());
+          EventSetup const& es = esp_->eventSetupForInstance(ts);
+          schedule_->runOneEvent(*rp, es, BranchActionBegin);
+	}
+	{
           CallPrePost holder(*actReg_);
           lbp = input_->readLuminosityBlock(rp);
         }
-        if(lbp.get()==0){
+        if(!lbp) {
+          IOVSyncValue ts(EventID(rp->run(),EventID::maxEventNumber()), rp->endTime());
+          EventSetup const& es = esp_->eventSetupForInstance(ts);
           schedule_->runOneEvent(*rp, es, BranchActionEnd);
           continue;
         }
         {
-          IOVSyncValue ts(EventID(lbp->runNumber(),0), Timestamp::invalidTimestamp());
+          IOVSyncValue ts(EventID(lbp->runNumber(),0), lbp->beginTime());
           EventSetup const& es = esp_->eventSetupForInstance(ts);
           schedule_->runOneEvent(*lbp, es, BranchActionBegin);
         }
@@ -763,17 +770,16 @@ namespace edm {
     }
     
     bool doneProcessingEvent = false;
-    while( not doneProcessingEvent &&
-           state_ == sRunning ) {
+    while(not doneProcessingEvent &&
+           state_ == sRunning) {
       std::auto_ptr<EventPrincipal> pep;
       {
         CallPrePost holder(*actReg_);
         pep = input_->readEvent(lbp);
       }
-      if( 0!= pep.get() ) {
+      if(0 != pep.get()) {
         IOVSyncValue ts(pep->id(), pep->time());
         EventSetup const& es = esp_->eventSetupForInstance(ts);
-        
         schedule_->runOneEvent(*pep, es, BranchActionEvent);
         toerror.succeeded();
         return EventHelperDescription(pep,&es);
@@ -782,19 +788,22 @@ namespace edm {
       {
         CallPrePost holder(*actReg_);
         input_->doFinishLumi(*lbp);
+
       }
-      IOVSyncValue ts(EventID(lbp->runNumber(),EventID::maxEventNumber()), Timestamp::invalidTimestamp());
-      EventSetup const& es = esp_->eventSetupForInstance(ts);
-      schedule_->runOneEvent(*lbp, es, BranchActionEnd);
+      {
+        IOVSyncValue ts(EventID(lbp->runNumber(),EventID::maxEventNumber()), lbp->endTime());
+        EventSetup const& es = esp_->eventSetupForInstance(ts);
+        schedule_->runOneEvent(*lbp, es, BranchActionEnd);
+      }
 
       bool foundLumi = false;
-      while( not foundLumi ) {
+      while(not foundLumi) {
         //try to get next lumi
         {
           CallPrePost holder(*actReg_);
           lbp = input_->readLuminosityBlock(rp);
         }
-        if( 0 != lbp.get() ){
+        if(0 != lbp.get()){
           foundLumi = true;
           break;
         }
@@ -803,22 +812,27 @@ namespace edm {
           CallPrePost holder(*actReg_);
           input_->doFinishRun(*rp);
         }
-        schedule_->runOneEvent(*rp, es, BranchActionEnd);
+	{
+          IOVSyncValue ts(EventID(rp->run(),EventID::maxEventNumber()), rp->endTime());
+          EventSetup const& es = esp_->eventSetupForInstance(ts);
+          schedule_->runOneEvent(*rp, es, BranchActionEnd);
+	}
         //try to get next run
         {
           CallPrePost holder(*actReg_);
           rp = input_->readRun();
         }
-        if(rp.get() == 0) { 
+        if(!rp) { 
           //reached end
           changeState(mInputExhausted);
           toerror.succeeded();
           return evtDesc;
         }
-        // Run principal needs a timestamp!
-        IOVSyncValue ts(EventID(rp->run(),0), Timestamp::invalidTimestamp());
-        EventSetup const& es = esp_->eventSetupForInstance(ts);
-        schedule_->runOneEvent(*rp, es, BranchActionBegin);
+	{
+          IOVSyncValue ts(EventID(rp->run(),0), rp->beginTime());
+          EventSetup const& es = esp_->eventSetupForInstance(ts);
+          schedule_->runOneEvent(*rp, es, BranchActionBegin);
+	}
       }
     }
     return evtDesc;
@@ -826,7 +840,7 @@ namespace edm {
   
   
   EventProcessor::StatusCode
-  EventProcessor::processEvents(int & numberEventsToProcess, boost::shared_ptr<LuminosityBlockPrincipal> lbp) {
+  EventProcessor::processEvents(int & numberEventsToProcess) {
     bool runforever = numberEventsToProcess < 0;
     bool got_sig = false;
     StatusCode rc = epSuccess;
@@ -845,6 +859,7 @@ namespace edm {
       }
 
       if(numberEventsToProcess == 0) {
+	rc = epCountComplete;
 	changeState(mCountComplete);
 	continue;
       }
@@ -853,7 +868,7 @@ namespace edm {
       std::auto_ptr<EventPrincipal> pep;
       {
         CallPrePost holder(*actReg_);
-        pep = input_->readEvent(lbp);
+        pep = input_->readEvent(lbp_);
       }
         
       if (pep.get() == 0) {
@@ -864,9 +879,11 @@ namespace edm {
         --numberEventsToProcess;
       }
 
-      IOVSyncValue ts(pep->id(), pep->time());
-      EventSetup const& es = esp_->eventSetupForInstance(ts);
-      schedule_->runOneEvent(*pep, es, BranchActionEvent);
+      {
+        IOVSyncValue ts(pep->id(), pep->time());
+        EventSetup const& es = esp_->eventSetupForInstance(ts);
+        schedule_->runOneEvent(*pep, es, BranchActionEvent);
+      }
       if (schedule_->terminate()) {
 	changeState(mCountComplete);
       }
@@ -886,13 +903,9 @@ namespace edm {
   }
 
   EventProcessor::StatusCode
-  EventProcessor::processLumis(int & numberEventsToProcess, boost::shared_ptr<RunPrincipal> rp) {
+  EventProcessor::processLumis(int & numberEventsToProcess, bool repeatable) {
     bool got_sig = false;
     StatusCode rc = epSuccess;
-
-    // Just use the Run's # for now
-    IOVSyncValue tsDummy(EventID(rp->run(),0), Timestamp::invalidTimestamp());
-    EventSetup const& esDummy = esp_->eventSetupForInstance(tsDummy);
 
     while(state_ == sRunning) {
 
@@ -907,26 +920,39 @@ namespace edm {
         }
       }
 
-      boost::shared_ptr<LuminosityBlockPrincipal> lbp;
-      {
-        CallPrePost holder(*actReg_);
-        lbp = input_->readLuminosityBlock(rp);
-      }
+      if (!lbp_) {
+        {
+          CallPrePost holder(*actReg_);
+          lbp_ = input_->readLuminosityBlock(rp_);
+        }
         
-      if (lbp.get() == 0) {
-	break;
-      }
+        if (!lbp_) {
+	  break;
+        }
 
-      //Should add a timestamp to Lumis and IOVSyncValue should know about Lumi #s
-      //IOVSyncValue tsDummy(EventID(rp->run(),0), Timestamp::invalidTimestamp());
-      //EventSetup const& esDummy = esp_->eventSetupForInstance(tsDummy);
-      schedule_->runOneEvent(*lbp, esDummy, BranchActionBegin);
-      rc = processEvents(numberEventsToProcess, lbp);
+        //IOVSyncValue should know about Lumi #s
+        {
+          IOVSyncValue ts(EventID(lbp_->runNumber(),0), lbp_->beginTime());
+          EventSetup const& es = esp_->eventSetupForInstance(ts);
+          schedule_->runOneEvent(*lbp_, es, BranchActionBegin);
+        }
+      }
+      rc = processEvents(numberEventsToProcess);
+      if (repeatable && rc == epCountComplete) {
+	// Event count limit reached, if repeatable,
+	// don't terminate lumi block, so we keep our place.
+        continue;
+      }
       {
         CallPrePost holder(*actReg_);
-        input_->doFinishLumi(*lbp);
+        input_->doFinishLumi(*lbp_);
       }
-      schedule_->runOneEvent(*lbp, esDummy, BranchActionEnd);
+      {
+        IOVSyncValue ts(EventID(lbp_->runNumber(),EventID::maxEventNumber()), lbp_->endTime());
+        EventSetup const& es = esp_->eventSetupForInstance(ts);
+        schedule_->runOneEvent(*lbp_, es, BranchActionEnd);
+      }
+      lbp_.reset();
     }
 
     // check once more for shutdown signal
@@ -942,7 +968,7 @@ namespace edm {
   }
 
   EventProcessor::StatusCode
-  EventProcessor::processRuns(int numberEventsToProcess, Msg m) {
+  EventProcessor::processRuns(int numberEventsToProcess, bool repeatable, Msg m) {
     bk::beginRuns(); // routine only for breakpointing
     changeState(m);
     StateSentry toerror(this);
@@ -966,34 +992,39 @@ namespace edm {
         }
       }
 
-      boost::shared_ptr<RunPrincipal> rp;
+      if (!rp_) {
+        {
+          CallPrePost holder(*actReg_);
+          rp_ = input_->readRun();
+        }
+        if (!rp_) {
+  	  changeState(mInputExhausted);
+	  rc = epInputComplete;
+	  continue;
+        }
+        {
+          IOVSyncValue ts(EventID(rp_->run(),0), rp_->beginTime());
+          EventSetup const& es = esp_->eventSetupForInstance(ts);
+          schedule_->runOneEvent(*rp_, es, BranchActionBegin);
+        }
+      }
+      rc = processLumis(numberEventsToProcess, repeatable);
+      if (rc == epCountComplete) {
+	// Event count limit reached.  If repeatable,
+	// don't terminate run, so we keep our place.
+        rc = epSuccess;
+        if (repeatable) continue;
+      }
       {
         CallPrePost holder(*actReg_);
-        rp = input_->readRun();
-      }
-        
-      if (rp.get() == 0) {
-	changeState(mInputExhausted);
-	rc = epInputComplete;
-	continue;
-      }
-
-      //Run needs to have an associated timestamp
-      {
-        IOVSyncValue ts(EventID(rp->run(),0), Timestamp::invalidTimestamp());
-        EventSetup const& es = esp_->eventSetupForInstance(ts);
-        schedule_->runOneEvent(*rp, es, BranchActionBegin);
-        rc = processLumis(numberEventsToProcess, rp);
+        input_->doFinishRun(*rp_);
       }
       {
-        CallPrePost holder(*actReg_);
-        input_->doFinishRun(*rp);
-      }
-      {
-        IOVSyncValue ts(EventID(rp->run(),EventID::maxEventNumber()), Timestamp::invalidTimestamp());
+        IOVSyncValue ts(EventID(rp_->run(),EventID::maxEventNumber()), rp_->endTime());
         EventSetup const& es = esp_->eventSetupForInstance(ts);      
-        schedule_->runOneEvent(*rp, es, BranchActionEnd);
+        schedule_->runOneEvent(*rp_, es, BranchActionEnd);
       }
+      rp_.reset();
     }
 
     // check once more for shutdown signal
@@ -1010,7 +1041,7 @@ namespace edm {
   }
 
   EventProcessor::StatusCode
-  EventProcessor::run(int numberEventsToProcess)
+  EventProcessor::run(int numberEventsToProcess, bool repeatable)
   {
     beginJob(); //make sure this was called
     StatusCode rc = epInputComplete;
@@ -1020,7 +1051,7 @@ namespace edm {
        //make sure we are in the stop state
        changeState(mStopAsync);
     } else {
-       rc = processRuns(numberEventsToProcess,mRunCount);
+       rc = processRuns(numberEventsToProcess, repeatable, mRunCount);
     }
     changeState(mFinished);
     return rc;
@@ -1051,7 +1082,6 @@ namespace edm {
     {
 	IOVSyncValue ts(pep->id(), pep->time());
 	EventSetup const& es = esp_->eventSetupForInstance(ts);
-
 	schedule_->runOneEvent(*pep, es, BranchActionEvent);
 	changeState(mCountComplete);
     }
@@ -1455,7 +1485,7 @@ namespace edm {
     FDEBUG(2) << "asyncRun starting >>>>>>>>>>>>>>>>>>>>>>\n";
 
     try {
-	rc = me->processRuns(-1, mRunAsync);
+	rc = me->processRuns(-1, false, mRunAsync);
     }
     catch (cms::Exception& e) {
       edm::LogError("FwkJob") << "cms::Exception caught in "

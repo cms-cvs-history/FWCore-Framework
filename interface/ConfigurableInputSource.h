@@ -2,13 +2,14 @@
 #define Framework_ConfigurableInputSource_h
 
 /*----------------------------------------------------------------------
-$Id: ConfigurableInputSource.h,v 1.22 2007/06/22 23:26:32 wmtan Exp $
+$Id: ConfigurableInputSource.h,v 1.27 2007/08/02 21:00:33 wmtan Exp $
 ----------------------------------------------------------------------*/
 
 #include "boost/shared_ptr.hpp"
 
 #include "FWCore/Framework/interface/InputSource.h"
 #include "FWCore/Framework/interface/Frameworkfwd.h"
+#include "DataFormats/Provenance/interface/EventAuxiliary.h"
 #include "DataFormats/Provenance/interface/EventID.h"
 #include "DataFormats/Provenance/interface/Timestamp.h"
 #include "DataFormats/Provenance/interface/LuminosityBlockID.h"
@@ -41,14 +42,10 @@ namespace edm {
     void setTime(TimeValue_t t) {presentTime_ = t;}
 
   private:
-    virtual void finishLumi(LuminosityBlockPrincipal& lbp);
-    virtual void finishRun(RunPrincipal& rp);
     virtual void setRunAndEventInfo();
     virtual bool produce(Event & e) = 0;
     virtual void beginRun(Run &) {}
-    virtual void endRun(Run &) {}
     virtual void beginLuminosityBlock(LuminosityBlock &) {}
-    virtual void endLuminosityBlock(LuminosityBlock &) {}
     virtual std::auto_ptr<EventPrincipal> readEvent_(boost::shared_ptr<LuminosityBlockPrincipal> lbp);
     virtual boost::shared_ptr<LuminosityBlockPrincipal> readLuminosityBlock_(boost::shared_ptr<RunPrincipal> rp);
     virtual boost::shared_ptr<RunPrincipal> readRun_();
@@ -73,8 +70,8 @@ namespace edm {
     LuminosityBlockNumber_t origLuminosityBlockNumber_t_;
     bool newRun_;
     bool newLumi_;
+    bool eventAlreadySet_;
     bool isRealData_;
-    std::auto_ptr<EventPrincipal> holder_;
   };
 }
 #endif

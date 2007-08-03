@@ -10,11 +10,14 @@
 //
 // Author:      Valentin Kuznetsov
 // Created:     Wed Jul 12 11:38:09 EDT 2006
-// $Id: EDLooperHelper.cc,v 1.6 2007/07/13 20:08:14 chrjones Exp $
+// $Id: EDLooperHelper.cc,v 1.7 2007/07/13 20:23:40 chrjones Exp $
 //
 // Revision history
 //
 // $Log: EDLooperHelper.cc,v $
+// Revision 1.7  2007/07/13 20:23:40  chrjones
+// bug fix: arguments must be references since we need them to see changes
+//
 // Revision 1.6  2007/07/13 20:08:14  chrjones
 // Have the code used by the looper properly handle run and luminosity blocks
 //
@@ -47,8 +50,8 @@ namespace edm {
 static const char* const kFacilityString = "FWCore.Framework.EDLooperHelper" ;
 
 // ---- cvs-based strings (Id and Tag with which file was checked out)
-static const char* const kIdString  = "$Id: EDLooperHelper.cc,v 1.6 2007/07/13 20:08:14 chrjones Exp $";
-static const char* const kTagString = "$Name:  $";
+static const char* const kIdString  = "$Id: EDLooperHelper.cc,v 1.7 2007/07/13 20:23:40 chrjones Exp $";
+static const char* const kTagString = "$Name: branch_1_6_X $";
 
 //
 // static data member definitions

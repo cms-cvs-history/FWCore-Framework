@@ -17,7 +17,8 @@ namespace edm {
 	  Base(reg, pc, hist, rtrv),
 	  aux_(id, time, lbp->luminosityBlock(), isReal),
 	  luminosityBlockPrincipal_(lbp),
-	  unscheduledHandler_() { }
+	  unscheduledHandler_() {
+	  }
 
   EventPrincipal::EventPrincipal(EventID const& id,
 	Timestamp const& time,
@@ -29,7 +30,7 @@ namespace edm {
 	boost::shared_ptr<DelayedReader> rtrv) :
 	  Base(reg, pc, hist, rtrv),
 	  aux_(id, time, lumi, isReal),
-	  luminosityBlockPrincipal_(new LuminosityBlockPrincipal(lumi, reg, id.run(), pc)),
+	  luminosityBlockPrincipal_(new LuminosityBlockPrincipal(lumi, time, time, reg, id.run(), pc)),
 	  unscheduledHandler_() { }
 
   RunPrincipal const&
