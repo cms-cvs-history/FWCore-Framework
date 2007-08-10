@@ -42,6 +42,7 @@
 #include "FWCore/ParameterSet/interface/Registry.h"
 
 #include "FWCore/ServiceRegistry/interface/ServiceRegistry.h"
+#include "FWCore/MessageLogger/interface/ExceptionMessages.h"
 #include "FWCore/MessageLogger/interface/MessageLogger.h"
 
 #include "FWCore/ServiceRegistry/interface/ActivityRegistry.h"
@@ -67,6 +68,62 @@ namespace edm {
     private:
       EventProcessor* ep_;
       bool success_;
+    };
+
+    class LuminosityBlockSentry
+    {
+    public:
+      LuminosityBlockSentry(EventProcessor* ep):ep_(ep) { }
+      ~LuminosityBlockSentry() {
+	if (ep_->lbp_) {
+	  try {
+	    ep_->endLuminosityBlock(ep_->lbp_.get());  
+	    ep_->lbp_.reset();
+	  }
+          catch (cms::Exception& e) {
+            printCmsException(e);
+          }
+          catch (std::bad_alloc& e) {
+	    printBadAllocException();
+          }
+          catch (std::exception& e) {
+            printStdException(e);
+          }
+          catch (...) {
+            printUnknownException();
+          }
+        }
+      }
+    private:
+      EventProcessor* ep_;
+    };
+
+    class RunSentry
+    {
+    public:
+      RunSentry(EventProcessor* ep):ep_(ep) { }
+      ~RunSentry() {
+	if (ep_->rp_) {
+	  try {
+	    ep_->endRun(ep_->rp_.get());  
+	    ep_->rp_.reset();
+	  }
+          catch (cms::Exception& e) {
+            printCmsException(e);
+          }
+          catch (std::bad_alloc& e) {
+	    printBadAllocException();
+          }
+          catch (std::exception& e) {
+            printStdException(e);
+          }
+          catch (...) {
+            printUnknownException();
+          }
+        }
+      }
+    private:
+      EventProcessor* ep_;
     };
   }
 
@@ -160,6 +217,7 @@ namespace edm {
       { sInit,          mBeginJob,       sJobReady },
       { sJobReady,      mException,      sError },
       { sJobReady,      mSetRun,         sRunGiven },
+      { sJobReady,      mInputRewind,    sRunning },
       { sJobReady,      mSkip,           sRunning },
       { sJobReady,      mRunID,          sRunning },
       { sJobReady,      mRunCount,       sRunning },
@@ -182,7 +240,7 @@ namespace edm {
       { sRunning,       mCountComplete,  sStopping }, // sJobReady 
       { sRunning,       mInputExhausted, sStopping }, // sJobReady
 
-      { sStopping,       mInputRewind, sJobReady },
+      { sStopping,      mInputRewind,    sRunning }, // The looper needs this
       { sStopping,      mException,      sError },
       { sStopping,      mFinished,       sJobReady },
       { sStopping,      mCountComplete,  sJobReady },
@@ -687,12 +745,24 @@ namespace edm {
   void
   EventProcessor::rewind()
   {
+    beginJob(); //make sure this was called
     changeState(mStopAsync);
     changeState(mInputRewind);
-    ServiceRegistry::Operate operate(serviceToken_);
-    input_->repeat();
-    input_->rewind();
-    return;
+    {
+      StateSentry toerror(this);
+
+      //make the services available
+      ServiceRegistry::Operate operate(serviceToken_);
+      
+      {
+        CallPrePost holder(*actReg_);
+	input_->repeat();
+        input_->rewind();
+      }
+      changeState(mCountComplete);
+      toerror.succeeded();
+    }
+    changeState(mFinished);
   }
   
   EventHelperDescription
@@ -735,35 +805,17 @@ namespace edm {
       //must be first time
       bool foundLumi = false;
       while(not foundLumi) {
-        {
-          CallPrePost holder(*actReg_);
-          rp = input_->readRun();
-        }
+	rp = beginRun();
         if(!rp) {
           //reached end
           changeState(mInputExhausted);
           toerror.succeeded();
           return evtDesc;
         }
-	{
-          IOVSyncValue ts(EventID(rp->run(),0), rp->beginTime());
-          EventSetup const& es = esp_->eventSetupForInstance(ts);
-          schedule_->runOneEvent(*rp, es, BranchActionBegin);
-	}
-	{
-          CallPrePost holder(*actReg_);
-          lbp = input_->readLuminosityBlock(rp);
-        }
+	lbp = beginLuminosityBlock(rp);
         if(!lbp) {
-          IOVSyncValue ts(EventID(rp->run(),EventID::maxEventNumber()), rp->endTime());
-          EventSetup const& es = esp_->eventSetupForInstance(ts);
-          schedule_->runOneEvent(*rp, es, BranchActionEnd);
+	  endRun(rp.get());
           continue;
-        }
-        {
-          IOVSyncValue ts(EventID(lbp->runNumber(),0), lbp->beginTime());
-          EventSetup const& es = esp_->eventSetupForInstance(ts);
-          schedule_->runOneEvent(*lbp, es, BranchActionBegin);
         }
         break;
       }
@@ -772,67 +824,32 @@ namespace edm {
     bool doneProcessingEvent = false;
     while(not doneProcessingEvent &&
            state_ == sRunning) {
-      std::auto_ptr<EventPrincipal> pep;
-      {
-        CallPrePost holder(*actReg_);
-        pep = input_->readEvent(lbp);
-      }
+      std::auto_ptr<EventPrincipal> pep = doOneEvent(lbp);
       if(0 != pep.get()) {
-        IOVSyncValue ts(pep->id(), pep->time());
-        EventSetup const& es = esp_->eventSetupForInstance(ts);
-        schedule_->runOneEvent(*pep, es, BranchActionEvent);
         toerror.succeeded();
-        return EventHelperDescription(pep,&es);
+        return EventHelperDescription(pep, &esp_->eventSetup());
       }
       //handle end of lumi
-      {
-        CallPrePost holder(*actReg_);
-        input_->doFinishLumi(*lbp);
-
-      }
-      {
-        IOVSyncValue ts(EventID(lbp->runNumber(),EventID::maxEventNumber()), lbp->endTime());
-        EventSetup const& es = esp_->eventSetupForInstance(ts);
-        schedule_->runOneEvent(*lbp, es, BranchActionEnd);
-      }
+      endLuminosityBlock(lbp.get());
 
       bool foundLumi = false;
       while(not foundLumi) {
         //try to get next lumi
-        {
-          CallPrePost holder(*actReg_);
-          lbp = input_->readLuminosityBlock(rp);
-        }
-        if(0 != lbp.get()){
+        lbp = beginLuminosityBlock(rp);
+        if(lbp) {
           foundLumi = true;
           break;
         }
         //handle end of run
-        {
-          CallPrePost holder(*actReg_);
-          input_->doFinishRun(*rp);
-        }
-	{
-          IOVSyncValue ts(EventID(rp->run(),EventID::maxEventNumber()), rp->endTime());
-          EventSetup const& es = esp_->eventSetupForInstance(ts);
-          schedule_->runOneEvent(*rp, es, BranchActionEnd);
-	}
+	endRun(rp.get());
         //try to get next run
-        {
-          CallPrePost holder(*actReg_);
-          rp = input_->readRun();
-        }
+        rp = beginRun();
         if(!rp) { 
           //reached end
           changeState(mInputExhausted);
           toerror.succeeded();
           return evtDesc;
         }
-	{
-          IOVSyncValue ts(EventID(rp->run(),0), rp->beginTime());
-          EventSetup const& es = esp_->eventSetupForInstance(ts);
-          schedule_->runOneEvent(*rp, es, BranchActionBegin);
-	}
       }
     }
     return evtDesc;
@@ -865,26 +882,16 @@ namespace edm {
       }
 
       FDEBUG(1) << numberEventsToProcess << std::endl;
-      std::auto_ptr<EventPrincipal> pep;
-      {
-        CallPrePost holder(*actReg_);
-        pep = input_->readEvent(lbp_);
-      }
         
-      if (pep.get() == 0) {
+      if(doOneEvent(lbp_).get() == 0) {
 	break;
       }
 
-      if (!runforever) {
+      if(!runforever) {
         --numberEventsToProcess;
       }
 
-      {
-        IOVSyncValue ts(pep->id(), pep->time());
-        EventSetup const& es = esp_->eventSetupForInstance(ts);
-        schedule_->runOneEvent(*pep, es, BranchActionEvent);
-      }
-      if (schedule_->terminate()) {
+      if(schedule_->terminate()) {
 	changeState(mCountComplete);
       }
 
@@ -904,6 +911,7 @@ namespace edm {
 
   EventProcessor::StatusCode
   EventProcessor::processLumis(int & numberEventsToProcess, bool repeatable) {
+    LuminosityBlockSentry lumiSentry(this);
     bool got_sig = false;
     StatusCode rc = epSuccess;
 
@@ -920,38 +928,19 @@ namespace edm {
         }
       }
 
-      if (!lbp_) {
-        {
-          CallPrePost holder(*actReg_);
-          lbp_ = input_->readLuminosityBlock(rp_);
-        }
-        
-        if (!lbp_) {
+      if(!lbp_) {
+	lbp_ = beginLuminosityBlock(rp_);
+        if(!lbp_) {
 	  break;
-        }
-
-        //IOVSyncValue should know about Lumi #s
-        {
-          IOVSyncValue ts(EventID(lbp_->runNumber(),0), lbp_->beginTime());
-          EventSetup const& es = esp_->eventSetupForInstance(ts);
-          schedule_->runOneEvent(*lbp_, es, BranchActionBegin);
         }
       }
       rc = processEvents(numberEventsToProcess);
-      if (repeatable && rc == epCountComplete) {
+      if(repeatable && rc == epCountComplete) {
 	// Event count limit reached, if repeatable,
 	// don't terminate lumi block, so we keep our place.
         continue;
       }
-      {
-        CallPrePost holder(*actReg_);
-        input_->doFinishLumi(*lbp_);
-      }
-      {
-        IOVSyncValue ts(EventID(lbp_->runNumber(),EventID::maxEventNumber()), lbp_->endTime());
-        EventSetup const& es = esp_->eventSetupForInstance(ts);
-        schedule_->runOneEvent(*lbp_, es, BranchActionEnd);
-      }
+      endLuminosityBlock(lbp_.get());
       lbp_.reset();
     }
 
@@ -970,8 +959,9 @@ namespace edm {
   EventProcessor::StatusCode
   EventProcessor::processRuns(int numberEventsToProcess, bool repeatable, Msg m) {
     bk::beginRuns(); // routine only for breakpointing
-    changeState(m);
+    RunSentry runSentry(this);
     StateSentry toerror(this);
+    changeState(m);
 
     //make the services available
     ServiceRegistry::Operate operate(serviceToken_);
@@ -992,38 +982,22 @@ namespace edm {
         }
       }
 
-      if (!rp_) {
-        {
-          CallPrePost holder(*actReg_);
-          rp_ = input_->readRun();
-        }
-        if (!rp_) {
+      if(!rp_) {
+        rp_ = beginRun();
+        if(!rp_) {
   	  changeState(mInputExhausted);
 	  rc = epInputComplete;
 	  continue;
         }
-        {
-          IOVSyncValue ts(EventID(rp_->run(),0), rp_->beginTime());
-          EventSetup const& es = esp_->eventSetupForInstance(ts);
-          schedule_->runOneEvent(*rp_, es, BranchActionBegin);
-        }
       }
       rc = processLumis(numberEventsToProcess, repeatable);
-      if (rc == epCountComplete) {
+      if(rc == epCountComplete) {
 	// Event count limit reached.  If repeatable,
 	// don't terminate run, so we keep our place.
         rc = epSuccess;
-        if (repeatable) continue;
+        if(repeatable) continue;
       }
-      {
-        CallPrePost holder(*actReg_);
-        input_->doFinishRun(*rp_);
-      }
-      {
-        IOVSyncValue ts(EventID(rp_->run(),EventID::maxEventNumber()), rp_->endTime());
-        EventSetup const& es = esp_->eventSetupForInstance(ts);      
-        schedule_->runOneEvent(*rp_, es, BranchActionEnd);
-      }
+      endRun(rp_.get());
       rp_.reset();
     }
 
@@ -1038,6 +1012,89 @@ namespace edm {
 
     toerror.succeeded();
     return rc;
+  }
+
+  boost::shared_ptr<LuminosityBlockPrincipal>
+  EventProcessor::beginLuminosityBlock(boost::shared_ptr<RunPrincipal> rp) {
+    boost::shared_ptr<LuminosityBlockPrincipal> lbp;
+    {
+      CallPrePost holder(*actReg_);
+      lbp = input_->readLuminosityBlock(rp);
+    }
+    if(lbp) {
+      IOVSyncValue ts(EventID(lbp->runNumber(),0), lbp->beginTime());
+      EventSetup const& es = esp_->eventSetupForInstance(ts);
+      schedule_->runOneEvent(*lbp, es, BranchActionBegin);
+    }
+    return lbp;
+  }
+
+  boost::shared_ptr<RunPrincipal>
+  EventProcessor::beginRun() {
+    boost::shared_ptr<RunPrincipal> rp;
+    {
+      CallPrePost holder(*actReg_);
+      rp = input_->readRun();
+    }
+    if(rp) {
+      IOVSyncValue ts(EventID(rp->run(),0), rp->beginTime());
+      EventSetup const& es = esp_->eventSetupForInstance(ts);
+      schedule_->runOneEvent(*rp, es, BranchActionBegin);
+    }
+    return rp;
+  }
+
+  std::auto_ptr<EventPrincipal>
+  EventProcessor::doOneEvent(boost::shared_ptr<LuminosityBlockPrincipal> lbp) {
+    std::auto_ptr<EventPrincipal> pep;
+    {
+      CallPrePost holder(*actReg_);
+      pep = input_->readEvent(lbp);
+    }
+    procOneEvent(pep.get());
+    return pep;
+  }
+
+  std::auto_ptr<EventPrincipal>
+  EventProcessor::doOneEvent(EventID const& id) {
+    std::auto_ptr<EventPrincipal> pep;
+    {
+      CallPrePost holder(*actReg_);
+      pep = input_->readEvent(id);
+    }
+    procOneEvent(pep.get());
+    return pep;
+  }
+
+  void
+  EventProcessor::procOneEvent(EventPrincipal *pep) {
+    if(0 != pep) {
+      IOVSyncValue ts(pep->id(), pep->time());
+      EventSetup const& es = esp_->eventSetupForInstance(ts);
+      schedule_->runOneEvent(*pep, es, BranchActionEvent);
+    }
+  }
+
+  void 
+  EventProcessor::endLuminosityBlock(LuminosityBlockPrincipal *lbp) {
+    {
+      CallPrePost holder(*actReg_);
+      input_->doFinishLumi(*lbp);
+    }
+    IOVSyncValue ts(EventID(lbp->runNumber(),EventID::maxEventNumber()), lbp->endTime());
+    EventSetup const& es = esp_->eventSetupForInstance(ts);
+    schedule_->runOneEvent(*lbp, es, BranchActionEnd);
+  }
+
+  void 
+  EventProcessor::endRun(RunPrincipal *rp) {
+    {
+      CallPrePost holder(*actReg_);
+      input_->doFinishRun(*rp);
+    }
+    IOVSyncValue ts(EventID(rp->run(), EventID::maxEventNumber()), rp->endTime());
+    EventSetup const& es = esp_->eventSetupForInstance(ts);      
+    schedule_->runOneEvent(*rp, es, BranchActionEnd);
   }
 
   EventProcessor::StatusCode
@@ -1068,24 +1125,12 @@ namespace edm {
     //make the services available
     ServiceRegistry::Operate operate(serviceToken_);
 
-    std::auto_ptr<EventPrincipal> pep;
-    {
-      CallPrePost holder(*actReg_);
-      pep = input_->readEvent(id);
+    if(doOneEvent(id).get() == 0) {
+      changeState(mInputExhausted);
+    } else {
+      changeState(mCountComplete);
+      rc = epInputComplete;
     }
-
-    if(pep.get() == 0) {
-	changeState(mInputExhausted);
-	rc = epInputComplete;
-    }
-    else
-    {
-	IOVSyncValue ts(pep->id(), pep->time());
-	EventSetup const& es = esp_->eventSetupForInstance(ts);
-	schedule_->runOneEvent(*pep, es, BranchActionEvent);
-	changeState(mCountComplete);
-    }
-
     toerror.succeeded();
     changeState(mFinished);
     return rc;
@@ -1408,7 +1453,7 @@ namespace edm {
     boost::mutex::scoped_lock sl(state_lock_);
     State curr = state_;
     int rc;
-    // found if (not end of table) and 
+    // found if(not end of table) and 
     // (state == table.state && (msg == table.message || msg == any))
     for(rc = 0;
 	table[rc].current != sInvalid && 
@@ -1519,4 +1564,5 @@ namespace edm {
     }
     FDEBUG(2) << "asyncRun ending >>>>>>>>>>>>>>>>>>>>>>\n";
   }
+
 }
