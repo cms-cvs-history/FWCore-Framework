@@ -4,7 +4,7 @@ This is a generic main that can be used with any plugin and a
 PSet script.   See notes in EventProcessor.cpp for details about
 it.
 
-$Id: cmsRun.cpp,v 1.39 2007/08/02 23:16:02 wmtan Exp $
+$Id: cmsRun.cpp,v 1.37.2.1 2007/08/03 23:13:53 wmtan Exp $
 
 ----------------------------------------------------------------------*/  
 
@@ -24,6 +24,7 @@ $Id: cmsRun.cpp,v 1.39 2007/08/02 23:16:02 wmtan Exp $
 #include "FWCore/PluginManager/interface/standard.h"
 #include "FWCore/Utilities/interface/Exception.h"
 #include "FWCore/Utilities/interface/Presence.h"
+#include "FWCore/MessageLogger/interface/ExceptionMessages.h"
 #include "FWCore/MessageLogger/interface/MessageLogger.h"
 #include "FWCore/MessageLogger/interface/MessageDrop.h"
 #include "FWCore/PluginManager/interface/PresenceFactory.h"
@@ -52,7 +53,23 @@ namespace {
       ep_(ep),
       callEndJob_(false) { }
     ~EventProcessorWithSentry() {
-      if (callEndJob_ && ep_.get()) ep_->endJob();
+      if (callEndJob_ && ep_.get()) {
+	try {
+	  ep_->endJob();
+	}
+	catch (cms::Exception& e) {
+	  edm::printCmsException(e, kProgramName);
+	}
+	catch (std::bad_alloc& e) {
+	  edm::printBadAllocException(kProgramName);
+	}
+	catch (std::exception& e) {
+	  edm::printStdException(e, kProgramName);
+	}
+	catch (...) {
+	  edm::printUnknownException(kProgramName);
+        }
+      }
     }
     void on() {
       callEndJob_ = true;
@@ -270,49 +287,20 @@ int main(int argc, char* argv[])
     rc = 0;
   }
   catch (cms::Exception& e) {
-    std::string shortDesc("CMSException");
-    std::ostringstream longDesc;
-    longDesc << "cms::Exception caught in " 
-	     << kProgramName
-	     << "\n"
-	     << e.explainSelf();
     rc = 8001;
-    jobRep->reportError(shortDesc, longDesc.str(), rc);
-    edm::LogSystem(shortDesc) << longDesc.str() << "\n";
+    edm::printCmsException(e, kProgramName, jobRep.get(), rc);
   }
   catch(std::bad_alloc& bda) {
-    std::string shortDesc("std::bad_allocException");
-    std::ostringstream longDesc;
-    longDesc << "std::bad_alloc exception caught in "
-	     << kProgramName
-	     << "\n"
-	     << "The job has probably exhausted the virtual memory available to the process.\n";
     rc = 8004;
-    jobRep->reportError(shortDesc, longDesc.str(), rc);
-    edm::LogSystem(shortDesc) << longDesc.str() << "\n";
+    edm::printBadAllocException(kProgramName, jobRep.get(), rc);
   }
-
   catch (std::exception& e) {
-    std::string shortDesc("StdLibException");
-    std::ostringstream longDesc;
-    longDesc << "Standard library exception caught in " 
-	     << kProgramName
-	     << "\n"
-	     << e.what();
     rc = 8002;
-    jobRep->reportError(shortDesc, longDesc.str(), rc);
-    edm::LogSystem(shortDesc) << longDesc.str() << "\n";
-         
+    edm::printStdException(e, kProgramName, jobRep.get(), rc);
   }
   catch (...) {
-    std::string shortDesc("UnknownException");
-    std::ostringstream longDesc;
-    longDesc << "Unknown exception caught in "
-	     << kProgramName
-	     << "\n";
     rc = 8003;
-    jobRep->reportError(shortDesc, longDesc.str(), rc);
-    edm::LogSystem(shortDesc) << longDesc.str() << "\n";
+    edm::printUnknownException(kProgramName, jobRep.get(), rc);
   }
   
   return rc;
