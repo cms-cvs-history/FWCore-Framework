@@ -32,7 +32,7 @@ problems:
   where does the pluginmanager initialize call go?
 
 
-$Id: EventProcessor.h,v 1.41 2007/08/02 21:02:42 wmtan Exp $
+$Id: EventProcessor.h,v 1.40.2.1 2007/08/03 23:17:17 wmtan Exp $
 
 ----------------------------------------------------------------------*/
 
@@ -76,6 +76,8 @@ namespace edm {
 	       mAny, mDtor, mException, mInputRewind };
 
     class StateSentry;
+    class LuminosityBlockSentry;
+    class RunSentry;
   }
     
   class EventProcessor
@@ -207,10 +209,12 @@ namespace edm {
     // Process one event with the given EventID
     StatusCode run(EventID const& id);
 
-    // Skip the specified number of events, and then process the next event.
+    // Skip the specified number of events.
     // If numberToSkip is negative, we will back up.
-    // For example, skip(-1) processes the previous event.
     StatusCode skip(int numberToSkip);
+
+    // Rewind to the first event
+    void rewind();
 
     InputSource& getInputSource();
 
@@ -315,8 +319,14 @@ namespace edm {
     StatusCode doneAsync(event_processor::Msg m);
     EventHelperDescription runOnce(boost::shared_ptr<RunPrincipal>& rp,
                                    boost::shared_ptr<LuminosityBlockPrincipal>& lbp);
-    
-    void rewind();
+
+    boost::shared_ptr<RunPrincipal> beginRun();
+    boost::shared_ptr<LuminosityBlockPrincipal> beginLuminosityBlock(boost::shared_ptr<RunPrincipal> rp);
+    std::auto_ptr<EventPrincipal> doOneEvent(boost::shared_ptr<LuminosityBlockPrincipal> lbp);
+    std::auto_ptr<EventPrincipal> doOneEvent(EventID const& id);
+    void procOneEvent(EventPrincipal *pep);
+    void endLuminosityBlock(LuminosityBlockPrincipal *lbp);
+    void endRun(RunPrincipal *rp);
 
     StatusCode waitForAsyncCompletion(unsigned int timeout_seconds);
 
@@ -367,6 +377,8 @@ namespace edm {
     boost::shared_ptr<EDLooper>                   looper_;
 
     friend class event_processor::StateSentry;
+    friend class event_processor::LuminosityBlockSentry;
+    friend class event_processor::RunSentry;
   }; // class EventProcessor
 
   //--------------------------------------------------------------------
