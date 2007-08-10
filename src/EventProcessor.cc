@@ -61,9 +61,9 @@ namespace edm {
     class StateSentry
     {
     public:
-      StateSentry(EventProcessor* ep):ep_(ep),success_(false) { }
-      ~StateSentry() { if(!success_) ep_->changeState(mException); }
-      void succeeded() { success_ = true; }
+      StateSentry(EventProcessor* ep) : ep_(ep), success_(false) { }
+      ~StateSentry() {if(!success_) ep_->changeState(mException);}
+      void succeeded() {success_ = true;}
 
     private:
       EventProcessor* ep_;
@@ -73,9 +73,9 @@ namespace edm {
     class LuminosityBlockSentry
     {
     public:
-      LuminosityBlockSentry(EventProcessor* ep):ep_(ep) { }
+      LuminosityBlockSentry(EventProcessor* ep) : ep_(ep), success_(false) { }
       ~LuminosityBlockSentry() {
-	if (ep_->lbp_) {
+	if (!success_ && ep_->lbp_) {
 	  try {
 	    ep_->endLuminosityBlock(ep_->lbp_.get());  
 	    ep_->lbp_.reset();
@@ -94,16 +94,18 @@ namespace edm {
           }
         }
       }
+      void succeeded() {success_ = true;}
     private:
       EventProcessor* ep_;
+      bool success_;
     };
 
     class RunSentry
     {
     public:
-      RunSentry(EventProcessor* ep):ep_(ep) { }
+      RunSentry(EventProcessor* ep) : ep_(ep), success_(false) { }
       ~RunSentry() {
-	if (ep_->rp_) {
+	if (!success_ && ep_->rp_) {
 	  try {
 	    ep_->endRun(ep_->rp_.get());  
 	    ep_->rp_.reset();
@@ -122,8 +124,10 @@ namespace edm {
           }
         }
       }
+      void succeeded() {success_ = true;}
     private:
       EventProcessor* ep_;
+      bool success_;
     };
   }
 
@@ -953,6 +957,7 @@ namespace edm {
       }
     }
 
+    lumiSentry.succeeded();
     return rc;
   }
 
@@ -1011,6 +1016,7 @@ namespace edm {
     }
 
     toerror.succeeded();
+    runSentry.succeeded();
     return rc;
   }
 
