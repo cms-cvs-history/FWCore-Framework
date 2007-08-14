@@ -81,7 +81,7 @@ edm::Ref<AppleCollection> ref(refApples, index);
 */
 /*----------------------------------------------------------------------
 
-$Id: DataViewImpl.h,v 1.30 2007/07/31 23:58:54 wmtan Exp $
+$Id: DataViewImpl.h,v 1.29.2.1 2007/08/03 23:17:17 wmtan Exp $
 
 ----------------------------------------------------------------------*/
 #include <cassert>
@@ -220,6 +220,7 @@ namespace edm {
     // alternative is not great either.  Putting it into the
     // public interface is asking for trouble
     friend class ConfigurableInputSource;
+    friend class DaqSource;
     friend class RawInputSource;
     friend class InputSource;
     friend class FilterWorker;

@@ -16,7 +16,7 @@ For its usage, see "FWCore/Framework/interface/DataViewImpl.h"
 */
 /*----------------------------------------------------------------------
 
-$Id: LuminosityBlock.h,v 1.12 2007/07/31 23:58:54 wmtan Exp $
+$Id: LuminosityBlock.h,v 1.11.2.1 2007/08/03 23:17:17 wmtan Exp $
 
 ----------------------------------------------------------------------*/
 
@@ -78,6 +78,7 @@ namespace edm {
     // alternative is not great either.  Putting it into the
     // public interface is asking for trouble
     friend class ConfigurableInputSource;
+    friend class DaqSource;
     friend class InputSource;
     friend class RawInputSource;
     friend class FilterWorker;
