@@ -3,7 +3,7 @@
 
 /*
   Author: Jim Kowalkowski 01-02-06
-  $Id: EventSelector.h,v 1.7 2007/01/05 18:51:11 wdd Exp $
+  $Id: EventSelector.h,v 1.9 2007/08/17 21:38:18 wdd Exp $
 
  */
 
@@ -60,6 +60,9 @@ namespace edm
     ParameterSetID psetID_;
 
     Strings paths_;
+
+    int nTriggerNames_;
+    bool notStarPresent_;
 
     bool acceptTriggerPath(HLTPathStatus const&, BitInfo const&) const;
   };
