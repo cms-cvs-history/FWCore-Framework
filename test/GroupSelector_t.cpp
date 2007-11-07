@@ -116,10 +116,10 @@ int work()
     vector<bool> expected(wanted, wanted+sizeof(wanted)/sizeof(bool));
 
     edm::ParameterSet keep_i2;
-    const string keep_i2_rule = "keep *_*_i2_*";
-    vector<string> cmds;
+    const std::string keep_i2_rule = "keep *_*_i2_*";
+    vector<std::string> cmds;
     cmds.push_back(keep_i2_rule);
-    keep_i2.addUntrackedParameter<vector<string> >("outputCommands", cmds);
+    keep_i2.addUntrackedParameter<vector<std::string> >("outputCommands", cmds);
 
     rc += doTest(keep_i2, "keep_i2 parameters", allbranches, expected);
   }
@@ -130,12 +130,12 @@ int work()
     vector<bool> expected(wanted, wanted+sizeof(wanted)/sizeof(bool));
 
     edm::ParameterSet drop_i2;
-    const string drop_i2_rule1 = "keep *";
-    const string drop_i2_rule2 = "drop *_*_i2_*";
-    vector<string> cmds;
+    const std::string drop_i2_rule1 = "keep *";
+    const std::string drop_i2_rule2 = "drop *_*_i2_*";
+    vector<std::string> cmds;
     cmds.push_back(drop_i2_rule1);
     cmds.push_back(drop_i2_rule2);
-    drop_i2.addUntrackedParameter<vector<string> >("outputCommands", cmds);
+    drop_i2.addUntrackedParameter<vector<std::string> >("outputCommands", cmds);
 
     rc += doTest(drop_i2, "drop_i2 parameters", allbranches, expected);
   }
@@ -147,12 +147,12 @@ int work()
     vector<bool> expected(wanted, wanted+sizeof(wanted)/sizeof(bool));
 
     edm::ParameterSet drop_foo;
-    const string drop_foo_rule1 = "keep *_*_*_*"; // same as "keep *"
-    const string drop_foo_rule2 = "drop foo_*_*_*";
-    vector<string> cmds;
+    const std::string drop_foo_rule1 = "keep *_*_*_*"; // same as "keep *"
+    const std::string drop_foo_rule2 = "drop foo_*_*_*";
+    vector<std::string> cmds;
     cmds.push_back(drop_foo_rule1);
     cmds.push_back(drop_foo_rule2);
-    drop_foo.addUntrackedParameter<vector<string> >("outputCommands", cmds);
+    drop_foo.addUntrackedParameter<vector<std::string> >("outputCommands", cmds);
 
     rc += doTest(drop_foo, "drop_foo parameters", allbranches, expected);
   }
@@ -163,12 +163,12 @@ int work()
     vector<bool> expected(wanted, wanted+sizeof(wanted)/sizeof(bool));
 
     edm::ParameterSet drop_ProdTypeA;
-    const string drop_ProdTypeA_rule1 = "keep *";
-    const string drop_ProdTypeA_rule2 = "drop ProdTypeA_*_*_*";
-    vector<string> cmds;
+    const std::string drop_ProdTypeA_rule1 = "keep *";
+    const std::string drop_ProdTypeA_rule2 = "drop ProdTypeA_*_*_*";
+    vector<std::string> cmds;
     cmds.push_back(drop_ProdTypeA_rule1);
     cmds.push_back(drop_ProdTypeA_rule2);
-    drop_ProdTypeA.addUntrackedParameter<vector<string> >("outputCommands", cmds);
+    drop_ProdTypeA.addUntrackedParameter<vector<std::string> >("outputCommands", cmds);
 
     rc += doTest(drop_ProdTypeA,
 		 "drop_ProdTypeA",
@@ -181,10 +181,10 @@ int work()
     vector<bool> expected(wanted, wanted+sizeof(wanted)/sizeof(bool));
 
     edm::ParameterSet keep_i1prod;
-    const string keep_i1prod_rule = "keep *_*_i1_PROD";
-    vector<string> cmds;
+    const std::string keep_i1prod_rule = "keep *_*_i1_PROD";
+    vector<std::string> cmds;
     cmds.push_back(keep_i1prod_rule);
-    keep_i1prod.addUntrackedParameter<vector<string> >("outputCommands", cmds);
+    keep_i1prod.addUntrackedParameter<vector<std::string> >("outputCommands", cmds);
 
     rc += doTest(keep_i1prod,
 		 "keep_i1prod",
@@ -198,14 +198,14 @@ int work()
     vector<bool> expected(wanted, wanted+sizeof(wanted)/sizeof(bool));
 
     edm::ParameterSet indecisive;
-    const string indecisive_rule1 = "keep *";
-    const string indecisive_rule2 = "drop *";
-    const string indecisive_rule3 = "keep *";
-    vector<string> cmds;
+    const std::string indecisive_rule1 = "keep *";
+    const std::string indecisive_rule2 = "drop *";
+    const std::string indecisive_rule3 = "keep *";
+    vector<std::string> cmds;
     cmds.push_back(indecisive_rule1);
     cmds.push_back(indecisive_rule2);
     cmds.push_back(indecisive_rule3);
-    indecisive.addUntrackedParameter<vector<string> >("outputCommands", cmds);
+    indecisive.addUntrackedParameter<vector<std::string> >("outputCommands", cmds);
 
     rc += doTest(indecisive,
 		 "indecisive",
@@ -219,14 +219,14 @@ int work()
     vector<bool> expected(wanted, wanted+sizeof(wanted)/sizeof(bool));
 
     edm::ParameterSet params;
-    const string rule1 = "keep *";
-    const string rule2 = "drop *_modA_*_*";
-    const string rule3 = "keep *_*_*_USER";
-    vector<string> cmds;
+    const std::string rule1 = "keep *";
+    const std::string rule2 = "drop *_modA_*_*";
+    const std::string rule3 = "keep *_*_*_USER";
+    vector<std::string> cmds;
     cmds.push_back(rule1);
     cmds.push_back(rule2);
     cmds.push_back(rule3);
-    params.addUntrackedParameter<vector<string> >("outputCommands", cmds);
+    params.addUntrackedParameter<vector<std::string> >("outputCommands", cmds);
 
     rc += doTest(params,
 		 "drop_modA_keep_user",
@@ -239,14 +239,14 @@ int work()
     vector<bool> expected(wanted, wanted+sizeof(wanted)/sizeof(bool));
 
     edm::ParameterSet params;
-    const string rule1 = "drop *";
-    const string rule2 = "keep Pr*A_m?dA_??_P?O*";
-    const string rule3 = "keep *?*?***??*????*?***_??***?__*?***T";
-    vector<string> cmds;
+    const std::string rule1 = "drop *";
+    const std::string rule2 = "keep Pr*A_m?dA_??_P?O*";
+    const std::string rule3 = "keep *?*?***??*????*?***_??***?__*?***T";
+    vector<std::string> cmds;
     cmds.push_back(rule1);
     cmds.push_back(rule2);
     cmds.push_back(rule3);
-    params.addUntrackedParameter<vector<string> >("outputCommands", cmds);
+    params.addUntrackedParameter<vector<std::string> >("outputCommands", cmds);
 
     rc += doTest(params,
 		 "excercise wildcards1",
@@ -257,10 +257,10 @@ int work()
     // Now try an illegal specification: not starting with 'keep' or 'drop'
     try {
 	edm::ParameterSet bad;
-	const string bad_rule = "beep *_*_i2_*";
-	vector<string> cmds;
+	const std::string bad_rule = "beep *_*_i2_*";
+	vector<std::string> cmds;
 	cmds.push_back(bad_rule);
-	bad.addUntrackedParameter<vector<string> >("outputCommands", cmds);
+	bad.addUntrackedParameter<vector<std::string> >("outputCommands", cmds);
 	edm::GroupSelector gs(bad);	
         gs.initialize(allbranches);
 	std::cerr << "Failed to throw required exception\n";
