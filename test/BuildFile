@@ -7,6 +7,9 @@
 <library file="DummyData.cc,DummyRecord.cc,DepRecord.cc,Dummy2Record.cc,DepOn2Record.cc" name=FWCoreFrameworkTestDummyForEventSetup>
 </library>
 
+<library file="MockEventProcessor.cc" name=FWCoreFrameworkTest>
+</library>
+
 <library file=DummySource.cc,stubs/DummySourceModule.cc name=FWCoreFrameworkTestDummySource>
  <flags EDM_PLUGIN=1>
 </library>
@@ -142,3 +145,11 @@
 <bin name=TestFWCoreOutputModuleUtilities file=OutputModuleUtilities_t.cpp>
 </bin>
 
+<bin name=TestFWCoreFrameworkStatemachine file=statemachine_t.cc>
+  <lib name=FWCoreFrameworkTest>
+  <use name=boost_program_options>
+</bin>
+
+<bin name=TestFWCoreFrameworkStatemachineSH file=TestDriver.cpp>
+  <flags TEST_RUNNER_ARGS=" /bin/bash FWCore/Framework/test run_statemachine.sh">
+</bin>
