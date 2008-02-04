@@ -26,6 +26,10 @@
  <flags EDM_PLUGIN=1>
 </library>
 
+<library file=stubs/TestMergeResults.cc name=TestMergeResults>
+ <flags EDM_PLUGIN=1>
+</library>
+
 <library file=stubs/TestMod.cc name=TestMod>
  <flags EDM_PLUGIN=1>
 </library>
