@@ -140,6 +140,12 @@
 <bin name=TestFWCoreFrameworkEventSelWildcard file=EventSelWildcard_t.cpp>
 </bin>
 
+<bin name=TestFWCoreFrameworkEventSelExc file=EventSelExc_t.cpp>
+</bin>
+
+<bin name=TestFWCoreFrameworkEventSelOverlap file=EventSelOverlap_t.cpp>
+</bin>
+
 <bin name=TestFWCoreFrameworkCurrentProcessingContext file=CurrentProcessingContext_t.cpp>
 </bin>
 
