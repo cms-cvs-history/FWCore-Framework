@@ -1171,12 +1171,12 @@ namespace edm {
 
   std::auto_ptr<EventPrincipal>
   EventProcessor::doOneEvent(boost::shared_ptr<LuminosityBlockPrincipal> lbp) {
+    CallPrePost holder(*actReg_);
     std::auto_ptr<EventPrincipal> pep(0);
     if (input_->nextItemType() != InputSource::IsEvent) {
       return pep;
     }
     {
-      CallPrePost holder(*actReg_);
       pep = input_->readEvent(lbp);
     }
     procOneEvent(pep.get());
