@@ -1,6 +1,6 @@
 /*----------------------------------------------------------------------
 
-$Id: OutputModule.cc,v 1.58 2008/02/21 22:47:51 wdd Exp $
+$Id: OutputModule.cc,v 1.59 2008/03/04 00:05:01 paterno Exp $
 ----------------------------------------------------------------------*/
 
 #include "FWCore/Framework/interface/OutputModule.h"
@@ -410,6 +410,7 @@ namespace edm {
     writeParameterSetRegistry();
     writeProductDescriptionRegistry();
     writeEntryDescriptions();
+    writeBranchMapper();
     finishEndFile();
   }
 
