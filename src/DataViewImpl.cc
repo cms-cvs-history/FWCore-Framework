@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------
-$Id: DataViewImpl.cc,v 1.25 2008/02/01 20:04:56 wmtan Exp $
+$Id: DataViewImpl.cc,v 1.26 2008/04/04 22:46:16 wmtan Exp $
 ----------------------------------------------------------------------*/
 
 #include <algorithm>
@@ -50,7 +50,7 @@ namespace edm {
 	// note: ownership has been passed - so clear the pointer!
 	pit->first = 0;
 
-	boost::shared_ptr<EntryDescription> entryDescriptionPtr(new EntryDescription);
+	boost::shared_ptr<EntryDescription> entryDescriptionPtr(new EntryDescription(pit->second->productID()));
 
 	// set parts of provenance
 	entryDescriptionPtr->parents_ = gotProductIDs_;

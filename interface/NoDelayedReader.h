@@ -2,7 +2,7 @@
 #define FWCore_Framework_NoDelayedReader_h
 
 /*----------------------------------------------------------------------
-$Id: NoDelayedReader.h,v 1.9 2008/01/30 00:32:01 wmtan Exp $
+$Id: NoDelayedReader.h,v 1.10 2008/02/06 06:24:44 wmtan Exp $
 ----------------------------------------------------------------------*/
 
 #include <memory>
@@ -14,7 +14,7 @@ namespace edm {
     virtual ~NoDelayedReader();
   private:
     virtual std::auto_ptr<EDProduct> getProduct_(BranchKey const& k, EDProductGetter const* ep) const;
-    virtual std::auto_ptr<EntryDescription> getProvenance_(BranchKey const& k) const;
+    virtual std::auto_ptr<EntryDescription> getProvenance_(BranchDescription const& desc) const;
   };
 }
 #endif

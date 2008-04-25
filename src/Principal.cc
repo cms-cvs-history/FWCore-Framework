@@ -1,5 +1,5 @@
 /**----------------------------------------------------------------------
-  $Id: Principal.cc,v 1.28 2008/02/28 20:51:06 wmtan Exp $
+  $Id: Principal.cc,v 1.29 2008/04/04 22:46:16 wmtan Exp $
   ----------------------------------------------------------------------*/
 
 #include <algorithm>
@@ -552,8 +552,7 @@ namespace edm {
     if (g.entryDescription()) return;
 
     // must attempt to load from persistent store
-    BranchKey const bk = BranchKey(g.productDescription());
-    std::auto_ptr<EntryDescription> prov(store_->getProvenance(bk));
+    std::auto_ptr<EntryDescription> prov(store_->getProvenance(g.productDescription()));
 
     // Now fix up the Group
     g.setProvenance(prov);
