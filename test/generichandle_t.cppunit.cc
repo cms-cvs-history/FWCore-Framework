@@ -2,7 +2,7 @@
 
 Test of the EventPrincipal class.
 
-$Id: generichandle_t.cppunit.cc,v 1.31 2008/02/12 21:49:14 chrjones Exp $
+$Id: generichandle_t.cppunit.cc,v 1.32 2008/04/04 22:46:17 wmtan Exp $
 
 ----------------------------------------------------------------------*/  
 #include <string>
@@ -150,7 +150,6 @@ void testGenericHandle::getbyLabelTest() {
   edm::ProductRegistry::ProductList const& pl = preg->productList();
   edm::BranchKey const bk(product);
   edm::ProductRegistry::ProductList::const_iterator it = pl.find(bk);
-  product.productID_ = it->second.productID_;
 
   edm::EventID col(1L, 1L);
   edm::Timestamp fakeTime;
@@ -227,7 +226,6 @@ void testGenericHandle::putTest() {
    edm::ProductRegistry::ProductList const& pl = preg->productList();
    edm::BranchKey const bk(product);
    edm::ProductRegistry::ProductList::const_iterator it = pl.find(bk);
-   product.productID_ = it->second.productID_;
    
    edm::EventID col(1L, 1L);
    edm::Timestamp fakeTime;

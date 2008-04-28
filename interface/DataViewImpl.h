@@ -81,7 +81,7 @@ edm::Ref<AppleCollection> ref(refApples, index);
 */
 /*----------------------------------------------------------------------
 
-$Id: DataViewImpl.h,v 1.37 2008/03/31 21:13:27 wmtan Exp $
+$Id: DataViewImpl.h,v 1.38 2008/04/24 20:46:21 wmtan Exp $
 
 ----------------------------------------------------------------------*/
 #include <cassert>
@@ -178,7 +178,7 @@ namespace edm {
     getManyByType(std::vector<Handle<PROD> >& results) const;
 
     Provenance const&
-    getProvenance(ProductID const& theID) const;
+    getProvenance(BranchID const& theID) const;
 
     void
     getAllProvenance(std::vector<Provenance const*> &provenances) const;
@@ -429,7 +429,7 @@ namespace edm {
     // product.release(); // The object has been copied into the Wrapper.
     // The old copy must be deleted, so we cannot release ownership.
 
-    return(OrphanHandle<PROD>(wp->product(), desc.productID()));
+    return(OrphanHandle<PROD>(wp->product(), desc.productIDtoAssign()));
   }
 
   template <typename PROD>
@@ -440,7 +440,7 @@ namespace edm {
       getBranchDescription(TypeID(*p), productInstanceName);
 
     //should keep track of what Ref's have been requested and make sure they are 'put'
-    return RefProd<PROD>(desc.productID(), prodGetter());
+    return RefProd<PROD>(desc.productIDtoAssign(), prodGetter());
   }
   
   template <typename PROD>

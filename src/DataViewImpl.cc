@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------
-$Id: DataViewImpl.cc,v 1.26 2008/04/04 22:46:16 wmtan Exp $
+$Id: DataViewImpl.cc,v 1.26.2.1 2008/04/25 17:20:22 wmtan Exp $
 ----------------------------------------------------------------------*/
 
 #include <algorithm>
@@ -50,7 +50,7 @@ namespace edm {
 	// note: ownership has been passed - so clear the pointer!
 	pit->first = 0;
 
-	boost::shared_ptr<EntryDescription> entryDescriptionPtr(new EntryDescription(pit->second->productID()));
+	boost::shared_ptr<EntryDescription> entryDescriptionPtr(new EntryDescription(pit->second->productIDtoAssign()));
 
 	// set parts of provenance
 	entryDescriptionPtr->parents_ = gotProductIDs_;
@@ -164,9 +164,9 @@ DataViewImpl::getMatchingSequenceByLabel_(TypeID const& typeID,
 }
 
   Provenance const&
-  DataViewImpl::getProvenance(ProductID const& oid) const
+  DataViewImpl::getProvenance(BranchID const& bid) const
   {
-    return dbk_.getProvenance(oid);
+    return dbk_.getProvenance(bid);
   }
 
   void

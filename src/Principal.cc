@@ -1,5 +1,5 @@
 /**----------------------------------------------------------------------
-  $Id: Principal.cc,v 1.29 2008/04/04 22:46:16 wmtan Exp $
+  $Id: Principal.cc,v 1.29.2.1 2008/04/25 17:20:22 wmtan Exp $
   ----------------------------------------------------------------------*/
 
 #include <algorithm>
@@ -7,6 +7,9 @@
 #include <stdexcept>
 
 #include "FWCore/Framework/interface/Principal.h"
+#include "DataFormats/Provenance/interface/BranchMapper.h"
+#include "DataFormats/Provenance/interface/BranchMapperRegistry.h"
+#include "DataFormats/Provenance/interface/ProcessHistory.h"
 #include "DataFormats/Provenance/interface/ProcessHistoryRegistry.h"
 #include "DataFormats/Provenance/interface/ProductRegistry.h"
 #include "DataFormats/Common/interface/BasicHandle.h"
@@ -25,13 +28,14 @@ namespace edm {
     EDProductGetter(),
     processHistoryID_(hist),
     processHistoryPtr_(boost::shared_ptr<ProcessHistory>(new ProcessHistory)),
+    branchMapperID_(),
+    branchMapperPtr_(new BranchMapper),
     processConfiguration_(pc),
     processHistoryModified_(false),
-    groups_(reg->maxID()),
+    groups_(),
     productStatuses_(reg->maxID(), productstatus::invalid()),
     preg_(reg),
-    store_(rtrv),
-    size_(0)
+    store_(rtrv)
   {
     if (processHistoryID_.isValid()) {
       ProcessHistoryRegistry& history(*ProcessHistoryRegistry::instance());
@@ -46,8 +50,9 @@ namespace edm {
 
   Group*
   Principal::getExistingGroup(Group const& group) {
-    unsigned int index = group.index();
-    return groups_[index].get();
+    GroupCollection::const_iterator it = groups_.find(group.provenance().branchID());
+    if (it == groups_.end()) return 0;
+    return it->second.get();
   }
 
   void 
@@ -57,13 +62,10 @@ namespace edm {
     assert (!bd.friendlyClassName().empty());
     assert (!bd.moduleLabel().empty());
     assert (!bd.processName().empty());
-    assert (bd.productID().isValid());
-    unsigned int index = group->index();
-    assert (index < groups_.size());
+    assert (group->provenance().productID().isValid());
     SharedGroupPtr g(group);
     if (g->entryDescription() == 0) g->provenance().setStore(store_);
-    if (!g->onDemand()) ++size_;
-    groups_[index] = g;
+    groups_.insert(std::make_pair(bd.branchID(), g));
   }
 
   void 
@@ -73,13 +75,10 @@ namespace edm {
     assert (!bd.friendlyClassName().empty());
     assert (!bd.moduleLabel().empty());
     assert (!bd.processName().empty());
-    assert (bd.productID().isValid());
-    unsigned int index = group->index();
-    assert (index < groups_.size());
+    assert (group->provenance().productID().isValid());
     SharedGroupPtr g(group);
     if (g->entryDescription() == 0) g->provenance().setStore(store_);
-    if (groups_[index]->onDemand()) ++size_;
-    groups_[index]->replace(*g);
+    groups_[bd.branchID()]->replace(*g);
   }
 
   void
@@ -144,12 +143,12 @@ namespace edm {
   }
 
   Principal::SharedConstGroupPtr const
-  Principal::getGroup(ProductID const& oid, bool resolveProd, bool resolveProv, bool fillOnDemand) const {
-    unsigned int index = Group::index(oid);
-    if (index < 0 || index >= groups_.size() || groups_[index].get() == 0) {
+  Principal::getGroup(BranchID const& bid, bool resolveProd, bool resolveProv, bool fillOnDemand) const {
+    GroupCollection::const_iterator it = groups_.find(bid);
+    if (it == groups_.end()) {
       return SharedConstGroupPtr();
     }
-    SharedConstGroupPtr const& g = groups_[index];
+    SharedConstGroupPtr const& g = it->second;
     if (resolveProd && !g->productUnavailable()) {
       this->resolveProduct(*g, fillOnDemand);
     }
@@ -161,7 +160,8 @@ namespace edm {
 
   BasicHandle
   Principal::get(ProductID const& oid) const {
-    SharedConstGroupPtr const& g = getGroup(oid, true, false, true);
+    BranchID bid = branchMapperPtr_->productToBranch(oid);
+    SharedConstGroupPtr const& g = getGroup(bid, true, false, true);
     if (g.get() == 0) {
       if (!oid.isValid()) {
         throw edm::Exception(edm::errors::ProductNotFound,"InvalidID")
@@ -186,10 +186,12 @@ namespace edm {
   }
 
   BasicHandle
-  Principal::getForOutput(ProductID const& oid, bool getProd, bool getProv) const {
-    ProductStatus & status = const_cast<ProductStatus &>(productStatuses_[Group::index(oid)]);
+  Principal::getForOutput(BranchID const& bid, bool getProd, bool getProv) const {
+    ProductID oid = branchMapperPtr_->branchToProduct(bid);
 
-    SharedConstGroupPtr const& g = getGroup(oid, getProd, getProv, false);
+    ProductStatus & status = const_cast<ProductStatus &>(productStatuses_[oid.id() - 1]);
+
+    SharedConstGroupPtr const& g = getGroup(bid, getProd, getProv, false);
     if (g.get() == 0) {
       if (!oid.isValid()) {
         throw edm::Exception(edm::errors::ProductNotFound,"InvalidID")
@@ -380,15 +382,11 @@ namespace edm {
   }
 
   Provenance const&
-  Principal::getProvenance(ProductID const& oid) const {
-    SharedConstGroupPtr const& g = getGroup(oid, false, true, true);
+  Principal::getProvenance(BranchID const& bid) const {
+    SharedConstGroupPtr const& g = getGroup(bid, false, true, true);
     if (g.get() == 0) {
-      if (!oid.isValid()) {
-        throw edm::Exception(edm::errors::ProductNotFound,"InvalidID")
-	  << "getProvenance: invalid ProductID supplied\n";
-      }
       throw edm::Exception(edm::errors::ProductNotFound,"InvalidID")
-	<< "getProvenance: no product with given id: "<< oid << "\n";
+	<< "getProvenance: no product with given branch id: "<< bid << "\n";
     }
 
     if (g->onDemand()) {
@@ -398,7 +396,7 @@ namespace edm {
     // If they still are not there, then throw
     if (g->onDemand()) {
       throw edm::Exception(edm::errors::ProductNotFound)
-	<< "getProvenance: no product with given ProductID: "<< oid <<"\n";
+	<< "getProvenance: no product with given BranchID: "<< bid <<"\n";
     }
 
     return g->provenance();
@@ -411,19 +409,19 @@ namespace edm {
   Principal::getAllProvenance(std::vector<Provenance const*> & provenances) const {
     provenances.clear();
     for (Principal::const_iterator i = begin(), iEnd = end(); i != iEnd; ++i) {
-      if ((*i)->provenanceAvailable() && (*i)->provenance().isPresent() && (*i)->provenance().product().present())
-	 provenances.push_back(&(*i)->provenance());
+      if (i->second->provenanceAvailable() && i->second->provenance().isPresent() && i->second->provenance().product().present())
+	 provenances.push_back(&i->second->provenance());
     }
   }
 
   void
   Principal::readImmediate() const {
     for (Principal::const_iterator i = begin(), iEnd = end(); i != iEnd; ++i) {
-      if (!(*i)->productUnavailable()) {
-        resolveProduct(**i, false);
+      if (i->second->productUnavailable()) {
+        resolveProduct(*i->second, false);
       }
-      if ((*i)->provenanceAvailable()) {
-	resolveProvenance(**i);
+      if (i->second->provenanceAvailable()) {
+	resolveProvenance(*i->second);
       }
     }
   }
@@ -496,9 +494,9 @@ namespace edm {
     // This is a vector of indexes into the productID vector
     // These indexes point to groups with desired process name (and
     // also type when this function is called from findGroups)
-    std::vector<ProductID> const& vindex = j->second;
+    std::vector<BranchID> const& vindex = j->second;
 
-    for (std::vector<ProductID>::const_iterator ib(vindex.begin()), ie(vindex.end());
+    for (std::vector<BranchID>::const_iterator ib(vindex.begin()), ie(vindex.end());
 	 ib != ie;
 	 ++ib) {
       SharedConstGroupPtr const& group = getGroup(*ib, false, false, false);
@@ -559,10 +557,9 @@ namespace edm {
   }
 
   void
-  Principal::recombine(Principal & other, std::vector<ProductID> const& pids) {
-    for (std::vector<ProductID>::const_iterator it = pids.begin(), itEnd = pids.end(); it != itEnd; ++it) {
-      unsigned int index = Group::index(*it);
-      groups_[index].swap(other.groups_[index]);
+  Principal::recombine(Principal & other, std::vector<BranchID> const& bids) {
+    for (std::vector<BranchID>::const_iterator it = bids.begin(), itEnd = bids.end(); it != itEnd; ++it) {
+      groups_[*it].swap(other.groups_[*it]);
     }
     store_->mergeReaders(other.store());
   }

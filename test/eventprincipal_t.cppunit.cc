@@ -2,7 +2,7 @@
 
 Test of the EventPrincipal class.
 
-$Id: eventprincipal_t.cppunit.cc,v 1.53 2008/01/31 04:56:34 wmtan Exp $
+$Id: eventprincipal_t.cppunit.cc,v 1.54 2008/04/04 22:46:17 wmtan Exp $
 
 ----------------------------------------------------------------------*/  
 #include <map>
@@ -14,6 +14,7 @@ $Id: eventprincipal_t.cppunit.cc,v 1.53 2008/01/31 04:56:34 wmtan Exp $
 #include <cppunit/extensions/HelperMacros.h>
 
 #include "DataFormats/Provenance/interface/BranchDescription.h"
+#include "DataFormats/Provenance/interface/BranchID.h"
 #include "DataFormats/Provenance/interface/ModuleDescription.h"
 #include "DataFormats/Provenance/interface/ParameterSetID.h"
 #include "DataFormats/Provenance/interface/ProcessConfiguration.h"
@@ -174,7 +175,6 @@ void test_ep::setUp()
     edm::ProductRegistry::ProductList const& pl = pProductRegistry_->productList();
     edm::BranchKey const bk(branch);
     edm::ProductRegistry::ProductList::const_iterator it = pl.find(bk);
-    branch.productID_ = it->second.productID_;
 
     std::auto_ptr<edm::Provenance> provenance(new edm::Provenance(branch, true));
 
@@ -300,7 +300,7 @@ void test_ep::failgetbyInvalidIdTest()
 
 void test_ep::failgetProvenanceTest() 
 {
-  edm::ProductID id;
+  edm::BranchID id;
   CPPUNIT_ASSERT_THROW(pEvent_->getProvenance(id), edm::Exception);
 }
 

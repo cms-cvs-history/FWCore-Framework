@@ -16,7 +16,7 @@
 //
 // Original Author:  Chris Jones
 //         Created:  Sun Feb  3 19:43:16 EST 2008
-// $Id: GenericObjectOwner.h,v 1.1 2008/02/12 21:48:33 chrjones Exp $
+// $Id: GenericObjectOwner.h,v 1.2 2008/02/15 20:11:06 wmtan Exp $
 //
 
 // system include files
@@ -150,7 +150,7 @@ class GenericObjectOwner
       // product.release(); // The object has been copied into the Wrapper.
       // The old copy must be deleted, so we cannot release ownership.
       
-      return(OrphanHandle<GenericObjectOwner>(oWrapper.Get("obj"), desc.productID()));
+      return(OrphanHandle<GenericObjectOwner>(oWrapper.Get("obj"), desc.productIDtoAssign()));
    }
    
 }
