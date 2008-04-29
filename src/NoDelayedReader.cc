@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------
-$Id: NoDelayedReader.cc,v 1.10 2008/02/06 06:24:45 wmtan Exp $
+$Id: NoDelayedReader.cc,v 1.10.2.1 2008/04/25 17:20:22 wmtan Exp $
 ----------------------------------------------------------------------*/
 
 #include "FWCore/Framework/interface/NoDelayedReader.h"
@@ -33,9 +33,9 @@ namespace edm {
       << "getProduct() called for branchkey: " << k << "\n";
   }
 
-  std::auto_ptr<EntryDescription>
+  std::auto_ptr<Provenance>
   NoDelayedReader::getProvenance_(BranchDescription const& desc) const {
     throw cms::Exception("LogicError","NoDelayedReader")
-      << "getProvenance() called for branchkey : " << BranchKey(desc) << "\n";
+      << "getProvenance() called for branchkey: " << BranchKey(desc) << "\n";
   }
 }

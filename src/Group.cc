@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------
-$Id: Group.cc,v 1.36 2008/02/14 15:55:06 wdd Exp $
+$Id: Group.cc,v 1.37 2008/04/04 22:46:16 wmtan Exp $
 ----------------------------------------------------------------------*/
 #include <string>
 #include "DataFormats/Provenance/interface/ProductStatus.h"
@@ -16,30 +16,30 @@ namespace edm {
   Group::Group() :
     product_(),
     provenance_(),
-    status_(productstatus::neverCreated()),
-    dropped_(false) {}
+    dropped_(false),
+    onDemand_(false) {}
 
 
   Group::Group(std::auto_ptr<Provenance> prov) :
     product_(),
     provenance_(prov.release()),
-    status_(productstatus::neverCreated()),
-    dropped_(!provenance_->product().present()) {
+    dropped_(!provenance_->product().present()),
+    onDemand_(false) {
   }
 
-  Group::Group(ConstBranchDescription const& bd, ProductStatus status) :
+  Group::Group(ConstBranchDescription const& bd, bool demand) :
     product_(),
-    provenance_(new Provenance(bd, productstatus::present(status) || (productstatus::unknown(status_)))),
-    status_(status),
-    dropped_(!bd.present()) {
+    provenance_(new Provenance(bd, productstatus::unknown())),
+    dropped_(!bd.present()),
+    onDemand_(demand) {
   }
 
   Group::Group(std::auto_ptr<EDProduct> edp,
 	       std::auto_ptr<Provenance> prov) :
     product_(edp.release()),
     provenance_(prov.release()),
-    status_(productstatus::present()),
-    dropped_(false) {
+    dropped_(false),
+    onDemand_(false) {
   }
 
   Group::~Group() {
@@ -48,15 +48,15 @@ namespace edm {
   ProductStatus
   Group::status() const {
     // for backward compatibility
-    if (productstatus::unknown(status_) && product_) {
-      status_ = (product_->isPresent() ? productstatus::present() : productstatus::neverCreated());
+    if (product_) {
+      product_->isPresent() ? provenance_->setPresent() : provenance_->setNotPresent();
     }
-    return status_;
+    return provenance_->productStatus();
   }
 
   bool
   Group::onDemand() const {
-    return productstatus::onDemand(status_);
+    return onDemand_;
   }
 
   bool 
@@ -64,7 +64,7 @@ namespace edm {
     if (onDemand()) return false;
     if (dropped_) return true;
     if (productstatus::unknown(status())) return false;
-    return not productstatus::present(status_);
+    return not productstatus::present(status());
 
   }
 
@@ -81,16 +81,15 @@ namespace edm {
   }
   
   void 
-  Group::setProvenance(std::auto_ptr<EntryDescription> prov) const {
+  Group::setProvenance(std::auto_ptr<Provenance> prov) const {
     assert (entryDescription() == 0);
-    provenance_->setEvent(boost::shared_ptr<EntryDescription>(prov.release()));  // Group takes ownership
+    provenance_ = boost::shared_ptr<Provenance>(prov.release());  // Group takes ownership
   }
 
   void  
   Group::swap(Group& other) {
     std::swap(product_, other.product_);
     std::swap(provenance_, other.provenance_);
-    std::swap(status_, other.status_);
     std::swap(dropped_, other.dropped_);
   }
 
@@ -161,7 +160,7 @@ namespace edm {
         << "process = " << processName() << "\n";
     }
 
-    provenance_->entryDescription()->mergeEntryDescription(newGroup->entryDescription());
+    const_cast<EntryDescription *>(entryDescription())->mergeEntryDescription(newGroup->entryDescription());
 
     if (!productUnavailable() && !newGroup->productUnavailable()) {
 

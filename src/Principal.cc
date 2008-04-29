@@ -1,5 +1,5 @@
 /**----------------------------------------------------------------------
-  $Id: Principal.cc,v 1.29.2.1 2008/04/25 17:20:22 wmtan Exp $
+  $Id: Principal.cc,v 1.29.2.2 2008/04/28 18:02:32 wmtan Exp $
   ----------------------------------------------------------------------*/
 
 #include <algorithm>
@@ -33,7 +33,6 @@ namespace edm {
     processConfiguration_(pc),
     processHistoryModified_(false),
     groups_(),
-    productStatuses_(reg->maxID(), productstatus::invalid()),
     preg_(reg),
     store_(rtrv)
   {
@@ -64,7 +63,6 @@ namespace edm {
     assert (!bd.processName().empty());
     assert (group->provenance().productID().isValid());
     SharedGroupPtr g(group);
-    if (g->entryDescription() == 0) g->provenance().setStore(store_);
     groups_.insert(std::make_pair(bd.branchID(), g));
   }
 
@@ -77,15 +75,16 @@ namespace edm {
     assert (!bd.processName().empty());
     assert (group->provenance().productID().isValid());
     SharedGroupPtr g(group);
-    if (g->entryDescription() == 0) g->provenance().setStore(store_);
     groups_[bd.branchID()]->replace(*g);
   }
 
+/*
   void
   Principal::addGroup(ConstBranchDescription const& bd, ProductStatus status) {
     std::auto_ptr<Group> g(new Group(bd, status));
     addOrReplaceGroup(g);
   }
+*/
 
   void
   Principal::addGroup(std::auto_ptr<EDProduct> prod, std::auto_ptr<Provenance> prov) {
@@ -189,20 +188,8 @@ namespace edm {
   Principal::getForOutput(BranchID const& bid, bool getProd, bool getProv) const {
     ProductID oid = branchMapperPtr_->branchToProduct(bid);
 
-    ProductStatus & status = const_cast<ProductStatus &>(productStatuses_[oid.id() - 1]);
-
     SharedConstGroupPtr const& g = getGroup(bid, getProd, getProv, false);
     if (g.get() == 0) {
-      if (!oid.isValid()) {
-        throw edm::Exception(edm::errors::ProductNotFound,"InvalidID")
-	  << "getForOutput: invalid ProductID supplied\n";
-      }
-      status = productstatus::neverCreated();
-      return BasicHandle();
-    }
-    status = g->status();
-    if (productstatus::onDemand(status)) {
-      status = productstatus::neverCreated();
       return BasicHandle();
     }
     return BasicHandle(g->product(), &g->provenance());
@@ -548,9 +535,7 @@ namespace edm {
   void
   Principal::resolveProvenance(Group const& g) const {
     if (g.entryDescription()) return;
-
-    // must attempt to load from persistent store
-    std::auto_ptr<EntryDescription> prov(store_->getProvenance(g.productDescription()));
+    std::auto_ptr<Provenance> prov(store_->getProvenance(g.productDescription()));
 
     // Now fix up the Group
     g.setProvenance(prov);

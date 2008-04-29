@@ -31,6 +31,12 @@ namespace edm {
   }
 
   void
+  EventPrincipal::addOnDemandGroup(ConstBranchDescription const& desc) {
+    std::auto_ptr<Group> g(new Group(desc, true));
+    addOrReplaceGroup(g);
+  }
+
+  void
   EventPrincipal::addGroup(std::auto_ptr<Provenance> prov) {
     std::auto_ptr<Group> g(new Group(prov));
     addOrReplaceGroup(g);

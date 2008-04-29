@@ -10,7 +10,7 @@ such code sees the Event class, which is a proxy for EventPrincipal.
 The major internal component of the EventPrincipal
 is the DataBlock.
 
-$Id: EventPrincipal.h,v 1.73 2008/02/28 20:51:05 wmtan Exp $
+$Id: EventPrincipal.h,v 1.74 2008/03/04 00:05:00 paterno Exp $
 
 ----------------------------------------------------------------------*/
 
@@ -94,6 +94,8 @@ namespace edm {
     RunPrincipal const& runPrincipal() const;
 
     RunPrincipal & runPrincipal();
+
+    void addOnDemandGroup(ConstBranchDescription const& desc);
 
     void addGroup(std::auto_ptr<Provenance>);
 

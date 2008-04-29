@@ -2,7 +2,7 @@
 
 Test of the EventPrincipal class.
 
-$Id: eventprincipal_t.cppunit.cc,v 1.54 2008/04/04 22:46:17 wmtan Exp $
+$Id: eventprincipal_t.cppunit.cc,v 1.54.2.1 2008/04/28 18:02:33 wmtan Exp $
 
 ----------------------------------------------------------------------*/  
 #include <map>
@@ -20,6 +20,7 @@ $Id: eventprincipal_t.cppunit.cc,v 1.54 2008/04/04 22:46:17 wmtan Exp $
 #include "DataFormats/Provenance/interface/ProcessConfiguration.h"
 #include "DataFormats/Provenance/interface/ProductID.h"
 #include "DataFormats/Provenance/interface/ProductRegistry.h"
+#include "DataFormats/Provenance/interface/ProductStatus.h"
 #include "DataFormats/Provenance/interface/Provenance.h"
 #include "DataFormats/Provenance/interface/Timestamp.h"
 #include "DataFormats/Provenance/interface/EventAuxiliary.h"
@@ -176,7 +177,7 @@ void test_ep::setUp()
     edm::BranchKey const bk(branch);
     edm::ProductRegistry::ProductList::const_iterator it = pl.find(bk);
 
-    std::auto_ptr<edm::Provenance> provenance(new edm::Provenance(branch, true));
+    std::auto_ptr<edm::Provenance> provenance(new edm::Provenance(branch, edm::productstatus::present()));
 
     edm::ProcessConfiguration* process = processConfigurations_[tag];
     assert(process);

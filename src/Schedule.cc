@@ -946,7 +946,7 @@ namespace edm {
     for(branches::iterator itBranch = demandBranches_.begin(), itBranchEnd = demandBranches_.end();
         itBranch != itBranchEnd;
         ++itBranch) {
-      ep.addGroup(**itBranch, productstatus::onDemand());
+      ep.addOnDemandGroup(**itBranch);
     }
   }
 

@@ -16,7 +16,7 @@ pointer to a Group, when queried.
 
 (Historical note: prior to April 2007 this class was named DataBlockImpl)
 
-$Id: Principal.h,v 1.18 2008/02/28 20:51:05 wmtan Exp $
+$Id: Principal.h,v 1.18.2.1 2008/04/28 18:02:32 wmtan Exp $
 
 ----------------------------------------------------------------------*/
 #include <map>
@@ -114,11 +114,9 @@ namespace edm {
       return processHistoryID_;   
     }
 
-    ProductStatusVector const& productStatuses() const {
-      return productStatuses_;   
-    }
-
+/*
     void addGroup(ConstBranchDescription const& bd, ProductStatus status);
+*/
 
     void addGroup(std::auto_ptr<EDProduct> prod, std::auto_ptr<Provenance> prov);
 
@@ -200,9 +198,6 @@ namespace edm {
 
     // A vector of groups.
     GroupCollection groups_; // products and provenances are persistent
-
-    // A vector of statuses
-    ProductStatusVector productStatuses_;
 
     // Pointer to the product registry. There is one entry in the registry
     // for each EDProduct in the event.
