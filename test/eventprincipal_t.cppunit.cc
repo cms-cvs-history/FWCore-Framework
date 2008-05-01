@@ -2,7 +2,7 @@
 
 Test of the EventPrincipal class.
 
-$Id: eventprincipal_t.cppunit.cc,v 1.54.2.1 2008/04/28 18:02:33 wmtan Exp $
+$Id: eventprincipal_t.cppunit.cc,v 1.54.2.2 2008/04/29 07:57:53 wmtan Exp $
 
 ----------------------------------------------------------------------*/  
 #include <map>
@@ -159,7 +159,8 @@ void test_ep::setUp()
   pProductRegistry_->addProduct(*fake_single_process_branch("test", "TEST"));
   pProductRegistry_->addProduct(*fake_single_process_branch("user", "USER"));
   pProductRegistry_->addProduct(*fake_single_process_branch("rick", "USER2", "rick"));
-  pProductRegistry_->setProductIDs();
+  pProductRegistry_->setFrozen();
+  pProductRegistry_->setProductIDs(1U);
  
   // Put products we'll look for into the EventPrincipal.
   {

@@ -2,7 +2,7 @@
 
 Test of the EventPrincipal class.
 
-$Id: event_getrefbeforeput_t.cppunit.cc,v 1.18 2007/12/31 22:43:57 wmtan Exp $
+$Id: event_getrefbeforeput_t.cppunit.cc,v 1.19 2008/01/31 04:56:34 wmtan Exp $
 
 ----------------------------------------------------------------------*/  
 #include <cassert>
@@ -55,7 +55,8 @@ CPPUNIT_TEST_SUITE_REGISTRATION(testEventGetRefBeforePut);
 void testEventGetRefBeforePut::failGetProductNotRegisteredTest() {
 
   edm::ProductRegistry *preg = new edm::ProductRegistry;
-  preg->setProductIDs();
+  preg->setFrozen();
+  preg->setProductIDs(1U);
   edm::EventID col(1L, 1L);
   std::string uuid = edm::createGlobalIdentifier();
   edm::Timestamp fakeTime;
@@ -112,7 +113,8 @@ void testEventGetRefBeforePut::getRefTest() {
 
   edm::ProductRegistry *preg = new edm::ProductRegistry;
   preg->addProduct(product);
-  preg->setProductIDs();
+  preg->setFrozen();
+  preg->setProductIDs(1U);
   edm::EventID col(1L, 1L);
   std::string uuid = edm::createGlobalIdentifier();
   edm::Timestamp fakeTime;

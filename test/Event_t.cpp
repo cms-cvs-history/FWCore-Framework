@@ -3,7 +3,7 @@
 
 Test program for edm::Event.
 
-$Id: Event_t.cpp,v 1.30 2008/01/31 04:56:34 wmtan Exp $
+$Id: Event_t.cpp,v 1.31 2008/04/24 20:46:21 wmtan Exp $
 ----------------------------------------------------------------------*/
 #include <Utilities/Testing/interface/CppUnit_testdriver.icpp>
 #include <cppunit/extensions/HelperMacros.h>
@@ -178,6 +178,7 @@ testEvent::registerProduct(std::string const& tag,
   branch.fullClassName_       = product_type.userClassName();
   branch.friendlyClassName_   = product_type.friendlyClassName();
   branch.moduleDescriptionID_ = localModuleDescription.id();
+  branch.produced_            = true;
   
   moduleDescriptions_[tag] = localModuleDescription;
   availableProducts_->addProduct(branch);
@@ -258,13 +259,14 @@ testEvent::testEvent() :
   branch.fullClassName_       = product_type.userClassName();
   branch.friendlyClassName_   = product_type.friendlyClassName();
   branch.moduleDescriptionID_ = currentModuleDescription_->id();
+  branch.produced_            = true;
   
   availableProducts_->addProduct(branch);
 
 
   // Freeze the product registry before we make the Event.
-  availableProducts_->setProductIDs();
   availableProducts_->setFrozen();
+  availableProducts_->setProductIDs(1U);
 }
 
 testEvent::~testEvent()
