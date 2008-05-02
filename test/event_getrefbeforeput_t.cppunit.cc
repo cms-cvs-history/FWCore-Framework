@@ -2,7 +2,7 @@
 
 Test of the EventPrincipal class.
 
-$Id: event_getrefbeforeput_t.cppunit.cc,v 1.19 2008/01/31 04:56:34 wmtan Exp $
+$Id: event_getrefbeforeput_t.cppunit.cc,v 1.19.2.1 2008/05/01 23:54:29 wmtan Exp $
 
 ----------------------------------------------------------------------*/  
 #include <cassert>
@@ -97,18 +97,20 @@ void testEventGetRefBeforePut::getRefTest() {
   edm::TypeID dummytype(dp);
   std::string className = dummytype.friendlyClassName();
 
-  edm::BranchDescription product;
-
-  product.fullClassName_ = dummytype.userClassName();
-  product.friendlyClassName_ = className;
-
   edm::ModuleDescription modDesc;
   modDesc.moduleName_ = "Blah";
 
-  product.moduleLabel_ = label;
-  product.productInstanceName_ = productInstanceName;
-  product.processName_ = processName;
-  product.moduleDescriptionID_ = modDesc.id();
+  edm::BranchDescription product(edm::InEvent,
+				 label,
+				 processName,
+				 dummytype.userClassName(),
+				 className,
+				 productInstanceName,
+				 modDesc.id(),
+				 std::set<edm::ParameterSetID>(),
+				 std::set<edm::ProcessConfigurationID>()
+				);
+
   product.init();
 
   edm::ProductRegistry *preg = new edm::ProductRegistry;

@@ -2,7 +2,7 @@
 
 Test of the EventPrincipal class.
 
-$Id: generichandle_t.cppunit.cc,v 1.32.2.1 2008/04/28 18:02:33 wmtan Exp $
+$Id: generichandle_t.cppunit.cc,v 1.32.2.2 2008/05/01 23:54:29 wmtan Exp $
 
 ----------------------------------------------------------------------*/  
 #include <string>
@@ -129,18 +129,20 @@ void testGenericHandle::getbyLabelTest() {
   edm::TypeID dummytype(dp);
   std::string className = dummytype.friendlyClassName();
 
-  edm::BranchDescription product;
-
-  product.fullClassName_ = dummytype.userClassName();
-  product.friendlyClassName_ = className;
-
   edm::ModuleDescription modDesc;
   modDesc.moduleName_ = "Blah";
 
-  product.moduleLabel_ = label;
-  product.productInstanceName_ = productInstanceName;
-  product.processName_ = processName;
-  product.moduleDescriptionID_ = modDesc.id();
+  edm::BranchDescription product(edm::InEvent,
+				 label,
+				 processName,
+				 dummytype.userClassName(),
+				 className,
+				 productInstanceName,
+				 modDesc.id(),
+				 std::set<edm::ParameterSetID>(),
+				 std::set<edm::ProcessConfigurationID>()
+				);
+
   product.init();
 
   edm::ProductRegistry *preg = new edm::ProductRegistry;
@@ -206,18 +208,20 @@ void testGenericHandle::putTest() {
    edm::TypeID dummytype(dp);
    std::string className = dummytype.friendlyClassName();
    
-   edm::BranchDescription product;
-   
-   product.fullClassName_ = dummytype.userClassName();
-   product.friendlyClassName_ = className;
-   
    edm::ModuleDescription modDesc;
    modDesc.moduleName_ = "Blah";
    
-   product.moduleLabel_ = label;
-   product.productInstanceName_ = productInstanceName;
-   product.processName_ = processName;
-   product.moduleDescriptionID_ = modDesc.id();
+  edm::BranchDescription product(edm::InEvent,
+				 label,
+				 processName,
+				 dummytype.userClassName(),
+				 className,
+				 productInstanceName,
+				 modDesc.id(),
+				 std::set<edm::ParameterSetID>(),
+				 std::set<edm::ProcessConfigurationID>()
+				);
+   
    product.init();
    
    edm::ProductRegistry *preg = new edm::ProductRegistry;

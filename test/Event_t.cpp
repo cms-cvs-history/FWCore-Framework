@@ -3,7 +3,7 @@
 
 Test program for edm::Event.
 
-$Id: Event_t.cpp,v 1.31 2008/04/24 20:46:21 wmtan Exp $
+$Id: Event_t.cpp,v 1.31.2.1 2008/05/01 23:54:29 wmtan Exp $
 ----------------------------------------------------------------------*/
 #include <Utilities/Testing/interface/CppUnit_testdriver.icpp>
 #include <cppunit/extensions/HelperMacros.h>
@@ -169,17 +169,19 @@ testEvent::registerProduct(std::string const& tag,
   localModuleDescription.moduleLabel_          = moduleLabel;
   localModuleDescription.processConfiguration_ = process;
   
-  BranchDescription branch;
-
   TypeID product_type(typeid(T));
-  branch.moduleLabel_         = moduleLabel;
-  branch.processName_         = processName;
-  branch.productInstanceName_ = productInstanceName;
-  branch.fullClassName_       = product_type.userClassName();
-  branch.friendlyClassName_   = product_type.friendlyClassName();
-  branch.moduleDescriptionID_ = localModuleDescription.id();
-  branch.produced_            = true;
-  
+
+  BranchDescription branch(InEvent,
+			   moduleLabel,
+			   processName,
+			   product_type.userClassName(),
+			   product_type.friendlyClassName(),
+			   productInstanceName,
+			   localModuleDescription.id(),
+			   std::set<ParameterSetID>(),
+			   std::set<ProcessConfigurationID>()
+			  );
+
   moduleDescriptions_[tag] = localModuleDescription;
   availableProducts_->addProduct(branch);
 }
@@ -252,17 +254,18 @@ testEvent::testEvent() :
 
   std::string productInstanceName("int1");
 
-  BranchDescription branch;
-  branch.moduleLabel_         = moduleLabel;
-  branch.productInstanceName_ = productInstanceName;
-  branch.processName_         = processName;
-  branch.fullClassName_       = product_type.userClassName();
-  branch.friendlyClassName_   = product_type.friendlyClassName();
-  branch.moduleDescriptionID_ = currentModuleDescription_->id();
-  branch.produced_            = true;
-  
-  availableProducts_->addProduct(branch);
+  BranchDescription branch(InEvent,
+			   moduleLabel,
+			   processName,
+			   product_type.userClassName(),
+			   product_type.friendlyClassName(),
+			   productInstanceName,
+			   currentModuleDescription_->id(),
+			   std::set<ParameterSetID>(),
+			   std::set<ProcessConfigurationID>()
+			  );
 
+  availableProducts_->addProduct(branch);
 
   // Freeze the product registry before we make the Event.
   availableProducts_->setFrozen();
