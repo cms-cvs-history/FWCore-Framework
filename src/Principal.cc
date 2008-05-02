@@ -1,5 +1,5 @@
 /**----------------------------------------------------------------------
-  $Id: Principal.cc,v 1.29.2.4 2008/05/02 09:31:33 wmtan Exp $
+  $Id: Principal.cc,v 1.29.2.5 2008/05/02 10:18:57 wmtan Exp $
   ----------------------------------------------------------------------*/
 
 #include <algorithm>
@@ -8,7 +8,7 @@
 
 #include "FWCore/Framework/interface/Principal.h"
 #include "DataFormats/Provenance/interface/BranchMapper.h"
-#include "DataFormats/Provenance/interface/BranchMapperRegistry.h"
+//#include "DataFormats/Provenance/interface/BranchMapperRegistry.h"
 #include "DataFormats/Provenance/interface/ProcessHistory.h"
 #include "DataFormats/Provenance/interface/ProcessHistoryRegistry.h"
 #include "DataFormats/Provenance/interface/ProductRegistry.h"
@@ -29,13 +29,10 @@ namespace edm {
     EDProductGetter(),
     processHistoryID_(hist),
     processHistoryPtr_(boost::shared_ptr<ProcessHistory>(new ProcessHistory)),
-    branchMapperID_(),
     branchMapperPtr_(new BranchMapper),
     processConfiguration_(pc),
     processHistoryModified_(false),
     groups_(),
-    branchEntryInfoVectorPtr_(),
-    branchEntryInfoVectorSorted_(true),
     preg_(reg),
     store_(rtrv)
   {
@@ -139,8 +136,7 @@ namespace edm {
 	<< "put: Cannot put because auto_ptr to product is null."
 	<< "\n";
     }
-    branchEntryInfoVectorPtr_->push_back(prov->branchEntryInfo());
-    branchEntryInfoVectorSorted_ = false;
+    branchMapperPtr_->insert(prov->branchEntryInfo());
     // Group assumes ownership
     this->addGroup(edp, prov);
     this->addToProcessHistory();
@@ -538,11 +534,6 @@ namespace edm {
   void
   Principal::resolveProvenance(Group const& g) const {
     if (g.provenance()) return;
-    if (!branchEntryInfoVectorSorted_) {
-      // Need operator < in BranchEntryInfo for this to build.
-      //edm::sort_all(*branchEntryInfoVectorPtr_);
-      branchEntryInfoVectorSorted_ = true;
-    }
     std::auto_ptr<Provenance> prov(store_->getProvenance(g.productDescription()));
 
     // Now fix up the Group

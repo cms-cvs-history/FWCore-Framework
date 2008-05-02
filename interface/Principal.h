@@ -16,7 +16,7 @@ pointer to a Group, when queried.
 
 (Historical note: prior to April 2007 this class was named DataBlockImpl)
 
-$Id: Principal.h,v 1.18.2.3 2008/05/02 09:31:32 wmtan Exp $
+$Id: Principal.h,v 1.18.2.4 2008/05/02 10:18:56 wmtan Exp $
 
 ----------------------------------------------------------------------*/
 #include <map>
@@ -115,10 +115,6 @@ namespace edm {
       return processHistoryID_;   
     }
 
-    BranchEntryInfoVector const& branchEntryInfoVector() const {
-      return *branchEntryInfoVectorPtr_;   
-    }
-
 /*
     void addGroup(ConstBranchDescription const& bd, ProductStatus status);
 */
@@ -192,8 +188,6 @@ namespace edm {
 
     boost::shared_ptr<ProcessHistory> processHistoryPtr_;
 
-    mutable BranchMapperID branchMapperID_;
-
     boost::shared_ptr<BranchMapper> branchMapperPtr_;
 
     ProcessConfiguration const& processConfiguration_;
@@ -202,12 +196,6 @@ namespace edm {
 
     // A vector of groups.
     GroupCollection groups_; // products and provenances are persistent
-
-    // A vector of BranchEntryInfo
-    boost::shared_ptr<BranchEntryInfoVector> branchEntryInfoVectorPtr_;
-
-    // Is BranchEntryInfo sorted?
-    mutable bool branchEntryInfoVectorSorted_;
 
     // Pointer to the product registry. There is one entry in the registry
     // for each EDProduct in the event.
