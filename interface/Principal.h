@@ -16,7 +16,7 @@ pointer to a Group, when queried.
 
 (Historical note: prior to April 2007 this class was named DataBlockImpl)
 
-$Id: Principal.h,v 1.18.2.2 2008/04/29 07:57:51 wmtan Exp $
+$Id: Principal.h,v 1.18.2.3 2008/05/02 09:31:32 wmtan Exp $
 
 ----------------------------------------------------------------------*/
 #include <map>
@@ -207,7 +207,7 @@ namespace edm {
     boost::shared_ptr<BranchEntryInfoVector> branchEntryInfoVectorPtr_;
 
     // Is BranchEntryInfo sorted?
-    bool branchEntryInfoVectorSorted_;
+    mutable bool branchEntryInfoVectorSorted_;
 
     // Pointer to the product registry. There is one entry in the registry
     // for each EDProduct in the event.

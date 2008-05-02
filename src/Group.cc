@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------
-$Id: Group.cc,v 1.37 2008/04/04 22:46:16 wmtan Exp $
+$Id: Group.cc,v 1.37.2.1 2008/04/29 07:57:52 wmtan Exp $
 ----------------------------------------------------------------------*/
 #include <string>
 #include "DataFormats/Provenance/interface/ProductStatus.h"
@@ -82,7 +82,7 @@ namespace edm {
   
   void 
   Group::setProvenance(std::auto_ptr<Provenance> prov) const {
-    assert (entryDescription() == 0);
+    assert (provenance() == 0);
     provenance_ = boost::shared_ptr<Provenance>(prov.release());  // Group takes ownership
   }
 
@@ -154,7 +154,7 @@ namespace edm {
         << "fixing the producer module, then contact the Framework development\n"
         << "group with details so we can discuss whether and how to support this\n"
         << "use case.\n"
-        << "className = " << provenance().className() << "\n"
+        << "className = " << provenance()->className() << "\n"
         << "moduleLabel = " << moduleLabel() << "\n"
         << "instance = " << productInstanceName() << "\n"
         << "process = " << processName() << "\n";
@@ -174,7 +174,7 @@ namespace edm {
             << "Group::mergeGroup\n" 
             << "Two run/lumi products for the same run/lumi which should be equal are not\n"
             << "Using the first, ignoring the second\n"
-            << "className = " << provenance().className() << "\n"
+            << "className = " << provenance()->className() << "\n"
             << "moduleLabel = " << moduleLabel() << "\n"
             << "instance = " << productInstanceName() << "\n"
             << "process = " << processName() << "\n";
@@ -185,7 +185,7 @@ namespace edm {
           << "Group::mergeGroup\n" 
           << "Run/lumi product has neither a mergeProduct nor isProductEqual function\n"
           << "Using the first, ignoring the second in merge\n"
-          << "className = " << provenance().className() << "\n"
+          << "className = " << provenance()->className() << "\n"
           << "moduleLabel = " << moduleLabel() << "\n"
           << "instance = " << productInstanceName() << "\n"
           << "process = " << processName() << "\n";

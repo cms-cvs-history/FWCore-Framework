@@ -1,5 +1,5 @@
 /**----------------------------------------------------------------------
-  $Id: Principal.cc,v 1.29.2.3 2008/04/29 07:57:52 wmtan Exp $
+  $Id: Principal.cc,v 1.29.2.4 2008/05/02 09:31:33 wmtan Exp $
   ----------------------------------------------------------------------*/
 
 #include <algorithm>
@@ -15,6 +15,7 @@
 #include "DataFormats/Common/interface/BasicHandle.h"
 #include "FWCore/Utilities/interface/TypeID.h"
 #include "FWCore/Utilities/interface/EDMException.h"
+#include "FWCore/Utilities/interface/Algorithms.h"
 #include "FWCore/Framework/src/Group.h"
 #include "FWCore/Framework/interface/Selector.h"
 //using boost::lambda::_1;
@@ -51,7 +52,7 @@ namespace edm {
 
   Group*
   Principal::getExistingGroup(Group const& group) {
-    GroupCollection::const_iterator it = groups_.find(group.provenance().branchID());
+    GroupCollection::const_iterator it = groups_.find(group.provenance()->branchID());
     if (it == groups_.end()) return 0;
     return it->second.get();
   }
@@ -63,7 +64,7 @@ namespace edm {
     assert (!bd.friendlyClassName().empty());
     assert (!bd.moduleLabel().empty());
     assert (!bd.processName().empty());
-    assert (group->provenance().productID().isValid());
+    assert (group->provenance()->productID().isValid());
     SharedGroupPtr g(group);
     groups_.insert(std::make_pair(bd.branchID(), g));
   }
@@ -75,7 +76,7 @@ namespace edm {
     assert (!bd.friendlyClassName().empty());
     assert (!bd.moduleLabel().empty());
     assert (!bd.processName().empty());
-    assert (group->provenance().productID().isValid());
+    assert (group->provenance()->productID().isValid());
     SharedGroupPtr g(group);
     groups_[bd.branchID()]->replace(*g);
   }
@@ -185,7 +186,7 @@ namespace edm {
         << "onDemand production failed to produce it.\n";
       return BasicHandle(whyFailed);
     }
-    return BasicHandle(g->product(), &g->provenance());
+    return BasicHandle(g->product(), g->provenance());
   }
 
   BasicHandle
@@ -194,7 +195,7 @@ namespace edm {
     if (g.get() == 0) {
       return BasicHandle();
     }
-    return BasicHandle(g->product(), &g->provenance());
+    return BasicHandle(g->product(), g->provenance());
   }
 
   BasicHandle
@@ -379,7 +380,7 @@ namespace edm {
     }
 
     if (g->onDemand()) {
-      unscheduledFill(g->provenance());
+      unscheduledFill(*g->provenance());
     }
     // We already tried to produce the unscheduled products above
     // If they still are not there, then throw
@@ -388,7 +389,7 @@ namespace edm {
 	<< "getProvenance: no product with given BranchID: "<< bid <<"\n";
     }
 
-    return g->provenance();
+    return *g->provenance();
   }
 
   // This one is mostly for test printout purposes
@@ -398,8 +399,8 @@ namespace edm {
   Principal::getAllProvenance(std::vector<Provenance const*> & provenances) const {
     provenances.clear();
     for (Principal::const_iterator i = begin(), iEnd = end(); i != iEnd; ++i) {
-      if (i->second->provenanceAvailable() && i->second->provenance().isPresent() && i->second->provenance().product().present())
-	 provenances.push_back(&i->second->provenance());
+      if (i->second->provenanceAvailable() && i->second->provenance()->isPresent() && i->second->provenance()->product().present())
+	 provenances.push_back(i->second->provenance());
     }
   }
 
@@ -493,7 +494,7 @@ namespace edm {
         continue;
       }
 
-      if (selector.match(group->provenance())) {
+      if (selector.match(*group->provenance())) {
 
 	// Skip product if not available.
         if (!group->productUnavailable()) {
@@ -502,7 +503,7 @@ namespace edm {
           // Unscheduled execution can fail to produce the EDProduct so check
           if (!group->productUnavailable() && !group->onDemand()) {
             // Found a good match, save it
-            results.push_back(BasicHandle(group->product(), &group->provenance()));
+            results.push_back(BasicHandle(group->product(), group->provenance()));
           }
         }
       }
@@ -522,7 +523,7 @@ namespace edm {
 
     // Try unscheduled production.
     if (g.onDemand()) {
-      if (fillOnDemand) unscheduledFill(g.provenance());
+      if (fillOnDemand) unscheduledFill(*g.provenance());
       return;
     }
 
@@ -536,7 +537,12 @@ namespace edm {
 
   void
   Principal::resolveProvenance(Group const& g) const {
-    if (g.entryDescription()) return;
+    if (g.provenance()) return;
+    if (!branchEntryInfoVectorSorted_) {
+      // Need operator < in BranchEntryInfo for this to build.
+      //edm::sort_all(*branchEntryInfoVectorPtr_);
+      branchEntryInfoVectorSorted_ = true;
+    }
     std::auto_ptr<Provenance> prov(store_->getProvenance(g.productDescription()));
 
     // Now fix up the Group

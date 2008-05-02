@@ -6,7 +6,7 @@
 Group: A collection of information related to a single EDProduct. This
 is the storage unit of such information.
 
-$Id: Group.h,v 1.27.2.1 2008/04/28 18:02:32 wmtan Exp $
+$Id: Group.h,v 1.27.2.2 2008/04/29 07:57:52 wmtan Exp $
 
 ----------------------------------------------------------------------*/
 
@@ -48,9 +48,9 @@ namespace edm {
 
     EDProduct const* product() const { return product_.get(); }
 
-    Provenance & provenance() {return *provenance_;} 
+    Provenance * provenance() {return provenance_.get();} 
 
-    Provenance const& provenance() const {return *provenance_;} 
+    Provenance const* provenance() const {return provenance_.get();} 
 
     EntryDescription const* entryDescription() const {return &provenance_->entryDescription();}
 
