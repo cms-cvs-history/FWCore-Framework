@@ -50,7 +50,9 @@ namespace edm {
 
     Provenance const* provenance() const {return provenance_.get();} 
 
-    EntryDescription const* entryDescription() const {return &provenance_->entryDescription();}
+    EntryDescription const* entryDescriptionPtr() const {return &provenance_->entryDescription();}
+
+    BranchEntryInfo const* branchEntryInfoPtr() const {return provenance_->branchEntryInfoPtr();}
 
     BranchDescription const& productDescription() const {return provenance_->product();}
 
@@ -70,7 +72,7 @@ namespace edm {
     // The following is const because we can add the provenance
     // to the cache after creation of the Group, without changing the meaning
     // of the Group.
-    void setProvenance(std::auto_ptr<Provenance> prov) const;
+    void setProvenance(std::auto_ptr<BranchEntryInfo> prov) const;
 
     // Write the group to the stream.
     void write(std::ostream& os) const;
@@ -102,8 +104,6 @@ namespace edm {
     void operator=(const Group&);
 
     mutable boost::shared_ptr<EDProduct> product_;
-    // mutable boost::shared_ptr<EntryDescription> entryDescription_;
-    // BranchDescription branchDescription_;
     mutable boost::shared_ptr<Provenance> provenance_;
     bool    dropped_;
     bool    onDemand_;

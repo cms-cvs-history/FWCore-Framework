@@ -533,10 +533,10 @@ namespace edm {
   void
   Principal::resolveProvenance(Group const& g) const {
     if (g.provenance()) return;
-    std::auto_ptr<Provenance> prov(store_->getProvenance(g.productDescription()));
+    std::auto_ptr<BranchEntryInfo> bei(store_->getProvenance(g.productDescription()));
 
     // Now fix up the Group
-    g.setProvenance(prov);
+    g.setProvenance(bei);
   }
 
   void

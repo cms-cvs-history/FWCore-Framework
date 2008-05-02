@@ -8,11 +8,11 @@ namespace edm {
     Group* group = getExistingGroup(*g);
     if (group != 0) {
 
-      assert(group->entryDescription() != 0);
+      assert(group->entryDescriptionPtr() != 0);
       if (!group->productUnavailable()) {
         assert(group->product() != 0);
       }
-      assert(g->entryDescription() != 0);
+      assert(g->entryDescriptionPtr() != 0);
       if (!g->productUnavailable()) {
         assert(g->product() != 0);
       }

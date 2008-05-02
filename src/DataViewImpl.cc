@@ -6,6 +6,7 @@
 #include "FWCore/Framework/interface/DataViewImpl.h"
 #include "DataFormats/Provenance/interface/ProductRegistry.h"
 #include "FWCore/Framework/interface/Principal.h"
+#include "DataFormats/Provenance/interface/BranchEntryInfo.h"
 #include "DataFormats/Provenance/interface/EntryDescription.h"
 #include "DataFormats/Provenance/interface/EntryDescriptionRegistry.h"
 #include "DataFormats/Provenance/interface/ProductStatus.h"
@@ -50,15 +51,20 @@ namespace edm {
 	// note: ownership has been passed - so clear the pointer!
 	pit->first = 0;
 
-	boost::shared_ptr<EntryDescription> entryDescriptionPtr(new EntryDescription());
 	// set provenance
+	boost::shared_ptr<EntryDescription> entryDescriptionPtr(new EntryDescription);
 	entryDescriptionPtr->parents_ = gotProductIDs_;
 	entryDescriptionPtr->moduleDescriptionID_ = pit->second->moduleDescriptionID();
+	EntryDescriptionRegistry::instance()->insertMapped(*entryDescriptionPtr);
+	boost::shared_ptr<BranchEntryInfo> branchEntryInfoPtr(
+		new BranchEntryInfo(pit->second->branchID(),
+				    pit->second->productIDtoAssign(),
+				    productstatus::present(),
+				    entryDescriptionPtr));
 	std::auto_ptr<Provenance> pv(
-	    new Provenance(*pit->second, productstatus::present(), entryDescriptionPtr));
+	    new Provenance(*pit->second, branchEntryInfoPtr));
 	dbk_.put(pr,pv);
 	++pit;
-	EntryDescriptionRegistry::instance()->insertMapped(*entryDescriptionPtr);
     }
 
     // the cleanup is all or none

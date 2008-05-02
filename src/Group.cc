@@ -28,7 +28,7 @@ namespace edm {
 
   Group::Group(ConstBranchDescription const& bd, bool demand) :
     product_(),
-    provenance_(new Provenance(bd, productstatus::unknown())),
+    provenance_(new Provenance(bd)),
     dropped_(!bd.present()),
     onDemand_(demand) {
   }
@@ -80,9 +80,9 @@ namespace edm {
   }
   
   void 
-  Group::setProvenance(std::auto_ptr<Provenance> prov) const {
-    assert (provenance() == 0);
-    provenance_ = boost::shared_ptr<Provenance>(prov.release());  // Group takes ownership
+  Group::setProvenance(std::auto_ptr<BranchEntryInfo> prov) const {
+    assert (branchEntryInfoPtr() == 0);
+    provenance_->setBranchEntryInfo(boost::shared_ptr<BranchEntryInfo>(prov.release()));  // Group takes ownership
   }
 
   void  
@@ -159,7 +159,7 @@ namespace edm {
         << "process = " << processName() << "\n";
     }
 
-    const_cast<EntryDescription *>(entryDescription())->mergeEntryDescription(newGroup->entryDescription());
+    const_cast<EntryDescription *>(entryDescriptionPtr())->mergeEntryDescription(newGroup->entryDescriptionPtr());
 
     if (!productUnavailable() && !newGroup->productUnavailable()) {
 
