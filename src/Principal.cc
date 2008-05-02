@@ -1,5 +1,5 @@
 /**----------------------------------------------------------------------
-  $Id: Principal.cc,v 1.29.2.2 2008/04/28 18:02:32 wmtan Exp $
+  $Id: Principal.cc,v 1.29.2.3 2008/04/29 07:57:52 wmtan Exp $
   ----------------------------------------------------------------------*/
 
 #include <algorithm>
@@ -33,6 +33,8 @@ namespace edm {
     processConfiguration_(pc),
     processHistoryModified_(false),
     groups_(),
+    branchEntryInfoVectorPtr_(),
+    branchEntryInfoVectorSorted_(true),
     preg_(reg),
     store_(rtrv)
   {
@@ -136,13 +138,15 @@ namespace edm {
 	<< "put: Cannot put because auto_ptr to product is null."
 	<< "\n";
     }
+    branchEntryInfoVectorPtr_->push_back(prov->branchEntryInfo());
+    branchEntryInfoVectorSorted_ = false;
     // Group assumes ownership
     this->addGroup(edp, prov);
     this->addToProcessHistory();
   }
 
   Principal::SharedConstGroupPtr const
-  Principal::getGroup(BranchID const& bid, bool resolveProd, bool resolveProv, bool fillOnDemand) const {
+  Principal::getGroup(BranchID const& bid, bool resolveProd, bool fillOnDemand) const {
     GroupCollection::const_iterator it = groups_.find(bid);
     if (it == groups_.end()) {
       return SharedConstGroupPtr();
@@ -151,7 +155,7 @@ namespace edm {
     if (resolveProd && !g->productUnavailable()) {
       this->resolveProduct(*g, fillOnDemand);
     }
-    if (resolveProv && g->provenanceAvailable()) {
+    if (g->provenanceAvailable()) {
       this->resolveProvenance(*g);
     }
     return g;
@@ -160,7 +164,7 @@ namespace edm {
   BasicHandle
   Principal::get(ProductID const& oid) const {
     BranchID bid = branchMapperPtr_->productToBranch(oid);
-    SharedConstGroupPtr const& g = getGroup(bid, true, false, true);
+    SharedConstGroupPtr const& g = getGroup(bid, true, true);
     if (g.get() == 0) {
       if (!oid.isValid()) {
         throw edm::Exception(edm::errors::ProductNotFound,"InvalidID")
@@ -185,10 +189,8 @@ namespace edm {
   }
 
   BasicHandle
-  Principal::getForOutput(BranchID const& bid, bool getProd, bool getProv) const {
-    ProductID oid = branchMapperPtr_->branchToProduct(bid);
-
-    SharedConstGroupPtr const& g = getGroup(bid, getProd, getProv, false);
+  Principal::getForOutput(BranchID const& bid, bool getProd) const {
+    SharedConstGroupPtr const& g = getGroup(bid, getProd, false);
     if (g.get() == 0) {
       return BasicHandle();
     }
@@ -370,7 +372,7 @@ namespace edm {
 
   Provenance const&
   Principal::getProvenance(BranchID const& bid) const {
-    SharedConstGroupPtr const& g = getGroup(bid, false, true, true);
+    SharedConstGroupPtr const& g = getGroup(bid, false, true);
     if (g.get() == 0) {
       throw edm::Exception(edm::errors::ProductNotFound,"InvalidID")
 	<< "getProvenance: no product with given branch id: "<< bid << "\n";
@@ -486,7 +488,7 @@ namespace edm {
     for (std::vector<BranchID>::const_iterator ib(vindex.begin()), ie(vindex.end());
 	 ib != ie;
 	 ++ib) {
-      SharedConstGroupPtr const& group = getGroup(*ib, false, false, false);
+      SharedConstGroupPtr const& group = getGroup(*ib, false, false);
       if(group.get() == 0) {
         continue;
       }

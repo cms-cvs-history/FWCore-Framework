@@ -16,7 +16,7 @@ pointer to a Group, when queried.
 
 (Historical note: prior to April 2007 this class was named DataBlockImpl)
 
-$Id: Principal.h,v 1.18.2.1 2008/04/28 18:02:32 wmtan Exp $
+$Id: Principal.h,v 1.18.2.2 2008/04/29 07:57:51 wmtan Exp $
 
 ----------------------------------------------------------------------*/
 #include <map>
@@ -28,6 +28,7 @@ $Id: Principal.h,v 1.18.2.1 2008/04/28 18:02:32 wmtan Exp $
 #include "FWCore/Framework/interface/Frameworkfwd.h"
 #include "DataFormats/Provenance/interface/ProvenanceFwd.h"
 #include "DataFormats/Provenance/interface/BranchID.h"
+#include "DataFormats/Provenance/interface/BranchEntryInfo.h"
 #include "DataFormats/Common/interface/EDProductGetter.h"
 #include "DataFormats/Provenance/interface/ProcessHistory.h"
 #include "DataFormats/Provenance/interface/ProductStatus.h"
@@ -65,7 +66,7 @@ namespace edm {
 
     BasicHandle  get(ProductID const& oid) const;
 
-    BasicHandle  getForOutput(BranchID const& bid, bool getProd, bool getProv) const;
+    BasicHandle  getForOutput(BranchID const& bid, bool getProd) const;
 
     BasicHandle  getBySelector(TypeID const& tid,
                                SelectorBase const& s) const;
@@ -114,6 +115,10 @@ namespace edm {
       return processHistoryID_;   
     }
 
+    BranchEntryInfoVector const& branchEntryInfoVector() const {
+      return *branchEntryInfoVectorPtr_;   
+    }
+
 /*
     void addGroup(ConstBranchDescription const& bd, ProductStatus status);
 */
@@ -153,7 +158,6 @@ namespace edm {
 
     SharedConstGroupPtr const getGroup(BranchID const& oid,
                                        bool resolveProd,
-                                       bool resolveProv,
 				       bool fillOnDemand) const;
 
     virtual bool unscheduledFill(Provenance const& prov) const = 0;
@@ -198,6 +202,12 @@ namespace edm {
 
     // A vector of groups.
     GroupCollection groups_; // products and provenances are persistent
+
+    // A vector of BranchEntryInfo
+    boost::shared_ptr<BranchEntryInfoVector> branchEntryInfoVectorPtr_;
+
+    // Is BranchEntryInfo sorted?
+    bool branchEntryInfoVectorSorted_;
 
     // Pointer to the product registry. There is one entry in the registry
     // for each EDProduct in the event.
