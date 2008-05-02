@@ -6,8 +6,6 @@
 OutputModule: The base class of all "modules" that write Events to an
 output stream.
 
-$Id: OutputModule.h,v 1.75 2008/03/04 00:05:00 paterno Exp $
-
 ----------------------------------------------------------------------*/
 
 #include <vector>

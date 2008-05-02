@@ -6,8 +6,6 @@
 Group: A collection of information related to a single EDProduct. This
 is the storage unit of such information.
 
-$Id: Group.h,v 1.27.2.2 2008/04/29 07:57:52 wmtan Exp $
-
 ----------------------------------------------------------------------*/
 
 #include <memory>

@@ -6,8 +6,6 @@
 DelayedReader: The abstract interface through which the EventPrincipal
 uses input sources to retrieve EDProducts from external storage.
 
-$Id: DelayedReader.h,v 1.9 2008/02/06 06:24:44 wmtan Exp $
-
 ----------------------------------------------------------------------*/
 
 #include <memory>

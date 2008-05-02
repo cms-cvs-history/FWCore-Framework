@@ -2,8 +2,6 @@
 
 Test of the EventPrincipal class.
 
-$Id: generichandle_t.cppunit.cc,v 1.32.2.2 2008/05/01 23:54:29 wmtan Exp $
-
 ----------------------------------------------------------------------*/  
 #include <string>
 #include <iostream>

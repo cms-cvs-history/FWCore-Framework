@@ -3,7 +3,6 @@
    test for ProductRegistry 
 
    \author Stefano ARGIRO
-   \version $Id: edproducer_productregistry_callback.cc,v 1.15 2008/01/15 06:52:08 wmtan Exp $
    \date 21 July 2005
 */
 

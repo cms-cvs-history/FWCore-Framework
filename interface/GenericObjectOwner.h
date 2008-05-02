@@ -16,7 +16,6 @@
 //
 // Original Author:  Chris Jones
 //         Created:  Sun Feb  3 19:43:16 EST 2008
-// $Id: GenericObjectOwner.h,v 1.2 2008/02/15 20:11:06 wmtan Exp $
 //
 
 // system include files

@@ -16,8 +16,6 @@ pointer to a Group, when queried.
 
 (Historical note: prior to April 2007 this class was named DataBlockImpl)
 
-$Id: Principal.h,v 1.18.2.4 2008/05/02 10:18:56 wmtan Exp $
-
 ----------------------------------------------------------------------*/
 #include <map>
 #include <memory>

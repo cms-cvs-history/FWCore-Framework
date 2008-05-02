@@ -10,8 +10,6 @@ such code sees the Event class, which is a proxy for EventPrincipal.
 The major internal component of the EventPrincipal
 is the DataBlock.
 
-$Id: EventPrincipal.h,v 1.74 2008/03/04 00:05:00 paterno Exp $
-
 ----------------------------------------------------------------------*/
 
 #include "boost/shared_ptr.hpp"

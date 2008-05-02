@@ -3,7 +3,6 @@
    test for ProductRegistry 
 
    \author Stefano ARGIRO
-   \version $Id: productregistry.cppunit.cc,v 1.20 2007/03/22 06:12:56 wmtan Exp $
    \date 21 July 2005
 */
 

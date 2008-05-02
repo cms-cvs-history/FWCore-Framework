@@ -3,7 +3,6 @@
 
 Test program for edm::Event.
 
-$Id: Event_t.cpp,v 1.31.2.1 2008/05/01 23:54:29 wmtan Exp $
 ----------------------------------------------------------------------*/
 #include <Utilities/Testing/interface/CppUnit_testdriver.icpp>
 #include <cppunit/extensions/HelperMacros.h>

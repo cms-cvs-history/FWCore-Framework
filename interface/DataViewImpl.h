@@ -81,8 +81,6 @@ edm::Ref<AppleCollection> ref(refApples, index);
 */
 /*----------------------------------------------------------------------
 
-$Id: DataViewImpl.h,v 1.38 2008/04/24 20:46:21 wmtan Exp $
-
 ----------------------------------------------------------------------*/
 #include <cassert>
 #include <memory>

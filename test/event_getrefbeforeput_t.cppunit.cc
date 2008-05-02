@@ -2,8 +2,6 @@
 
 Test of the EventPrincipal class.
 
-$Id: event_getrefbeforeput_t.cppunit.cc,v 1.19.2.1 2008/05/01 23:54:29 wmtan Exp $
-
 ----------------------------------------------------------------------*/  
 #include <cassert>
 #include <iostream>

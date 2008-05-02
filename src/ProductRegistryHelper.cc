@@ -1,7 +1,5 @@
 /*----------------------------------------------------------------------
   
-$Id: ProductRegistryHelper.cc,v 1.15 2007/03/04 06:10:25 wmtan Exp $
-
 ----------------------------------------------------------------------*/
 
 #include "DataFormats/Provenance/interface/ModuleDescriptionRegistry.h"

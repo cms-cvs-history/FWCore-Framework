@@ -2,8 +2,6 @@
 
 Test of the EventPrincipal class.
 
-$Id: eventprincipal_t.cppunit.cc,v 1.54.2.2 2008/04/29 07:57:53 wmtan Exp $
-
 ----------------------------------------------------------------------*/  
 #include <map>
 #include <memory>
