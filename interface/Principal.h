@@ -119,6 +119,8 @@ namespace edm {
 
     void addGroup(std::auto_ptr<EDProduct> prod, std::auto_ptr<Provenance> prov);
 
+    void addGroup(std::auto_ptr<Provenance> prov);
+
     ProcessConfiguration const& processConfiguration() const {return processConfiguration_;}
 
     ProductRegistry const& productRegistry() const {return *preg_;}

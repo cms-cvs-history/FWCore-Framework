@@ -95,8 +95,6 @@ namespace edm {
 
     void addOnDemandGroup(ConstBranchDescription const& desc);
 
-    void addGroup(std::auto_ptr<Provenance>);
-
     using Base::addGroup;
 
     void setUnscheduledHandler(boost::shared_ptr<UnscheduledHandler> iHandler);

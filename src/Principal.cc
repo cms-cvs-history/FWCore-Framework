@@ -92,6 +92,12 @@ namespace edm {
   }
 
   void
+  Principal::addGroup(std::auto_ptr<Provenance> prov) {
+    std::auto_ptr<Group> g(new Group(prov));
+    addOrReplaceGroup(g);
+  }
+
+  void
   Principal::addToProcessHistory() const {
     if (processHistoryModified_) return;
     ProcessHistory& ph = *processHistoryPtr_;
