@@ -10,7 +10,7 @@ such code sees the Run class, which is a proxy for RunPrincipal.
 The major internal component of the RunPrincipal
 is the DataBlock.
 
-$Id: RunPrincipal.h,v 1.22 2008/01/31 04:56:44 wmtan Exp $
+$Id: RunPrincipal.h,v 1.23 2008/02/02 21:25:59 wmtan Exp $
 
 ----------------------------------------------------------------------*/
 
@@ -28,8 +28,9 @@ namespace edm {
 	boost::shared_ptr<ProductRegistry const> reg,
 	ProcessConfiguration const& pc,
 	ProcessHistoryID const& hist = ProcessHistoryID(),
+	boost::shared_ptr<BranchMapper> mapper = boost::shared_ptr<BranchMapper>(new BranchMapper),
 	boost::shared_ptr<DelayedReader> rtrv = boost::shared_ptr<DelayedReader>(new NoDelayedReader)) :
-	  Base(reg, pc, hist, rtrv), aux_(aux) {}
+	  Base(reg, pc, hist, mapper, rtrv), aux_(aux) {}
     ~RunPrincipal() {}
 
     RunAuxiliary const& aux() const {

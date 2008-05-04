@@ -11,6 +11,7 @@
 #include "DataFormats/Provenance/interface/ProcessHistory.h"
 #include "DataFormats/Provenance/interface/ProcessHistoryRegistry.h"
 #include "DataFormats/Provenance/interface/ProductRegistry.h"
+#include "DataFormats/Provenance/interface/ProductStatus.h"
 #include "DataFormats/Common/interface/BasicHandle.h"
 #include "FWCore/Utilities/interface/TypeID.h"
 #include "FWCore/Utilities/interface/EDMException.h"
@@ -24,11 +25,12 @@ namespace edm {
   Principal::Principal(boost::shared_ptr<ProductRegistry const> reg,
 		       ProcessConfiguration const& pc,
 		       ProcessHistoryID const& hist,
+		       boost::shared_ptr<BranchMapper> mapper,
 		       boost::shared_ptr<DelayedReader> rtrv) :
     EDProductGetter(),
     processHistoryID_(hist),
     processHistoryPtr_(boost::shared_ptr<ProcessHistory>(new ProcessHistory)),
-    branchMapperPtr_(new BranchMapper),
+    branchMapperPtr_(mapper),
     processConfiguration_(pc),
     processHistoryModified_(false),
     groups_(),
@@ -60,7 +62,6 @@ namespace edm {
     assert (!bd.friendlyClassName().empty());
     assert (!bd.moduleLabel().empty());
     assert (!bd.processName().empty());
-    assert (group->provenance()->productID().isValid());
     SharedGroupPtr g(group);
     groups_.insert(std::make_pair(bd.branchID(), g));
   }
@@ -72,18 +73,15 @@ namespace edm {
     assert (!bd.friendlyClassName().empty());
     assert (!bd.moduleLabel().empty());
     assert (!bd.processName().empty());
-    assert (group->provenance()->productID().isValid());
     SharedGroupPtr g(group);
     groups_[bd.branchID()]->replace(*g);
   }
 
-/*
   void
-  Principal::addGroup(ConstBranchDescription const& bd, ProductStatus status) {
-    std::auto_ptr<Group> g(new Group(bd, status));
+  Principal::addGroup(ConstBranchDescription const& bd) {
+    std::auto_ptr<Group> g(new Group(bd));
     addOrReplaceGroup(g);
   }
-*/
 
   void
   Principal::addGroup(std::auto_ptr<EDProduct> prod, std::auto_ptr<Provenance> prov) {
@@ -154,11 +152,11 @@ namespace edm {
       return SharedConstGroupPtr();
     }
     SharedConstGroupPtr const& g = it->second;
-    if (resolveProd && !g->productUnavailable()) {
-      this->resolveProduct(*g, fillOnDemand);
-    }
     if (g->provenanceAvailable()) {
       this->resolveProvenance(*g);
+    }
+    if (resolveProd && !g->productUnavailable()) {
+      this->resolveProduct(*g, fillOnDemand);
     }
     return g;
   }
@@ -408,11 +406,11 @@ namespace edm {
   void
   Principal::readImmediate() const {
     for (Principal::const_iterator i = begin(), iEnd = end(); i != iEnd; ++i) {
-      if (i->second->productUnavailable()) {
-        resolveProduct(*i->second, false);
-      }
       if (i->second->provenanceAvailable()) {
 	resolveProvenance(*i->second);
+      }
+      if (!i->second->productUnavailable()) {
+        resolveProduct(*i->second, false);
       }
     }
   }
@@ -538,11 +536,10 @@ namespace edm {
 
   void
   Principal::resolveProvenance(Group const& g) const {
-    if (g.provenance()) return;
-    std::auto_ptr<BranchEntryInfo> bei(store_->getProvenance(g.productDescription()));
-
-    // Now fix up the Group
-    g.setProvenance(bei);
+    if (!g.provenance()->branchEntryInfoPtr()) {
+      // Now fix up the Group
+      g.setProvenance(branchMapperPtr_->branchToEntryInfo(g.productDescription().branchID()));
+    }
   }
 
   void

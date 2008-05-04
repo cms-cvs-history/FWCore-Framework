@@ -31,10 +31,4 @@ namespace edm {
     throw cms::Exception("LogicError","NoDelayedReader")
       << "getProduct() called for branchkey: " << k << "\n";
   }
-
-  std::auto_ptr<BranchEntryInfo>
-  NoDelayedReader::getProvenance_(BranchDescription const& desc) const {
-    throw cms::Exception("LogicError","NoDelayedReader")
-      << "getProvenance() called for branchkey: " << BranchKey(desc) << "\n";
-  }
 }

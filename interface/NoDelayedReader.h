@@ -14,7 +14,6 @@ namespace edm {
     virtual ~NoDelayedReader();
   private:
     virtual std::auto_ptr<EDProduct> getProduct_(BranchKey const& k, EDProductGetter const* ep) const;
-    virtual std::auto_ptr<BranchEntryInfo> getProvenance_(BranchDescription const& desc) const;
   };
 }
 #endif

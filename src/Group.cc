@@ -33,6 +33,13 @@ namespace edm {
     onDemand_(demand) {
   }
 
+  Group::Group(ConstBranchDescription const& bd) :
+    product_(),
+    provenance_(new Provenance(bd)),
+    dropped_(!bd.present()),
+    onDemand_(false) {
+  }
+
   Group::Group(std::auto_ptr<EDProduct> edp,
 	       std::auto_ptr<Provenance> prov) :
     product_(edp.release()),
@@ -80,9 +87,9 @@ namespace edm {
   }
   
   void 
-  Group::setProvenance(std::auto_ptr<BranchEntryInfo> prov) const {
+  Group::setProvenance(std::auto_ptr<BranchEntryInfo> beiPtr) const {
     assert (branchEntryInfoPtr() == 0);
-    provenance_->setBranchEntryInfo(boost::shared_ptr<BranchEntryInfo>(prov.release()));  // Group takes ownership
+    provenance_->setBranchEntryInfo(boost::shared_ptr<BranchEntryInfo>(beiPtr.release()));  // Group takes ownership
   }
 
   void  

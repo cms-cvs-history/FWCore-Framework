@@ -24,9 +24,11 @@ namespace edm {
 
     Group();
 
-    Group(std::auto_ptr<Provenance> prov);
+    explicit Group(std::auto_ptr<Provenance> prov);
 
     Group(ConstBranchDescription const& bd, bool demand);
+
+    explicit Group(ConstBranchDescription const& bd);
 
     Group(std::auto_ptr<EDProduct> edp,
 	  std::auto_ptr<Provenance> prov);
@@ -72,7 +74,7 @@ namespace edm {
     // The following is const because we can add the provenance
     // to the cache after creation of the Group, without changing the meaning
     // of the Group.
-    void setProvenance(std::auto_ptr<BranchEntryInfo> prov) const;
+    void setProvenance(std::auto_ptr<BranchEntryInfo> beiPtr) const;
 
     // Write the group to the stream.
     void write(std::ostream& os) const;

@@ -55,7 +55,6 @@ namespace edm {
 	boost::shared_ptr<EntryDescription> entryDescriptionPtr(new EntryDescription);
 	entryDescriptionPtr->parents_ = gotProductIDs_;
 	entryDescriptionPtr->moduleDescriptionID_ = pit->second->moduleDescriptionID();
-	EntryDescriptionRegistry::instance()->insertMapped(*entryDescriptionPtr);
 	boost::shared_ptr<BranchEntryInfo> branchEntryInfoPtr(
 		new BranchEntryInfo(pit->second->branchID(),
 				    pit->second->productIDtoAssign(),

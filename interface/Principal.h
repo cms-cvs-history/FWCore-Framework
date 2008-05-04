@@ -27,6 +27,7 @@ pointer to a Group, when queried.
 #include "DataFormats/Provenance/interface/ProvenanceFwd.h"
 #include "DataFormats/Provenance/interface/BranchID.h"
 #include "DataFormats/Provenance/interface/BranchEntryInfo.h"
+#include "DataFormats/Provenance/interface/BranchMapper.h"
 #include "DataFormats/Common/interface/EDProductGetter.h"
 #include "DataFormats/Provenance/interface/ProcessHistory.h"
 #include "DataFormats/Provenance/interface/ProductStatus.h"
@@ -49,6 +50,7 @@ namespace edm {
     Principal(boost::shared_ptr<ProductRegistry const> reg,
 	      ProcessConfiguration const& pc,
               ProcessHistoryID const& hist = ProcessHistoryID(),
+	      boost::shared_ptr<BranchMapper> mapper = boost::shared_ptr<BranchMapper>(new BranchMapper),
               boost::shared_ptr<DelayedReader> rtrv = boost::shared_ptr<DelayedReader>(new NoDelayedReader));
 
     virtual ~Principal();
@@ -113,9 +115,7 @@ namespace edm {
       return processHistoryID_;   
     }
 
-/*
-    void addGroup(ConstBranchDescription const& bd, ProductStatus status);
-*/
+    void addGroup(ConstBranchDescription const& bd);
 
     void addGroup(std::auto_ptr<EDProduct> prod, std::auto_ptr<Provenance> prov);
 
