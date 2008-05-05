@@ -12,7 +12,9 @@ Test of the EventPrincipal class.
 #include <cppunit/extensions/HelperMacros.h>
 
 #include "DataFormats/Provenance/interface/BranchDescription.h"
+#include "DataFormats/Provenance/interface/BranchEntryInfo.h"
 #include "DataFormats/Provenance/interface/BranchID.h"
+#include "DataFormats/Provenance/interface/EntryDescription.h"
 #include "DataFormats/Provenance/interface/ModuleDescription.h"
 #include "DataFormats/Provenance/interface/ParameterSetID.h"
 #include "DataFormats/Provenance/interface/ProcessConfiguration.h"
@@ -176,7 +178,16 @@ void test_ep::setUp()
     edm::BranchKey const bk(branch);
     edm::ProductRegistry::ProductList::const_iterator it = pl.find(bk);
 
-    std::auto_ptr<edm::Provenance> provenance(new edm::Provenance(branch));
+    const edm::BranchDescription& branchFromRegistry = it->second;
+
+    boost::shared_ptr<edm::EntryDescription> entryDescriptionPtr(new edm::EntryDescription);
+    entryDescriptionPtr->moduleDescriptionID_ = branchFromRegistry.moduleDescriptionID();
+    boost::shared_ptr<edm::BranchEntryInfo> branchEntryInfoPtr(
+      new edm::BranchEntryInfo(branchFromRegistry.branchID(),
+                               branchFromRegistry.productIDtoAssign(),
+                               edm::productstatus::present(),
+                               entryDescriptionPtr));
+    std::auto_ptr<edm::Provenance> provenance(new edm::Provenance(branchFromRegistry, branchEntryInfoPtr));
 
     edm::ProcessConfiguration* process = processConfigurations_[tag];
     assert(process);
