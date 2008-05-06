@@ -97,6 +97,7 @@ namespace edm {
     std::swap(product_, other.product_);
     std::swap(provenance_, other.provenance_);
     std::swap(dropped_, other.dropped_);
+    std::swap(onDemand_, other.onDemand_);
   }
 
   void
