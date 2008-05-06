@@ -15,12 +15,11 @@
 
 namespace edm {
 
-  DataViewImpl::DataViewImpl(Principal & dbk,
+  DataViewImpl::DataViewImpl(Principal & pcpl,
 	ModuleDescription const& md,
 	BranchType const& branchType)  :
-    put_products_(),
-    gotProductIDs_(),
-    dbk_(dbk),
+    putProducts_(),
+    principal_(pcpl),
     md_(md),
     branchType_(branchType)
   {  }
@@ -32,70 +31,34 @@ namespace edm {
   DataViewImpl::~DataViewImpl() {
     // anything left here must be the result of a failure
     // let's record them as failed attempts in the event principal
-    for_all(put_products_, deleter());
+    for_all(putProducts_, deleter());
   }
 
   size_t
   DataViewImpl::size() const {
-    return put_products_.size() + dbk_.size();
-  }
-
-  void 
-  DataViewImpl::commit_() {
-    // fill in guts of provenance here
-    ProductPtrVec::iterator pit(put_products_.begin());
-    ProductPtrVec::iterator pie(put_products_.end());
-
-    while(pit!=pie) {
-	std::auto_ptr<EDProduct> pr(pit->first);
-	// note: ownership has been passed - so clear the pointer!
-	pit->first = 0;
-
-	// set provenance
-	boost::shared_ptr<EntryDescription> entryDescriptionPtr(new EntryDescription);
-	entryDescriptionPtr->parents_ = gotProductIDs_;
-	entryDescriptionPtr->moduleDescriptionID_ = pit->second->moduleDescriptionID();
-	boost::shared_ptr<BranchEntryInfo> branchEntryInfoPtr(
-		new BranchEntryInfo(pit->second->branchID(),
-				    pit->second->productIDtoAssign(),
-				    productstatus::present(),
-				    entryDescriptionPtr));
-	std::auto_ptr<Provenance> pv(
-	    new Provenance(*pit->second, branchEntryInfoPtr));
-	dbk_.put(pr,pv);
-	++pit;
-    }
-
-    // the cleanup is all or none
-    put_products_.clear();
-  }
-
-  BasicHandle
-  DataViewImpl::get_(ProductID const& oid) const
-  {
-    return dbk_.get(oid);
+    return putProducts_.size() + principal_.size();
   }
 
   BasicHandle
   DataViewImpl::get_(TypeID const& tid, SelectorBase const& sel) const
   {
-    return dbk_.getBySelector(tid, sel);
+    return principal_.getBySelector(tid, sel);
   }
-    
+
   BasicHandle
   DataViewImpl::getByLabel_(TypeID const& tid,
 		     std::string const& label,
                      std::string const& productInstanceName) const
   {
-    return dbk_.getByLabel(tid, label, productInstanceName);
+    return principal_.getByLabel(tid, label, productInstanceName);
   }
 
-  void 
-  DataViewImpl::getMany_(TypeID const& tid, 
+  void
+  DataViewImpl::getMany_(TypeID const& tid,
 		  SelectorBase const& sel,
 		  BasicHandleVec& results) const
   {
-    dbk_.getMany(tid, sel, results);
+    principal_.getMany(tid, sel, results);
   }
 
   BasicHandle
@@ -104,86 +67,74 @@ namespace edm {
   	             std::string const& productInstanceName,
   	             std::string const& processName) const
   {
-    return dbk_.getByLabel(tid, label, productInstanceName, processName);
+    return principal_.getByLabel(tid, label, productInstanceName, processName);
   }
 
   BasicHandle
   DataViewImpl::getByType_(TypeID const& tid) const
   {
-    return dbk_.getByType(tid);
+    return principal_.getByType(tid);
   }
 
-  void 
-  DataViewImpl::getManyByType_(TypeID const& tid, 
+  void
+  DataViewImpl::getManyByType_(TypeID const& tid,
 		  BasicHandleVec& results) const
   {
-    dbk_.getManyByType(tid, results);
+    principal_.getManyByType(tid, results);
   }
 
-  int 
+  int
   DataViewImpl::getMatchingSequence_(TypeID const& typeID,
                                      SelectorBase const& selector,
                                      BasicHandleVec& results,
                                      bool stopIfProcessHasMatch) const
   {
-    return dbk_.getMatchingSequence(typeID,
+    return principal_.getMatchingSequence(typeID,
                                     selector,
                                     results,
                                     stopIfProcessHasMatch);
   }
 
-  int 
+    int
+    DataViewImpl::getMatchingSequenceByLabel_(TypeID const& typeID,
+                                              std::string const& label,
+                                              std::string const& productInstanceName,
+                                              BasicHandleVec& results,
+                                              bool stopIfProcessHasMatch) const
+  {
+    edm::Selector sel(edm::ModuleLabelSelector(label) &&
+                      edm::ProductInstanceNameSelector(productInstanceName));
+
+    int n = principal_.getMatchingSequence(typeID,
+                                     sel,
+                                     results,
+                                     stopIfProcessHasMatch);
+    return n;
+  }
+
+  int
   DataViewImpl::getMatchingSequenceByLabel_(TypeID const& typeID,
                                             std::string const& label,
                                             std::string const& productInstanceName,
+                                            std::string const& processName,
                                             BasicHandleVec& results,
                                             bool stopIfProcessHasMatch) const
-{
-  edm::Selector sel(edm::ModuleLabelSelector(label) &&
-                    edm::ProductInstanceNameSelector(productInstanceName));
-  
-  int n = dbk_.getMatchingSequence(typeID,
-				   sel,
-				   results,
-				   stopIfProcessHasMatch);
-  return n;
-}
-
-int 
-DataViewImpl::getMatchingSequenceByLabel_(TypeID const& typeID,
-                                          std::string const& label,
-                                          std::string const& productInstanceName,
-                                          std::string const& processName,
-                                          BasicHandleVec& results,
-                                          bool stopIfProcessHasMatch) const
-{
-  edm::Selector sel(edm::ModuleLabelSelector(label) &&
-                    edm::ProductInstanceNameSelector(productInstanceName) &&
-                    edm::ProcessNameSelector(processName) );
-  
-  int n = dbk_.getMatchingSequence(typeID,
-				   sel,
-				   results,
-				   stopIfProcessHasMatch);
-  return n;
-}
-
-  Provenance const&
-  DataViewImpl::getProvenance(BranchID const& bid) const
   {
-    return dbk_.getProvenance(bid);
-  }
+    edm::Selector sel(edm::ModuleLabelSelector(label) &&
+                      edm::ProductInstanceNameSelector(productInstanceName) &&
+                      edm::ProcessNameSelector(processName) );
 
-  void
-  DataViewImpl::getAllProvenance(std::vector<Provenance const*> & provenances) const
-  {
-    dbk_.getAllProvenance(provenances);
+    int n = principal_.getMatchingSequence(typeID,
+  				   sel,
+  				   results,
+  				   stopIfProcessHasMatch);
+    return n;
   }
 
   ProcessHistory const&
   DataViewImpl::processHistory() const
   {
-    return dbk_.processHistory();
+    return principal_.processHistory();
   }
 
   ConstBranchDescription const&
@@ -191,7 +142,7 @@ DataViewImpl::getMatchingSequenceByLabel_(TypeID const& typeID,
 				     std::string const& productInstanceName) const {
     std::string friendlyClassName = type.friendlyClassName();
         BranchKey bk(friendlyClassName, md_.moduleLabel(), productInstanceName, md_.processName());
-    ProductRegistry::ConstProductList const& pl = dbk_.productRegistry().constProductList();
+    ProductRegistry::ConstProductList const& pl = principal_.productRegistry().constProductList();
     ProductRegistry::ConstProductList::const_iterator it = pl.find(bk);
     if (it == pl.end()) {
       throw edm::Exception(edm::errors::InsertFailure)
@@ -203,8 +154,8 @@ DataViewImpl::getMatchingSequenceByLabel_(TypeID const& typeID,
 	<< "  product instance name:       '" << bk.productInstanceName_ << "'\n"
 
 	<< "The ProductRegistry contains:\n"
-	<< dbk_.productRegistry()
-	<< '\n';	  
+	<< principal_.productRegistry()
+	<< '\n';
     }
     if(it->second.branchType() != branchType_) {
         throw edm::Exception(edm::errors::InsertFailure,"Not Registered")
@@ -224,6 +175,6 @@ DataViewImpl::getMatchingSequenceByLabel_(TypeID const& typeID,
 
   EDProductGetter const*
   DataViewImpl::prodGetter() const{
-    return dbk_.prodGetter();
+    return principal_.prodGetter();
   }
 }

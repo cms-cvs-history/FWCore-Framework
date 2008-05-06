@@ -16,7 +16,7 @@ For its usage, see "FWCore/Framework/interface/DataViewImpl.h"
 */
 /*----------------------------------------------------------------------
 
-$Id: LuminosityBlock.h,v 1.15 2008/01/15 06:51:47 wmtan Exp $
+$Id: LuminosityBlock.h,v 1.16 2008/03/31 21:13:27 wmtan Exp $
 
 ----------------------------------------------------------------------*/
 
@@ -34,7 +34,7 @@ namespace edm {
   class LuminosityBlock : private DataViewImpl
   {
   public:
-    LuminosityBlock(LuminosityBlockPrincipal& dbk, const ModuleDescription& md);
+    LuminosityBlock(LuminosityBlockPrincipal& lbp, const ModuleDescription& md);
     ~LuminosityBlock() {}
 
     // AUX functions.
@@ -52,23 +52,41 @@ namespace edm {
     Timestamp const& endTime() const {return aux_.endTime();}
 
     using DataViewImpl::get;
-    using DataViewImpl::getAllProvenance;
     using DataViewImpl::getByLabel;
     using DataViewImpl::getByType;
     using DataViewImpl::getMany;
     using DataViewImpl::getManyByType;
-    using DataViewImpl::getProvenance;
-    using DataViewImpl::getRefBeforePut;
     using DataViewImpl::me;
     using DataViewImpl::processHistory;
-    using DataViewImpl::put;
 
     Run const&
     getRun() const {
       return *run_;
     }
 
+    ///Put a new product.
+    template <typename PROD>
+    void
+    put(std::auto_ptr<PROD> product) {put<PROD>(product, std::string());}
+
+    ///Put a new product with a 'product instance name'
+    template <typename PROD>
+    void
+    put(std::auto_ptr<PROD> product, std::string const& productInstanceName);
+
+    Provenance const&
+    getProvenance(BranchID const& theID) const;
+
+    void
+    getAllProvenance(std::vector<Provenance const*> &provenances) const;
+
   private:
+    LuminosityBlockPrincipal const&
+    luminosityBlockPrincipal() const;
+
+    LuminosityBlockPrincipal &
+    luminosityBlockPrincipal();
+
     // commit_() is called to complete the transaction represented by
     // this DataViewImpl. The friendships required seems gross, but any
     // alternative is not great either.  Putting it into the
@@ -80,8 +98,41 @@ namespace edm {
     friend class EDFilter;
     friend class EDProducer;
 
+    void commit_();
+
     LuminosityBlockAuxiliary const& aux_;
     boost::shared_ptr<Run const> const run_;
   };
+
+  template <typename PROD>
+  void
+  LuminosityBlock::put(std::auto_ptr<PROD> product, std::string const& productInstanceName)
+  {
+    if (product.get() == 0) {                // null pointer is illegal
+      TypeID typeID(typeid(PROD));
+      throw edm::Exception(edm::errors::NullPointerError)
+        << "LuminosityBlock::put: A null auto_ptr was passed to 'put'.\n"
+	<< "The pointer is of type " << typeID << ".\n"
+	<< "The specified productInstanceName was '" << productInstanceName << "'.\n";
+    }
+
+    // The following will call post_insert if T has such a function,
+    // and do nothing if T has no such function.
+    typename boost::mpl::if_c<detail::has_postinsert<PROD>::value, 
+      DoPostInsert<PROD>, 
+      DoNotPostInsert<PROD> >::type maybe_inserter;
+    maybe_inserter(product.get());
+
+    ConstBranchDescription const& desc =
+      getBranchDescription(TypeID(*product), productInstanceName);
+
+    Wrapper<PROD> *wp(new Wrapper<PROD>(product));
+
+    putProducts().push_back(std::make_pair(wp, &desc));
+
+    // product.release(); // The object has been copied into the Wrapper.
+    // The old copy must be deleted, so we cannot release ownership.
+  }
+  
 }
 #endif

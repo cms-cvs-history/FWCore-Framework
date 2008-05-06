@@ -167,7 +167,13 @@ namespace edm {
         << "process = " << processName() << "\n";
     }
 
-    const_cast<EntryDescription *>(entryDescriptionPtr())->mergeEntryDescription(newGroup->entryDescriptionPtr());
+    // Don't support specifying multple modules.  So just null the description
+    // if they are different.    
+
+    if (provenance_->moduleDescriptionID() != newGroup->provenance_->moduleDescriptionID()) {
+	// Not just yet
+      // provenance_->moduleDescriptionID_ = ModuleDescriptionID();
+    }
 
     if (!productUnavailable() && !newGroup->productUnavailable()) {
 

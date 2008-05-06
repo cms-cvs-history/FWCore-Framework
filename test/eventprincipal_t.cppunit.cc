@@ -234,10 +234,10 @@ void test_ep::tearDown()
 void test_ep::failgetbyIdTest() 
 {
   edm::ProductID invalid;
-  CPPUNIT_ASSERT_THROW(pEvent_->get(invalid), edm::Exception);
+  CPPUNIT_ASSERT_THROW(pEvent_->getByProductID(invalid), edm::Exception);
 
   edm::ProductID notpresent(10000000);
-  edm::BasicHandle h(pEvent_->get(notpresent));
+  edm::BasicHandle h(pEvent_->getByProductID(notpresent));
   CPPUNIT_ASSERT(h.failedToGet());
 }
 
@@ -306,7 +306,7 @@ void test_ep::failgetbyInvalidIdTest()
   //put_a_product<edmtest::DummyProduct>(pProdConfig_, label);
 
   edm::ProductID id;
-  CPPUNIT_ASSERT_THROW(pEvent_->get(id), edm::Exception);
+  CPPUNIT_ASSERT_THROW(pEvent_->getByProductID(id), edm::Exception);
 }
 
 void test_ep::failgetProvenanceTest() 

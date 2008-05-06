@@ -10,12 +10,13 @@ such code sees the LuminosityBlock class, which is a proxy for LuminosityBlockPr
 The major internal component of the LuminosityBlockPrincipal
 is the DataBlock.
 
-$Id: LuminosityBlockPrincipal.h,v 1.29 2008/02/02 21:25:59 wmtan Exp $
+$Id: LuminosityBlockPrincipal.h,v 1.29.2.1 2008/05/04 03:18:24 wmtan Exp $
 
 ----------------------------------------------------------------------*/
 
 #include "boost/shared_ptr.hpp"
 
+#include "DataFormats/Provenance/interface/BranchMapper.h"
 #include "DataFormats/Provenance/interface/LuminosityBlockAuxiliary.h"
 #include "DataFormats/Provenance/interface/RunID.h"
 #include "FWCore/Framework/interface/Principal.h"
@@ -82,12 +83,31 @@ namespace edm {
 
     void mergeLuminosityBlock(boost::shared_ptr<LuminosityBlockPrincipal> lbp);
 
+    Provenance const&
+    getProvenance(BranchID const& bid) const;
+
+    void
+    getAllProvenance(std::vector<Provenance const *> & provenances) const;
+
+    void put(std::auto_ptr<EDProduct> edp,
+	     std::auto_ptr<Provenance> prov);
+
+    void addGroup(ConstBranchDescription const& bd);
+
+    void addGroup(std::auto_ptr<EDProduct> prod, std::auto_ptr<Provenance> prov);
+
+    void addGroup(std::auto_ptr<Provenance> prov);
+
   private:
     virtual void addOrReplaceGroup(std::auto_ptr<Group> g);
-    virtual bool unscheduledFill(Provenance const&) const {return false;}
+
+    virtual void resolveProvenance(Group const& g) const;
+
+    virtual bool unscheduledFill(std::string const&) const {return false;}
 
     boost::shared_ptr<RunPrincipal> runPrincipal_;
     LuminosityBlockAuxiliary aux_;
+    boost::shared_ptr<BranchMapper> branchMapperPtr_;
   };
 }
 #endif

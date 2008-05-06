@@ -27,7 +27,6 @@ pointer to a Group, when queried.
 #include "DataFormats/Provenance/interface/ProvenanceFwd.h"
 #include "DataFormats/Provenance/interface/BranchID.h"
 #include "DataFormats/Provenance/interface/BranchEntryInfo.h"
-#include "DataFormats/Provenance/interface/BranchMapper.h"
 #include "DataFormats/Common/interface/EDProductGetter.h"
 #include "DataFormats/Provenance/interface/ProcessHistory.h"
 #include "DataFormats/Provenance/interface/ProductStatus.h"
@@ -50,21 +49,11 @@ namespace edm {
     Principal(boost::shared_ptr<ProductRegistry const> reg,
 	      ProcessConfiguration const& pc,
               ProcessHistoryID const& hist = ProcessHistoryID(),
-	      boost::shared_ptr<BranchMapper> mapper = boost::shared_ptr<BranchMapper>(new BranchMapper),
               boost::shared_ptr<DelayedReader> rtrv = boost::shared_ptr<DelayedReader>(new NoDelayedReader));
 
     virtual ~Principal();
 
     EDProductGetter const* prodGetter() const {return this;}
-
-    Principal const& groupGetter() const {return *this;}
-
-    Principal & groupGetter() {return *this;}
-
-    void put(std::auto_ptr<EDProduct> edp,
-	     std::auto_ptr<Provenance> prov);
-
-    BasicHandle  get(ProductID const& oid) const;
 
     BasicHandle  getForOutput(BranchID const& bid, bool getProd) const;
 
@@ -100,12 +89,6 @@ namespace edm {
 			       BasicHandleVec& results,
 			       bool stopIfProcessHasMatch) const;
 
-    Provenance const&
-    getProvenance(BranchID const& bid) const;
-
-    void
-    getAllProvenance(std::vector<Provenance const *> & provenances) const;
-
     void
     readImmediate() const;
 
@@ -115,19 +98,11 @@ namespace edm {
       return processHistoryID_;   
     }
 
-    void addGroup(ConstBranchDescription const& bd);
-
-    void addGroup(std::auto_ptr<EDProduct> prod, std::auto_ptr<Provenance> prov);
-
-    void addGroup(std::auto_ptr<Provenance> prov);
-
     ProcessConfiguration const& processConfiguration() const {return processConfiguration_;}
 
     ProductRegistry const& productRegistry() const {return *preg_;}
 
     boost::shared_ptr<DelayedReader> store() const {return store_;}
-
-    virtual EDProduct const* getIt(ProductID const& oid) const;
 
     // ----- Mark this Principal as having been updated in the
     // current Process.
@@ -149,14 +124,18 @@ namespace edm {
     Group*  getExistingGroup(Group const& g);
     void replaceGroup(std::auto_ptr<Group> g);
 
-  private:
-    virtual void addOrReplaceGroup(std::auto_ptr<Group> g) = 0;
-
     SharedConstGroupPtr const getGroup(BranchID const& oid,
                                        bool resolveProd,
 				       bool fillOnDemand) const;
 
-    virtual bool unscheduledFill(Provenance const& prov) const = 0;
+  private:
+    virtual EDProduct const* getIt(ProductID const&) const;
+
+    virtual void addOrReplaceGroup(std::auto_ptr<Group> g) = 0;
+
+    virtual void resolveProvenance(Group const& g) const = 0;
+
+    virtual bool unscheduledFill(std::string const& moduleLabel) const = 0;
 
     // Used for indices to find groups by type and process
     typedef std::map<std::string, std::vector<BranchID> > ProcessLookup;
@@ -180,15 +159,9 @@ namespace edm {
     // *this is const.
     void resolveProduct(Group const& g, bool fillOnDemand) const;
 
-    // Make my DelayedReader get the EntryDescription
-    // for a group.
-    void resolveProvenance(Group const& g) const;
-
     mutable ProcessHistoryID processHistoryID_;
 
     boost::shared_ptr<ProcessHistory> processHistoryPtr_;
-
-    boost::shared_ptr<BranchMapper> branchMapperPtr_;
 
     ProcessConfiguration const& processConfiguration_;
 

@@ -14,8 +14,10 @@ is the DataBlock.
 
 #include "boost/shared_ptr.hpp"
 
+#include "DataFormats/Provenance/interface/BranchMapper.h"
 #include "DataFormats/Provenance/interface/EventAuxiliary.h"
 #include "DataFormats/Provenance/interface/History.h"
+#include "DataFormats/Common/interface/EDProductGetter.h"
 #include "FWCore/Framework/interface/Principal.h"
 
 
@@ -96,25 +98,54 @@ namespace edm {
 
     void addOnDemandGroup(ConstBranchDescription const& desc);
 
-    using Base::addGroup;
-
     void setUnscheduledHandler(boost::shared_ptr<UnscheduledHandler> iHandler);
 
     EventSelectionIDVector const& eventSelectionIDs() const;
+
     History const& history() const;
+
     void setHistory(History const& h);
+
+    Provenance const&
+    getProvenance(BranchID const& bid) const;
+
+    void
+    getAllProvenance(std::vector<Provenance const *> & provenances) const;
+
+    BasicHandle
+    getByProductID(ProductID const& oid) const;
+
+    void put(std::auto_ptr<EDProduct> edp,
+	     std::auto_ptr<Provenance> prov);
+
+    void addGroup(ConstBranchDescription const& bd);
+
+    void addGroup(std::auto_ptr<EDProduct> prod, std::auto_ptr<Provenance> prov);
+
+    void addGroup(std::auto_ptr<Provenance> prov);
+
+    virtual EDProduct const* getIt(ProductID const& oid) const;
+
   private:
+
     virtual void addOrReplaceGroup(std::auto_ptr<Group> g);
 
-    virtual bool unscheduledFill(Provenance const& prov) const;
+    virtual void resolveProvenance(Group const& g) const;
+
+    virtual bool unscheduledFill(std::string const& moduleLabel) const;
 
     EventAuxiliary aux_;
     boost::shared_ptr<LuminosityBlockPrincipal> luminosityBlockPrincipal_;
+
+    boost::shared_ptr<BranchMapper> branchMapperPtr_;
+
     // Handler for unscheduled modules
     boost::shared_ptr<UnscheduledHandler> unscheduledHandler_;
 
     mutable std::vector<std::string> moduleLabelsRunning_;
+
     History   eventHistory_;
+
   };
 
   inline

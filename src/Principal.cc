@@ -25,12 +25,10 @@ namespace edm {
   Principal::Principal(boost::shared_ptr<ProductRegistry const> reg,
 		       ProcessConfiguration const& pc,
 		       ProcessHistoryID const& hist,
-		       boost::shared_ptr<BranchMapper> mapper,
 		       boost::shared_ptr<DelayedReader> rtrv) :
     EDProductGetter(),
     processHistoryID_(hist),
     processHistoryPtr_(boost::shared_ptr<ProcessHistory>(new ProcessHistory)),
-    branchMapperPtr_(mapper),
     processConfiguration_(pc),
     processHistoryModified_(false),
     groups_(),
@@ -78,24 +76,6 @@ namespace edm {
   }
 
   void
-  Principal::addGroup(ConstBranchDescription const& bd) {
-    std::auto_ptr<Group> g(new Group(bd));
-    addOrReplaceGroup(g);
-  }
-
-  void
-  Principal::addGroup(std::auto_ptr<EDProduct> prod, std::auto_ptr<Provenance> prov) {
-    std::auto_ptr<Group> g(new Group(prod, prov));
-    addOrReplaceGroup(g);
-  }
-
-  void
-  Principal::addGroup(std::auto_ptr<Provenance> prov) {
-    std::auto_ptr<Group> g(new Group(prov));
-    addOrReplaceGroup(g);
-  }
-
-  void
   Principal::addToProcessHistory() const {
     if (processHistoryModified_) return;
     ProcessHistory& ph = *processHistoryPtr_;
@@ -125,26 +105,6 @@ namespace edm {
     return *processHistoryPtr_;
   }
 
-  void 
-  Principal::put(std::auto_ptr<EDProduct> edp,
-		 std::auto_ptr<Provenance> prov) {
-
-    if (!prov->productID().isValid()) {
-      throw edm::Exception(edm::errors::InsertFailure,"Null Product ID")
-	<< "put: Cannot put product with null Product ID."
-	<< "\n";
-    }
-    if (edp.get() == 0) {
-      throw edm::Exception(edm::errors::InsertFailure,"Null Pointer")
-	<< "put: Cannot put because auto_ptr to product is null."
-	<< "\n";
-    }
-    branchMapperPtr_->insert(prov->branchEntryInfo());
-    // Group assumes ownership
-    this->addGroup(edp, prov);
-    this->addToProcessHistory();
-  }
-
   Principal::SharedConstGroupPtr const
   Principal::getGroup(BranchID const& bid, bool resolveProd, bool fillOnDemand) const {
     GroupCollection::const_iterator it = groups_.find(bid);
@@ -159,33 +119,6 @@ namespace edm {
       this->resolveProduct(*g, fillOnDemand);
     }
     return g;
-  }
-
-  BasicHandle
-  Principal::get(ProductID const& oid) const {
-    BranchID bid = branchMapperPtr_->productToBranch(oid);
-    SharedConstGroupPtr const& g = getGroup(bid, true, true);
-    if (g.get() == 0) {
-      if (!oid.isValid()) {
-        throw edm::Exception(edm::errors::ProductNotFound,"InvalidID")
-	  << "get by product ID: invalid ProductID supplied\n";
-      }
-      boost::shared_ptr<cms::Exception> whyFailed( new edm::Exception(edm::errors::ProductNotFound,"InvalidID") );
-      *whyFailed
-	<< "get by product ID: no product with given id: "<< oid << "\n";
-      return BasicHandle(whyFailed);
-    }
-
-    // Check for case where we tried on demand production and
-    // it failed to produce the object
-    if (g->onDemand()) {
-      boost::shared_ptr<cms::Exception> whyFailed( new edm::Exception(edm::errors::ProductNotFound,"InvalidID") );
-      *whyFailed
-	<< "get by product ID: no product with given id: " << oid << "\n"
-        << "onDemand production failed to produce it.\n";
-      return BasicHandle(whyFailed);
-    }
-    return BasicHandle(g->product(), g->provenance());
   }
 
   BasicHandle
@@ -370,39 +303,6 @@ namespace edm {
                       stopIfProcessHasMatch);
   }
 
-  Provenance const&
-  Principal::getProvenance(BranchID const& bid) const {
-    SharedConstGroupPtr const& g = getGroup(bid, false, true);
-    if (g.get() == 0) {
-      throw edm::Exception(edm::errors::ProductNotFound,"InvalidID")
-	<< "getProvenance: no product with given branch id: "<< bid << "\n";
-    }
-
-    if (g->onDemand()) {
-      unscheduledFill(*g->provenance());
-    }
-    // We already tried to produce the unscheduled products above
-    // If they still are not there, then throw
-    if (g->onDemand()) {
-      throw edm::Exception(edm::errors::ProductNotFound)
-	<< "getProvenance: no product with given BranchID: "<< bid <<"\n";
-    }
-
-    return *g->provenance();
-  }
-
-  // This one is mostly for test printout purposes
-  // No attempt to trigger on demand execution
-  // Skips provenance when the EDProduct is not there
-  void
-  Principal::getAllProvenance(std::vector<Provenance const*> & provenances) const {
-    provenances.clear();
-    for (Principal::const_iterator i = begin(), iEnd = end(); i != iEnd; ++i) {
-      if (i->second->provenanceAvailable() && i->second->provenance()->isPresent() && i->second->provenance()->product().present())
-	 provenances.push_back(i->second->provenance());
-    }
-  }
-
   void
   Principal::readImmediate() const {
     for (Principal::const_iterator i = begin(), iEnd = end(); i != iEnd; ++i) {
@@ -413,11 +313,6 @@ namespace edm {
         resolveProduct(*i->second, false);
       }
     }
-  }
-
-  EDProduct const *
-  Principal::getIt(ProductID const& oid) const {
-    return get(oid).wrapper();
   }
 
   size_t
@@ -522,7 +417,7 @@ namespace edm {
 
     // Try unscheduled production.
     if (g.onDemand()) {
-      if (fillOnDemand) unscheduledFill(*g.provenance());
+      if (fillOnDemand) unscheduledFill(g.provenance()->moduleLabel());
       return;
     }
 
@@ -535,18 +430,15 @@ namespace edm {
   }
 
   void
-  Principal::resolveProvenance(Group const& g) const {
-    if (!g.provenance()->branchEntryInfoPtr()) {
-      // Now fix up the Group
-      g.setProvenance(branchMapperPtr_->branchToEntryInfo(g.productDescription().branchID()));
-    }
-  }
-
-  void
   Principal::recombine(Principal & other, std::vector<BranchID> const& bids) {
     for (std::vector<BranchID>::const_iterator it = bids.begin(), itEnd = bids.end(); it != itEnd; ++it) {
       groups_[*it].swap(other.groups_[*it]);
     }
     store_->mergeReaders(other.store());
+  }
+
+  EDProduct const*
+  Principal::getIt(ProductID const& pid) const {
+    assert(0);
   }
 }
