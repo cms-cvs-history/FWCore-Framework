@@ -34,7 +34,6 @@ Test of the EventPrincipal class.
 #include "FWCore/Framework/interface/RunPrincipal.h"
 
 #include "FWCore/Framework/interface/GenericHandle.h"
-#include "FWCore/Framework/interface/GenericObjectOwner.h"
 #include <cppunit/extensions/HelperMacros.h>
 
 #include "boost/shared_ptr.hpp"
