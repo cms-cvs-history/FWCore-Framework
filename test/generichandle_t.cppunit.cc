@@ -5,15 +5,24 @@ Test of the EventPrincipal class.
 ----------------------------------------------------------------------*/  
 #include <string>
 #include <iostream>
+#include <memory>
 
 #include "FWCore/Utilities/interface/GetPassID.h"
 #include "FWCore/Utilities/interface/GetReleaseVersion.h"
 #include "FWCore/Utilities/interface/GlobalIdentifier.h"
 #include "FWCore/Utilities/interface/TypeID.h"
+#include "DataFormats/Provenance/interface/BranchDescription.h"
+#include "DataFormats/Provenance/interface/BranchEntryInfo.h"
+#include "DataFormats/Provenance/interface/BranchID.h"
+#include "DataFormats/Provenance/interface/EntryDescription.h"
 #include "DataFormats/Provenance/interface/ProductRegistry.h"
 #include "DataFormats/Provenance/interface/ModuleDescription.h"
+#include "DataFormats/Provenance/interface/ModuleDescriptionID.h"
 #include "DataFormats/Provenance/interface/EventAuxiliary.h"
 #include "DataFormats/Provenance/interface/LuminosityBlockAuxiliary.h"
+#include "DataFormats/Provenance/interface/ProductID.h"
+#include "DataFormats/Provenance/interface/ProductStatus.h"
+#include "DataFormats/Provenance/interface/Provenance.h"
 #include "DataFormats/Provenance/interface/RunAuxiliary.h"
 #include "DataFormats/Provenance/interface/Timestamp.h"
 #include "DataFormats/Common/interface/Wrapper.h"
@@ -27,6 +36,8 @@ Test of the EventPrincipal class.
 #include "FWCore/Framework/interface/GenericHandle.h"
 #include "FWCore/Framework/interface/GenericObjectOwner.h"
 #include <cppunit/extensions/HelperMacros.h>
+
+#include "boost/shared_ptr.hpp"
 
 // This is a gross hack, to allow us to test the event
 namespace edm
@@ -44,7 +55,6 @@ CPPUNIT_TEST_SUITE(testGenericHandle);
 CPPUNIT_TEST(failgetbyLabelTest);
 CPPUNIT_TEST(getbyLabelTest);
 CPPUNIT_TEST(failWrongType);
-CPPUNIT_TEST(putTest);
 CPPUNIT_TEST_SUITE_END();
 public:
   void setUp(){}
@@ -71,6 +81,7 @@ void testGenericHandle::failWrongType() {
       CPPUNIT_ASSERT("Threw wrong kind of exception" == 0);
    }
 }
+
 void testGenericHandle::failgetbyLabelTest() {
 
   edm::EventID id;
@@ -109,8 +120,7 @@ void testGenericHandle::failgetbyLabelTest() {
   }
   if( !didThrow) {
     CPPUNIT_ASSERT("Failed to throw required exception" == 0);      
-  }
-  
+  }  
 }
 
 void testGenericHandle::getbyLabelTest() {
@@ -164,7 +174,16 @@ void testGenericHandle::getbyLabelTest() {
   edm::EventAuxiliary eventAux(col, uuid, fakeTime, lbp->luminosityBlock(), true);
   edm::EventPrincipal ep(eventAux, pregc, lbp, pc);
 
-  std::auto_ptr<edm::Provenance> pprov(new edm::Provenance(product));
+  const edm::BranchDescription& branchFromRegistry = it->second;
+  boost::shared_ptr<edm::EntryDescription> entryDescriptionPtr(new edm::EntryDescription);
+  entryDescriptionPtr->moduleDescriptionID_ = branchFromRegistry.moduleDescriptionID();
+  boost::shared_ptr<edm::BranchEntryInfo> branchEntryInfoPtr(
+    new edm::BranchEntryInfo(branchFromRegistry.branchID(),
+                             branchFromRegistry.productIDtoAssign(),
+                             edm::productstatus::present(),
+                             entryDescriptionPtr));
+  std::auto_ptr<edm::Provenance> pprov(new edm::Provenance(branchFromRegistry, branchEntryInfoPtr));
+
   ep.put(pprod, pprov);
   
   edm::GenericHandle h("edmtest::DummyProduct");
@@ -191,95 +210,3 @@ void testGenericHandle::getbyLabelTest() {
   CPPUNIT_ASSERT(h.isValid());
   CPPUNIT_ASSERT(h.provenance()->moduleLabel() == label);
 }
-
-void testGenericHandle::putTest() {
-   std::string processName = "PROD";
-   
-   typedef edmtest::DummyProduct DP;
-   typedef edm::Wrapper<DP> WDP;
-   std::auto_ptr<DP> pr(new DP);
-   //std::auto_ptr<edm::EDProduct> pprod(new WDP(pr));
-   std::string label("fred");
-   std::string productInstanceName("Rick");
-   
-   edmtest::DummyProduct dp;
-   edm::TypeID dummytype(dp);
-   std::string className = dummytype.friendlyClassName();
-   
-   edm::ModuleDescription modDesc;
-   modDesc.moduleName_ = "Blah";
-   
-  edm::BranchDescription product(edm::InEvent,
-				 label,
-				 processName,
-				 dummytype.userClassName(),
-				 className,
-				 productInstanceName,
-				 modDesc.id(),
-				 std::set<edm::ParameterSetID>(),
-				 std::set<edm::ProcessConfigurationID>()
-				);
-   
-   product.init();
-   
-   edm::ProductRegistry *preg = new edm::ProductRegistry;
-   preg->addProduct(product);
-   preg->setFrozen();
-   preg->setProductIDs(1U);
-   
-   edm::ProductRegistry::ProductList const& pl = preg->productList();
-   edm::BranchKey const bk(product);
-   edm::ProductRegistry::ProductList::const_iterator it = pl.find(bk);
-   
-   edm::EventID col(1L, 1L);
-   edm::Timestamp fakeTime;
-   std::string uuid = edm::createGlobalIdentifier();
-   edm::ProcessConfiguration pc("PROD", edm::ParameterSetID(), edm::getReleaseVersion(), edm::getPassID());
-   boost::shared_ptr<edm::ProductRegistry const> pregc(preg);
-   edm::RunAuxiliary runAux(col.run(), fakeTime, fakeTime);
-   boost::shared_ptr<edm::RunPrincipal> rp(new edm::RunPrincipal(runAux, pregc, pc));
-   edm::LuminosityBlockAuxiliary lumiAux(rp->run(), 1, fakeTime, fakeTime);
-   boost::shared_ptr<edm::LuminosityBlockPrincipal>lbp(new edm::LuminosityBlockPrincipal(lumiAux, pregc, rp, pc));
-   edm::EventAuxiliary eventAux(col, uuid, fakeTime, lbp->luminosityBlock(), true);
-   edm::EventPrincipal ep(eventAux, pregc, lbp, pc);
-   
-   {
-      edm::ModuleDescription modDesc;
-      modDesc.moduleName_="Fred";
-      modDesc.moduleLabel_=label;
-      modDesc.processConfiguration_ = pc;
-      edm::Event ev(ep,modDesc);
-      
-      ROOT::Reflex::Object obj( ROOT::Reflex::Type::ByTypeInfo(typeid(edmtest::DummyProduct)), pr.release());
-      std::auto_ptr<edm::GenericObjectOwner> goo(new edm::GenericObjectOwner(obj));
-      edm::OrphanHandle<edm::GenericObjectOwner> oh(ev.put(goo,productInstanceName));
-      CPPUNIT_ASSERT(0!= oh->object().Address());
-      
-      edm::EDProducer::commitEvent(ev);
-   }
-   
-   edm::GenericHandle h("edmtest::DummyProduct");
-   try {
-      edm::ModuleDescription modDesc;
-      modDesc.moduleName_="Blah";
-      modDesc.moduleLabel_="blahs"; 
-      edm::Event event(ep, modDesc);
-      
-      event.getByLabel(label, productInstanceName,h);
-   }
-   catch (cms::Exception& x) {
-      std::cerr << x.explainSelf()<< std::endl;
-      CPPUNIT_ASSERT("Threw cms::Exception unexpectedly" == 0);
-   }
-   catch(std::exception& x){
-      std::cerr <<x.what()<<std::endl;
-      CPPUNIT_ASSERT("threw std::exception"==0);
-   }
-   catch (...) {
-      std::cerr << "Unknown exception type\n";
-      CPPUNIT_ASSERT("Threw exception unexpectedly" == 0);
-   }
-   CPPUNIT_ASSERT(h.isValid());
-   CPPUNIT_ASSERT(h.provenance()->moduleLabel() == label);
-}
-
