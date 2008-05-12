@@ -4,7 +4,7 @@
 namespace edm {
 
   Run::Run(RunPrincipal& rp, ModuleDescription const& md) :
-	DataViewImpl(rp, md, InRun),
+	DataViewImpl<RunLumiEntryInfo>(rp, md, InRun),
 	aux_(rp.aux()) {
   }
 
@@ -18,7 +18,7 @@ namespace edm {
     return dynamic_cast<RunPrincipal const&>(principal());
   }
 
-  Provenance const&
+  Provenance
   Run::getProvenance(BranchID const& bid) const
   {
     return runPrincipal().getProvenance(bid);
@@ -44,16 +44,11 @@ namespace edm {
 	pit->first = 0;
 
 	// set provenance
-	boost::shared_ptr<EntryDescription> entryDescriptionPtr(new EntryDescription);
-	entryDescriptionPtr->moduleDescriptionID_ = pit->second->moduleDescriptionID();
-	boost::shared_ptr<BranchEntryInfo> branchEntryInfoPtr(
-		new BranchEntryInfo(pit->second->branchID(),
-				    pit->second->productIDtoAssign(),
+	std::auto_ptr<RunLumiEntryInfo> runEntryInfoPtr(
+		new RunLumiEntryInfo(pit->second->branchID(),
 				    productstatus::present(),
-				    entryDescriptionPtr));
-	std::auto_ptr<Provenance> pv(
-	    new Provenance(*pit->second, branchEntryInfoPtr));
-	rp.put(pr,pv);
+				    pit->second->moduleDescriptionID()));
+	rp.put(pr, *pit->second, runEntryInfoPtr);
 	++pit;
     }
 

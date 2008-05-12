@@ -1,9 +1,9 @@
 /*----------------------------------------------------------------------
-  $Id: SelectorBase.cc,v 1.1 2006/10/23 23:49:01 chrjones Exp $
+  $Id: SelectorBase.cc,v 1.2 2007/04/09 22:18:56 wdd Exp $
   ----------------------------------------------------------------------*/
 
 #include "FWCore/Framework/interface/SelectorBase.h"
-#include "FWCore/Framework/interface/SelectorProvenance.h"
+#include "DataFormats/Provenance/interface/ConstBranchDescription.h"
 
 namespace edm
 {
@@ -17,14 +17,7 @@ namespace edm
   { }
 
   bool
-  SelectorBase::match(Provenance const& p) const
-  {
-    SelectorProvenance sp(p);
-    return doMatch(sp);
-  }
-
-  bool
-  SelectorBase::match(SelectorProvenance const& p) const
+  SelectorBase::match(ConstBranchDescription const& p) const
   {
     return doMatch(p);
   }

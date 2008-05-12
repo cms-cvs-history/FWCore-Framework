@@ -1,5 +1,5 @@
 #include "FWCore/Framework/interface/RunPrincipal.h"
-#include "FWCore/Framework/src/Group.h"
+#include "FWCore/Framework/interface/Group.h"
 
 namespace edm {
   void
@@ -29,33 +29,37 @@ namespace edm {
   }
 
   void
-  RunPrincipal::addGroup(std::auto_ptr<EDProduct> prod, std::auto_ptr<Provenance> prov) {
-    std::auto_ptr<Group> g(new Group(prod, prov));
+  RunPrincipal::addGroup(std::auto_ptr<EDProduct> prod,
+	ConstBranchDescription const& bd,
+	std::auto_ptr<RunLumiEntryInfo> entryInfo) {
+    std::auto_ptr<Group> g(new Group(prod, bd, entryInfo));
     addOrReplaceGroup(g);
   }
 
   void
-  RunPrincipal::addGroup(std::auto_ptr<Provenance> prov) {
-    std::auto_ptr<Group> g(new Group(prov));
+  RunPrincipal::addGroup(ConstBranchDescription const& bd,
+	std::auto_ptr<RunLumiEntryInfo> entryInfo) {
+    std::auto_ptr<Group> g(new Group(bd, entryInfo));
     addOrReplaceGroup(g);
   }
 
   void 
   RunPrincipal::put(std::auto_ptr<EDProduct> edp,
-		 std::auto_ptr<Provenance> prov) {
+		ConstBranchDescription const& bd,
+		std::auto_ptr<RunLumiEntryInfo> entryInfo) {
 
     if (edp.get() == 0) {
       throw edm::Exception(edm::errors::InsertFailure,"Null Pointer")
 	<< "put: Cannot put because auto_ptr to product is null."
 	<< "\n";
     }
-    branchMapperPtr_->insert(prov->branchEntryInfo());
+    branchMapperPtr_->insert(*entryInfo);
     // Group assumes ownership
-    this->addGroup(edp, prov);
+    this->addGroup(edp, bd, entryInfo);
     this->addToProcessHistory();
   }
 
-  Provenance const&
+  Provenance
   RunPrincipal::getProvenance(BranchID const& bid) const {
     SharedConstGroupPtr const& g = getGroup(bid, false, true);
     if (g.get() == 0) {
@@ -64,7 +68,7 @@ namespace edm {
     }
 
     if (g->onDemand()) {
-      unscheduledFill(g->provenance()->moduleLabel());
+      unscheduledFill(g->productDescription().moduleLabel());
     }
     // We already tried to produce the unscheduled products above
     // If they still are not there, then throw
@@ -82,7 +86,8 @@ namespace edm {
   void
   RunPrincipal::getAllProvenance(std::vector<Provenance const*> & provenances) const {
     provenances.clear();
-    for (Principal::const_iterator i = begin(), iEnd = end(); i != iEnd; ++i) {
+    for (Base::const_iterator i = begin(), iEnd = end(); i != iEnd; ++i) {
+      resolveProvenance(*i->second);
       if (i->second->provenanceAvailable() && i->second->provenance()->isPresent() && i->second->provenance()->product().present())
 	 provenances.push_back(i->second->provenance());
     }
@@ -90,7 +95,7 @@ namespace edm {
 
   void
   RunPrincipal::resolveProvenance(Group const& g) const {
-    if (!g.provenance()->branchEntryInfoPtr()) {
+    if (!g.entryInfoPtr()) {
       // Now fix up the Group
       g.setProvenance(branchMapperPtr_->branchToEntryInfo(g.productDescription().branchID()));
     }
@@ -101,7 +106,7 @@ namespace edm {
 
     aux_.mergeAuxiliary(rp->aux());
 
-    for (Principal::const_iterator i = rp->begin(), iEnd = rp->end(); i != iEnd; ++i) {
+    for (Base::const_iterator i = rp->begin(), iEnd = rp->end(); i != iEnd; ++i) {
 
       std::auto_ptr<Group> g(new Group());
       g->swap(*i->second);

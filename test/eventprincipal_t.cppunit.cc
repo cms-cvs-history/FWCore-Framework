@@ -12,7 +12,6 @@ Test of the EventPrincipal class.
 #include <cppunit/extensions/HelperMacros.h>
 
 #include "DataFormats/Provenance/interface/BranchDescription.h"
-#include "DataFormats/Provenance/interface/BranchEntryInfo.h"
 #include "DataFormats/Provenance/interface/BranchID.h"
 #include "DataFormats/Provenance/interface/EntryDescription.h"
 #include "DataFormats/Provenance/interface/ModuleDescription.h"
@@ -24,6 +23,7 @@ Test of the EventPrincipal class.
 #include "DataFormats/Provenance/interface/Provenance.h"
 #include "DataFormats/Provenance/interface/Timestamp.h"
 #include "DataFormats/Provenance/interface/EventAuxiliary.h"
+#include "DataFormats/Provenance/interface/EventEntryInfo.h"
 #include "DataFormats/Provenance/interface/LuminosityBlockAuxiliary.h"
 #include "DataFormats/Provenance/interface/RunAuxiliary.h"
 #include "DataFormats/Common/interface/Wrapper.h"
@@ -178,16 +178,15 @@ void test_ep::setUp()
     edm::BranchKey const bk(branch);
     edm::ProductRegistry::ProductList::const_iterator it = pl.find(bk);
 
-    const edm::BranchDescription& branchFromRegistry = it->second;
+    const edm::ConstBranchDescription branchFromRegistry(it->second);
 
     boost::shared_ptr<edm::EntryDescription> entryDescriptionPtr(new edm::EntryDescription);
     entryDescriptionPtr->moduleDescriptionID_ = branchFromRegistry.moduleDescriptionID();
-    boost::shared_ptr<edm::BranchEntryInfo> branchEntryInfoPtr(
-      new edm::BranchEntryInfo(branchFromRegistry.branchID(),
-                               branchFromRegistry.productIDtoAssign(),
+    std::auto_ptr<edm::EventEntryInfo> branchEntryInfoPtr(
+      new edm::EventEntryInfo(branchFromRegistry.branchID(),
                                edm::productstatus::present(),
+                               branchFromRegistry.productIDtoAssign(),
                                entryDescriptionPtr));
-    std::auto_ptr<edm::Provenance> provenance(new edm::Provenance(branchFromRegistry, branchEntryInfoPtr));
 
     edm::ProcessConfiguration* process = processConfigurations_[tag];
     assert(process);
@@ -200,7 +199,7 @@ void test_ep::setUp()
     boost::shared_ptr<edm::LuminosityBlockPrincipal>lbp(new edm::LuminosityBlockPrincipal(lumiAux, preg, rp, *process));
     edm::EventAuxiliary eventAux(eventID_, uuid, now, lbp->luminosityBlock(), true);
     pEvent_ = new edm::EventPrincipal(eventAux, preg, lbp, *process);
-    pEvent_->put(product, provenance);
+    pEvent_->put(product, branchFromRegistry, branchEntryInfoPtr);
   }
   CPPUNIT_ASSERT(pEvent_->size() == 1);
   
@@ -274,7 +273,7 @@ void test_ep::failgetManyTest()
   edm::TypeID tid(dummy);
 
   edm::ProcessNameSelector sel("PROD");
-  std::vector<edm::BasicHandle> handles;
+  std::vector<edm::BasicHandle > handles;
   pEvent_->getMany(tid, sel, handles);
   CPPUNIT_ASSERT(handles.empty());
 }
@@ -293,7 +292,7 @@ void test_ep::failgetManybyTypeTest()
   // so that's a type sure not to match any product.
   edm::ProductID dummy;
   edm::TypeID tid(dummy);
-  std::vector<edm::BasicHandle> handles;
+  std::vector<edm::BasicHandle > handles;
 
   
   pEvent_->getManyByType(tid, handles);

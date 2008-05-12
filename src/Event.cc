@@ -6,7 +6,7 @@
 namespace edm {
 
     Event::Event(EventPrincipal& ep, ModuleDescription const& md) :
-	DataViewImpl(ep, md, InEvent),
+	DataViewImpl<EventEntryInfo>(ep, md, InEvent),
 	aux_(ep.aux()),
 	luminosityBlock_(new LuminosityBlock(ep.luminosityBlockPrincipal(), md)),
 	gotProductIDs_(),
@@ -42,7 +42,7 @@ namespace edm {
   }
 
 
-  Provenance const&
+  Provenance
   Event::getProvenance(BranchID const& bid) const
   {
     return eventPrincipal().getProvenance(bid);
@@ -74,17 +74,13 @@ namespace edm {
 	pit->first = 0;
 
 	// set provenance
-	boost::shared_ptr<EntryDescription> entryDescriptionPtr(new EntryDescription);
-	entryDescriptionPtr->parents_ = gotProductIDs_;
-	entryDescriptionPtr->moduleDescriptionID_ = pit->second->moduleDescriptionID();
-	boost::shared_ptr<BranchEntryInfo> branchEntryInfoPtr(
-		new BranchEntryInfo(pit->second->branchID(),
-				    pit->second->productIDtoAssign(),
+	std::auto_ptr<EventEntryInfo> eventEntryInfoPtr(
+		new EventEntryInfo(pit->second->branchID(),
 				    productstatus::present(),
-				    entryDescriptionPtr));
-	std::auto_ptr<Provenance> pv(
-	    new Provenance(*pit->second, branchEntryInfoPtr));
-	ep.put(pr,pv);
+				    pit->second->moduleDescriptionID(),
+				    pit->second->productIDtoAssign(),
+				    gotProductIDs_));
+	ep.put(pr, *pit->second, eventEntryInfoPtr);
 	++pit;
     }
 

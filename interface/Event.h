@@ -16,7 +16,7 @@ For its usage, see "FWCore/Framework/interface/DataViewImpl.h"
 */
 /*----------------------------------------------------------------------
 
-$Id: Event.h,v 1.63 2008/03/31 21:13:27 wmtan Exp $
+$Id: Event.h,v 1.63.2.1 2008/05/06 21:10:00 wmtan Exp $
 
 ----------------------------------------------------------------------*/
 
@@ -39,9 +39,10 @@ $Id: Event.h,v 1.63 2008/03/31 21:13:27 wmtan Exp $
 
 namespace edm {
 
-  class Event : private DataViewImpl
+  class Event : private DataViewImpl<EventEntryInfo>
   {
   public:
+    typedef DataViewImpl<EventEntryInfo> Base;
     Event(EventPrincipal& ep, const ModuleDescription& md);
     ~Event(){}
 
@@ -53,14 +54,14 @@ namespace edm {
     bool isRealData() const {return aux_.isRealData();}
     EventAuxiliary::ExperimentType experimentType() const {return aux_.experimentType();}
 
-    using DataViewImpl::get;
-    using DataViewImpl::getByLabel;
-    using DataViewImpl::getByType;
-    using DataViewImpl::getMany;
-    using DataViewImpl::getManyByType;
-    using DataViewImpl::me;
-    using DataViewImpl::processHistory;
-    using DataViewImpl::size;
+    using Base::get;
+    using Base::getByLabel;
+    using Base::getByType;
+    using Base::getMany;
+    using Base::getManyByType;
+    using Base::me;
+    using Base::processHistory;
+    using Base::size;
 
     LuminosityBlock const&
     getLuminosityBlock() const {
@@ -155,7 +156,7 @@ namespace edm {
     fillView_(BasicHandle & bh,
 	      Handle<View<ELEMENT> >& result) const;
 
-    Provenance const&
+    Provenance
     getProvenance(BranchID const& theID) const;
 
     void
@@ -280,7 +281,7 @@ namespace edm {
   Event::get(SelectorBase const& sel,
 		    Handle<PROD>& result) const
   {
-    bool ok = this->DataViewImpl::get(sel, result);
+    bool ok = this->Base::get(sel, result);
     if (ok) {
       gotProductIDs_.push_back(result.id());
     }
@@ -291,7 +292,7 @@ namespace edm {
   bool
   Event::getByLabel(InputTag const& tag, Handle<PROD>& result) const
   {
-    bool ok = this->DataViewImpl::getByLabel(tag, result);
+    bool ok = this->Base::getByLabel(tag, result);
     if (ok) {
       gotProductIDs_.push_back(result.id());
     }
@@ -302,7 +303,7 @@ namespace edm {
   bool
   Event::getByLabel(std::string const& label, Handle<PROD>& result) const
   {
-    bool ok = this->DataViewImpl::getByLabel(label, result);
+    bool ok = this->Base::getByLabel(label, result);
     if (ok) {
       gotProductIDs_.push_back(result.id());
     }
@@ -315,7 +316,7 @@ namespace edm {
 			   std::string const& productInstanceName,
 			   Handle<PROD>& result) const
   {
-    bool ok = this->DataViewImpl::getByLabel(label, productInstanceName, result);
+    bool ok = this->Base::getByLabel(label, productInstanceName, result);
     if (ok) {
       gotProductIDs_.push_back(result.id());
     }
@@ -327,7 +328,7 @@ namespace edm {
   Event::getMany(SelectorBase const& sel,
 			std::vector<Handle<PROD> >& results) const
   { 
-    this->DataViewImpl::getMany(sel, results);
+    this->Base::getMany(sel, results);
     for (typename std::vector<Handle<PROD> >::const_iterator it = results.begin(), itEnd = results.end();
         it != itEnd; ++it) {
       gotProductIDs_.push_back(it->id());
@@ -338,7 +339,7 @@ namespace edm {
   bool
   Event::getByType(Handle<PROD>& result) const
   {
-    bool ok = this->DataViewImpl::getByType(result);
+    bool ok = this->Base::getByType(result);
     if (ok) {
       gotProductIDs_.push_back(result.id());
     }
@@ -349,7 +350,7 @@ namespace edm {
   void 
   Event::getManyByType(std::vector<Handle<PROD> >& results) const
   { 
-    this->DataViewImpl::getManyByType(results);
+    this->Base::getManyByType(results);
     for (typename std::vector<Handle<PROD> >::const_iterator it = results.begin(), itEnd = results.end();
         it != itEnd; ++it) {
       gotProductIDs_.push_back(it->id());

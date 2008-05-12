@@ -16,7 +16,7 @@ For its usage, see "FWCore/Framework/interface/DataViewImpl.h"
 */
 /*----------------------------------------------------------------------
 
-$Id: LuminosityBlock.h,v 1.16 2008/03/31 21:13:27 wmtan Exp $
+$Id: LuminosityBlock.h,v 1.16.2.1 2008/05/06 21:10:01 wmtan Exp $
 
 ----------------------------------------------------------------------*/
 
@@ -31,12 +31,13 @@ $Id: LuminosityBlock.h,v 1.16 2008/03/31 21:13:27 wmtan Exp $
 
 namespace edm {
 
-  class LuminosityBlock : private DataViewImpl
+  class LuminosityBlock : private DataViewImpl<RunLumiEntryInfo>
   {
   public:
     LuminosityBlock(LuminosityBlockPrincipal& lbp, const ModuleDescription& md);
     ~LuminosityBlock() {}
 
+    typedef DataViewImpl<RunLumiEntryInfo> Base;
     // AUX functions.
     LuminosityBlockNumber_t luminosityBlock() const {return aux_.luminosityBlock();}
 
@@ -51,13 +52,13 @@ namespace edm {
     Timestamp const& beginTime() const {return aux_.beginTime();}
     Timestamp const& endTime() const {return aux_.endTime();}
 
-    using DataViewImpl::get;
-    using DataViewImpl::getByLabel;
-    using DataViewImpl::getByType;
-    using DataViewImpl::getMany;
-    using DataViewImpl::getManyByType;
-    using DataViewImpl::me;
-    using DataViewImpl::processHistory;
+    using Base::get;
+    using Base::getByLabel;
+    using Base::getByType;
+    using Base::getMany;
+    using Base::getManyByType;
+    using Base::me;
+    using Base::processHistory;
 
     Run const&
     getRun() const {
@@ -74,7 +75,7 @@ namespace edm {
     void
     put(std::auto_ptr<PROD> product, std::string const& productInstanceName);
 
-    Provenance const&
+    Provenance
     getProvenance(BranchID const& theID) const;
 
     void

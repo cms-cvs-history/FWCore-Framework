@@ -26,7 +26,7 @@ pointer to a Group, when queried.
 #include "FWCore/Framework/interface/Frameworkfwd.h"
 #include "DataFormats/Provenance/interface/ProvenanceFwd.h"
 #include "DataFormats/Provenance/interface/BranchID.h"
-#include "DataFormats/Provenance/interface/BranchEntryInfo.h"
+#include "DataFormats/Provenance/interface/EventEntryInfo.h"
 #include "DataFormats/Common/interface/EDProductGetter.h"
 #include "DataFormats/Provenance/interface/ProcessHistory.h"
 #include "DataFormats/Provenance/interface/ProductStatus.h"
@@ -34,14 +34,16 @@ pointer to a Group, when queried.
 
 
 namespace edm {
+  template <typename T>
   class Principal : public EDProductGetter {
   public:
+    typedef GroupT<T> Group;
     typedef std::map<BranchID, boost::shared_ptr<Group> > GroupCollection;
-    typedef GroupCollection::const_iterator const_iterator;
-    typedef ProcessHistory::const_iterator  ProcessNameConstIterator;
-    typedef boost::shared_ptr<const Group>  SharedConstGroupPtr;
-    typedef std::vector<BasicHandle>        BasicHandleVec;
-    typedef GroupCollection::size_type      size_type;
+    typedef typename GroupCollection::const_iterator const_iterator;
+    typedef ProcessHistory::const_iterator ProcessNameConstIterator;
+    typedef boost::shared_ptr<const Group> SharedConstGroupPtr;
+    typedef typename std::vector<BasicHandle> BasicHandleVec;
+    typedef typename GroupCollection::size_type      size_type;
 
     typedef boost::shared_ptr<Group> SharedGroupPtr;
     typedef std::string ProcessName;
@@ -55,7 +57,7 @@ namespace edm {
 
     EDProductGetter const* prodGetter() const {return this;}
 
-    BasicHandle  getForOutput(BranchID const& bid, bool getProd) const;
+    OutputHandle<T>  getForOutput(BranchID const& bid, bool getProd) const;
 
     BasicHandle  getBySelector(TypeID const& tid,
                                SelectorBase const& s) const;
@@ -179,4 +181,6 @@ namespace edm {
     boost::shared_ptr<DelayedReader> store_;
   };
 }
+
+#include "Principal.icc"
 #endif

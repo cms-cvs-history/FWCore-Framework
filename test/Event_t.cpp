@@ -650,7 +650,7 @@ void testEvent::getByLabel()
     principal_->getByLabel(TypeID(typeid(edmtest::IntProduct)), "modMulti", "int1", "LATE");
   convert_handle(bh, h);
   CPPUNIT_ASSERT(h->value == 100);
-  edm::BasicHandle bh2(principal_->getByLabel(TypeID(typeid(edmtest::IntProduct)), "modMulti", "int1", "nomatch"));
+  BasicHandle bh2(principal_->getByLabel(TypeID(typeid(edmtest::IntProduct)), "modMulti", "int1", "nomatch"));
   CPPUNIT_ASSERT(!bh2.isValid());
 }
 

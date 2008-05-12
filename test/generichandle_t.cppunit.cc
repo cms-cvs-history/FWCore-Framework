@@ -5,24 +5,15 @@ Test of the EventPrincipal class.
 ----------------------------------------------------------------------*/  
 #include <string>
 #include <iostream>
-#include <memory>
 
 #include "FWCore/Utilities/interface/GetPassID.h"
 #include "FWCore/Utilities/interface/GetReleaseVersion.h"
 #include "FWCore/Utilities/interface/GlobalIdentifier.h"
 #include "FWCore/Utilities/interface/TypeID.h"
-#include "DataFormats/Provenance/interface/BranchDescription.h"
-#include "DataFormats/Provenance/interface/BranchEntryInfo.h"
-#include "DataFormats/Provenance/interface/BranchID.h"
-#include "DataFormats/Provenance/interface/EntryDescription.h"
 #include "DataFormats/Provenance/interface/ProductRegistry.h"
 #include "DataFormats/Provenance/interface/ModuleDescription.h"
-#include "DataFormats/Provenance/interface/ModuleDescriptionID.h"
 #include "DataFormats/Provenance/interface/EventAuxiliary.h"
 #include "DataFormats/Provenance/interface/LuminosityBlockAuxiliary.h"
-#include "DataFormats/Provenance/interface/ProductID.h"
-#include "DataFormats/Provenance/interface/ProductStatus.h"
-#include "DataFormats/Provenance/interface/Provenance.h"
 #include "DataFormats/Provenance/interface/RunAuxiliary.h"
 #include "DataFormats/Provenance/interface/Timestamp.h"
 #include "DataFormats/Common/interface/Wrapper.h"
@@ -35,8 +26,6 @@ Test of the EventPrincipal class.
 
 #include "FWCore/Framework/interface/GenericHandle.h"
 #include <cppunit/extensions/HelperMacros.h>
-
-#include "boost/shared_ptr.hpp"
 
 // This is a gross hack, to allow us to test the event
 namespace edm
@@ -61,7 +50,6 @@ public:
   void failgetbyLabelTest();
   void failWrongType();
   void getbyLabelTest();
-  void putTest();
 };
 
 ///registration of the test so that the runner can find it
@@ -80,7 +68,6 @@ void testGenericHandle::failWrongType() {
       CPPUNIT_ASSERT("Threw wrong kind of exception" == 0);
    }
 }
-
 void testGenericHandle::failgetbyLabelTest() {
 
   edm::EventID id;
@@ -119,7 +106,8 @@ void testGenericHandle::failgetbyLabelTest() {
   }
   if( !didThrow) {
     CPPUNIT_ASSERT("Failed to throw required exception" == 0);      
-  }  
+  }
+  
 }
 
 void testGenericHandle::getbyLabelTest() {
@@ -172,18 +160,16 @@ void testGenericHandle::getbyLabelTest() {
   boost::shared_ptr<edm::LuminosityBlockPrincipal>lbp(new edm::LuminosityBlockPrincipal(lumiAux, pregc, rp, pc));
   edm::EventAuxiliary eventAux(col, uuid, fakeTime, lbp->luminosityBlock(), true);
   edm::EventPrincipal ep(eventAux, pregc, lbp, pc);
-
   const edm::BranchDescription& branchFromRegistry = it->second;
   boost::shared_ptr<edm::EntryDescription> entryDescriptionPtr(new edm::EntryDescription);
   entryDescriptionPtr->moduleDescriptionID_ = branchFromRegistry.moduleDescriptionID();
-  boost::shared_ptr<edm::BranchEntryInfo> branchEntryInfoPtr(
-    new edm::BranchEntryInfo(branchFromRegistry.branchID(),
-                             branchFromRegistry.productIDtoAssign(),
-                             edm::productstatus::present(),
-                             entryDescriptionPtr));
-  std::auto_ptr<edm::Provenance> pprov(new edm::Provenance(branchFromRegistry, branchEntryInfoPtr));
-
-  ep.put(pprod, pprov);
+  std::auto_ptr<edm::EventEntryInfo> branchEntryInfoPtr(
+      new edm::EventEntryInfo(branchFromRegistry.branchID(),
+                              edm::productstatus::present(),
+                              branchFromRegistry.productIDtoAssign(),
+                              entryDescriptionPtr));
+  edm::ConstBranchDescription const desc(branchFromRegistry);
+  ep.put(pprod, desc, branchEntryInfoPtr);
   
   edm::GenericHandle h("edmtest::DummyProduct");
   try {

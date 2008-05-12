@@ -15,7 +15,7 @@ For its usage, see "FWCore/Framework/interface/DataViewImpl.h"
 */
 /*----------------------------------------------------------------------
 
-$Id: Run.h,v 1.12 2008/03/31 21:13:27 wmtan Exp $
+$Id: Run.h,v 1.12.2.1 2008/05/06 21:10:01 wmtan Exp $
 
 ----------------------------------------------------------------------*/
 
@@ -27,25 +27,26 @@ $Id: Run.h,v 1.12 2008/03/31 21:13:27 wmtan Exp $
 
 namespace edm {
 
-  class Run : private DataViewImpl
+  class Run : private DataViewImpl<RunLumiEntryInfo>
   {
   public:
     Run(RunPrincipal& rp, const ModuleDescription& md);
     ~Run(){}
 
+    typedef DataViewImpl<RunLumiEntryInfo> Base;
     // AUX functions.
     RunID const& id() const {return aux_.id();}
     RunNumber_t run() const {return aux_.run();}
     Timestamp const& beginTime() const {return aux_.beginTime();}
     Timestamp const& endTime() const {return aux_.endTime();}
 
-    using DataViewImpl::get;
-    using DataViewImpl::getByLabel;
-    using DataViewImpl::getByType;
-    using DataViewImpl::getMany;
-    using DataViewImpl::getManyByType;
-    using DataViewImpl::me;
-    using DataViewImpl::processHistory;
+    using Base::get;
+    using Base::getByLabel;
+    using Base::getByType;
+    using Base::getMany;
+    using Base::getManyByType;
+    using Base::me;
+    using Base::processHistory;
 
     ///Put a new product.
     template <typename PROD>
@@ -57,7 +58,7 @@ namespace edm {
     void
     put(std::auto_ptr<PROD> product, std::string const& productInstanceName);
 
-    Provenance const&
+    Provenance
     getProvenance(BranchID const& theID) const;
 
     void

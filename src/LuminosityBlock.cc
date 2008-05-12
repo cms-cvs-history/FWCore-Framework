@@ -6,7 +6,7 @@
 namespace edm {
 
   LuminosityBlock::LuminosityBlock(LuminosityBlockPrincipal& lbp, ModuleDescription const& md) :
-	DataViewImpl(lbp, md, InLumi),
+	DataViewImpl<RunLumiEntryInfo>(lbp, md, InLumi),
 	aux_(lbp.aux()),
 	run_(new Run(lbp.runPrincipal(), md)) {
   }
@@ -21,7 +21,7 @@ namespace edm {
     return dynamic_cast<LuminosityBlockPrincipal const&>(principal());
   }
 
-  Provenance const&
+  Provenance
   LuminosityBlock::getProvenance(BranchID const& bid) const
   {
     return luminosityBlockPrincipal().getProvenance(bid);
@@ -47,16 +47,11 @@ namespace edm {
 	pit->first = 0;
 
 	// set provenance
-	boost::shared_ptr<EntryDescription> entryDescriptionPtr(new EntryDescription);
-	entryDescriptionPtr->moduleDescriptionID_ = pit->second->moduleDescriptionID();
-	boost::shared_ptr<BranchEntryInfo> branchEntryInfoPtr(
-		new BranchEntryInfo(pit->second->branchID(),
-				    pit->second->productIDtoAssign(),
+	std::auto_ptr<RunLumiEntryInfo> lumiEntryInfoPtr(
+		new RunLumiEntryInfo(pit->second->branchID(),
 				    productstatus::present(),
-				    entryDescriptionPtr));
-	std::auto_ptr<Provenance> pv(
-	    new Provenance(*pit->second, branchEntryInfoPtr));
-	lbp.put(pr,pv);
+				    pit->second->moduleDescriptionID()));
+	lbp.put(pr, *pit->second, lumiEntryInfoPtr);
 	++pit;
     }
 

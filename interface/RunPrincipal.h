@@ -10,11 +10,12 @@ such code sees the Run class, which is a proxy for RunPrincipal.
 The major internal component of the RunPrincipal
 is the DataBlock.
 
-$Id: RunPrincipal.h,v 1.23.2.1 2008/05/04 03:18:25 wmtan Exp $
+$Id: RunPrincipal.h,v 1.23.2.2 2008/05/06 21:10:01 wmtan Exp $
 
 ----------------------------------------------------------------------*/
 
 #include "boost/shared_ptr.hpp"
+#include <vector>
 
 #include "DataFormats/Provenance/interface/BranchMapper.h"
 #include "DataFormats/Provenance/interface/RunAuxiliary.h"
@@ -22,14 +23,19 @@ $Id: RunPrincipal.h,v 1.23.2.1 2008/05/04 03:18:25 wmtan Exp $
 
 namespace edm {
   class UnscheduledHandler;
-  class RunPrincipal : public Principal {
-  typedef Principal Base;
+  class RunPrincipal : public Principal<RunLumiEntryInfo> {
   public:
+    typedef RunAuxiliary Auxiliary;
+    typedef LumiEntryInfo EntryInfo;
+    typedef BranchMapper<EntryInfo> Mapper;
+    typedef std::vector<EntryInfo> EntryInfoVector;
+    typedef Principal<EntryInfo> Base;
+
     RunPrincipal(RunAuxiliary const& aux,
 	boost::shared_ptr<ProductRegistry const> reg,
 	ProcessConfiguration const& pc,
 	ProcessHistoryID const& hist = ProcessHistoryID(),
-	boost::shared_ptr<BranchMapper> mapper = boost::shared_ptr<BranchMapper>(new BranchMapper),
+	boost::shared_ptr<Mapper> mapper = boost::shared_ptr<Mapper>(new Mapper),
 	boost::shared_ptr<DelayedReader> rtrv = boost::shared_ptr<DelayedReader>(new NoDelayedReader)) :
 	  Base(reg, pc, hist, rtrv),
 	  aux_(aux),
@@ -65,20 +71,20 @@ namespace edm {
 
     void mergeRun(boost::shared_ptr<RunPrincipal> rp);
 
-    Provenance const&
+    Provenance
     getProvenance(BranchID const& bid) const;
 
     void
     getAllProvenance(std::vector<Provenance const *> & provenances) const;
 
     void put(std::auto_ptr<EDProduct> edp,
-	     std::auto_ptr<Provenance> prov);
+	     ConstBranchDescription const& bd, std::auto_ptr<RunLumiEntryInfo> entryInfo);
 
     void addGroup(ConstBranchDescription const& bd);
 
-    void addGroup(std::auto_ptr<EDProduct> prod, std::auto_ptr<Provenance> prov);
+    void addGroup(std::auto_ptr<EDProduct> prod, ConstBranchDescription const& bd, std::auto_ptr<RunLumiEntryInfo> entryInfo);
 
-    void addGroup(std::auto_ptr<Provenance> prov);
+    void addGroup(ConstBranchDescription const& bd, std::auto_ptr<RunLumiEntryInfo> entryInfo);
 
   private:
 
@@ -90,7 +96,7 @@ namespace edm {
 
     RunAuxiliary aux_;
 
-    boost::shared_ptr<BranchMapper> branchMapperPtr_;
+    boost::shared_ptr<Mapper> branchMapperPtr_;
   };
 }
 #endif

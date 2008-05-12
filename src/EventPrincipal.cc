@@ -1,7 +1,7 @@
 #include "FWCore/Framework/interface/EventPrincipal.h"
 #include "FWCore/Framework/interface/UnscheduledHandler.h"
 #include "FWCore/Framework/interface/LuminosityBlockPrincipal.h"
-#include "FWCore/Framework/src/Group.h"
+#include "FWCore/Framework/interface/Group.h"
 #include "FWCore/Utilities/interface/Algorithms.h"
 #include "DataFormats/Common/interface/BasicHandle.h"
 #include "DataFormats/Provenance/interface/Provenance.h"
@@ -14,7 +14,7 @@ namespace edm {
 	boost::shared_ptr<LuminosityBlockPrincipal> lbp,
 	ProcessConfiguration const& pc,
 	ProcessHistoryID const& hist,
-	boost::shared_ptr<BranchMapper> mapper,
+	boost::shared_ptr<Mapper> mapper,
 	boost::shared_ptr<DelayedReader> rtrv) :
 	  Base(reg, pc, hist, rtrv),
 	  aux_(aux),
@@ -46,7 +46,7 @@ namespace edm {
     Group const* group = getExistingGroup(*g);
     if (group != 0) {
       if(!group->onDemand()) {
-        BranchDescription const& bd = group->productDescription();
+        ConstBranchDescription const& bd = group->productDescription();
 	throw edm::Exception(edm::errors::InsertFailure,"AlreadyPresent")
 	  << "addGroup_: Problem found while adding product provenance, "
 	  << "product already exists for ("
@@ -69,23 +69,41 @@ namespace edm {
   }
 
   void
-  EventPrincipal::addGroup(std::auto_ptr<EDProduct> prod, std::auto_ptr<Provenance> prov) {
-    std::auto_ptr<Group> g(new Group(prod, prov));
+  EventPrincipal::addGroup(std::auto_ptr<EDProduct> prod,
+	 ConstBranchDescription const& bd,
+	 std::auto_ptr<EventEntryInfo> entryInfo) {
+    std::auto_ptr<Group> g(new Group(prod, bd, entryInfo));
     addOrReplaceGroup(g);
   }
 
   void
-  EventPrincipal::addGroup(std::auto_ptr<Provenance> prov) {
-    std::auto_ptr<Group> g(new Group(prov));
+  EventPrincipal::addGroup(ConstBranchDescription const& bd,
+	 std::auto_ptr<EventEntryInfo> entryInfo) {
+    std::auto_ptr<Group> g(new Group(bd, entryInfo));
     addOrReplaceGroup(g);
   }
 
+  void
+  EventPrincipal::addGroup(std::auto_ptr<EDProduct> prod,
+	 ConstBranchDescription const& bd,
+	 boost::shared_ptr<EventEntryInfo> entryInfo) {
+    std::auto_ptr<Group> g(new Group(prod, bd, entryInfo));
+    addOrReplaceGroup(g);
+  }
+
+  void
+  EventPrincipal::addGroup(ConstBranchDescription const& bd,
+	 boost::shared_ptr<EventEntryInfo> entryInfo) {
+    std::auto_ptr<Group> g(new Group(bd, entryInfo));
+    addOrReplaceGroup(g);
+  }
 
   void 
   EventPrincipal::put(std::auto_ptr<EDProduct> edp,
-		 std::auto_ptr<Provenance> prov) {
+		ConstBranchDescription const& bd,
+		std::auto_ptr<EventEntryInfo> entryInfo) {
 
-    if (!prov->productID().isValid()) {
+    if (!entryInfo->productID().isValid()) {
       throw edm::Exception(edm::errors::InsertFailure,"Null Product ID")
 	<< "put: Cannot put product with null Product ID."
 	<< "\n";
@@ -95,9 +113,9 @@ namespace edm {
 	<< "put: Cannot put because auto_ptr to product is null."
 	<< "\n";
     }
-    branchMapperPtr_->insert(prov->branchEntryInfo());
+    branchMapperPtr_->insert(*entryInfo);
     // Group assumes ownership
-    this->addGroup(edp, prov);
+    this->addGroup(edp, bd, entryInfo);
     this->addToProcessHistory();
   }
 
@@ -133,7 +151,7 @@ namespace edm {
     return getByProductID(oid).wrapper();
   }
 
-  Provenance const&
+  Provenance
   EventPrincipal::getProvenance(BranchID const& bid) const {
     SharedConstGroupPtr const& g = getGroup(bid, false, true);
     if (g.get() == 0) {
@@ -142,7 +160,7 @@ namespace edm {
     }
 
     if (g->onDemand()) {
-      unscheduledFill(g->provenance()->moduleLabel());
+      unscheduledFill(g->productDescription().moduleLabel());
     }
     // We already tried to produce the unscheduled products above
     // If they still are not there, then throw
@@ -160,7 +178,8 @@ namespace edm {
   void
   EventPrincipal::getAllProvenance(std::vector<Provenance const*> & provenances) const {
     provenances.clear();
-    for (Principal::const_iterator i = begin(), iEnd = end(); i != iEnd; ++i) {
+    for (Base::const_iterator i = begin(), iEnd = end(); i != iEnd; ++i) {
+      resolveProvenance(*i->second);
       if (i->second->provenanceAvailable() && i->second->provenance()->isPresent() && i->second->provenance()->product().present())
 	 provenances.push_back(i->second->provenance());
     }
@@ -168,12 +187,11 @@ namespace edm {
 
   void
   EventPrincipal::resolveProvenance(Group const& g) const {
-    if (!g.provenance()->branchEntryInfoPtr()) {
+    if (!g.entryInfoPtr()) {
       // Now fix up the Group
-      g.setProvenance(branchMapperPtr_->branchToEntryInfo(g.productDescription().branchID()));
+      g.setProvenance(branchMapperPtr_->branchToEntryInfo(g.productDescription(). branchID()));
     }
   }
-
 
   void
   EventPrincipal::setUnscheduledHandler(boost::shared_ptr<UnscheduledHandler> iHandler) {

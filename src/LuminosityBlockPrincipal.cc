@@ -1,6 +1,6 @@
 #include "FWCore/Framework/interface/LuminosityBlockPrincipal.h"
 #include "FWCore/Framework/interface/RunPrincipal.h"
-#include "FWCore/Framework/src/Group.h"
+#include "FWCore/Framework/interface/Group.h"
 
 namespace edm {
 
@@ -9,7 +9,7 @@ namespace edm {
 	boost::shared_ptr<RunPrincipal> rp,
 	ProcessConfiguration const& pc,
 	ProcessHistoryID const& hist,
-	boost::shared_ptr<BranchMapper> mapper,
+	boost::shared_ptr<Mapper> mapper, 
 	boost::shared_ptr<DelayedReader> rtrv) :
 	  Base(reg, pc, hist, rtrv),
 	  runPrincipal_(rp),
@@ -42,34 +42,37 @@ namespace edm {
   }
 
   void
-  LuminosityBlockPrincipal::addGroup(std::auto_ptr<EDProduct> prod, std::auto_ptr<Provenance> prov) {
-    std::auto_ptr<Group> g(new Group(prod, prov));
+  LuminosityBlockPrincipal::addGroup(std::auto_ptr<EDProduct> prod,
+	ConstBranchDescription const& bd,
+	std::auto_ptr<RunLumiEntryInfo> entryInfo) {
+    std::auto_ptr<Group> g(new Group(prod, bd, entryInfo));
     addOrReplaceGroup(g);
   }
 
   void
-  LuminosityBlockPrincipal::addGroup(std::auto_ptr<Provenance> prov) {
-    std::auto_ptr<Group> g(new Group(prov));
+  LuminosityBlockPrincipal::addGroup(ConstBranchDescription const& bd,
+	std::auto_ptr<RunLumiEntryInfo> entryInfo) {
+    std::auto_ptr<Group> g(new Group(bd, entryInfo));
     addOrReplaceGroup(g);
   }
 
-
   void 
   LuminosityBlockPrincipal::put(std::auto_ptr<EDProduct> edp,
-		 std::auto_ptr<Provenance> prov) {
+		ConstBranchDescription const& bd,
+		std::auto_ptr<RunLumiEntryInfo> entryInfo) {
 
     if (edp.get() == 0) {
       throw edm::Exception(edm::errors::InsertFailure,"Null Pointer")
 	<< "put: Cannot put because auto_ptr to product is null."
 	<< "\n";
     }
-    branchMapperPtr_->insert(prov->branchEntryInfo());
+    branchMapperPtr_->insert(*entryInfo);
     // Group assumes ownership
-    this->addGroup(edp, prov);
+    this->addGroup(edp, bd, entryInfo);
     this->addToProcessHistory();
   }
 
-  Provenance const&
+  Provenance
   LuminosityBlockPrincipal::getProvenance(BranchID const& bid) const {
     SharedConstGroupPtr const& g = getGroup(bid, false, true);
     if (g.get() == 0) {
@@ -78,7 +81,7 @@ namespace edm {
     }
 
     if (g->onDemand()) {
-      unscheduledFill(g->provenance()->moduleLabel());
+      unscheduledFill(g->productDescription().moduleLabel());
     }
     // We already tried to produce the unscheduled products above
     // If they still are not there, then throw
@@ -96,7 +99,8 @@ namespace edm {
   void
   LuminosityBlockPrincipal::getAllProvenance(std::vector<Provenance const*> & provenances) const {
     provenances.clear();
-    for (Principal::const_iterator i = begin(), iEnd = end(); i != iEnd; ++i) {
+    for (Base::const_iterator i = begin(), iEnd = end(); i != iEnd; ++i) {
+      resolveProvenance(*i->second);
       if (i->second->provenanceAvailable() && i->second->provenance()->isPresent() && i->second->provenance()->product().present())
 	 provenances.push_back(i->second->provenance());
     }
@@ -104,9 +108,9 @@ namespace edm {
 
   void
   LuminosityBlockPrincipal::resolveProvenance(Group const& g) const {
-    if (!g.provenance()->branchEntryInfoPtr()) {
+    if (!g.entryInfoPtr()) {
       // Now fix up the Group
-      g.setProvenance(branchMapperPtr_->branchToEntryInfo(g.productDescription().branchID()));
+      g.setProvenance(branchMapperPtr_->branchToEntryInfo(g.productDescription(). branchID()));
     }
   }
 
@@ -115,7 +119,7 @@ namespace edm {
 
     aux_.mergeAuxiliary(lbp->aux());
 
-    for (Principal::const_iterator i = lbp->begin(), iEnd = lbp->end(); i != iEnd; ++i) {
+    for (Base::const_iterator i = lbp->begin(), iEnd = lbp->end(); i != iEnd; ++i) {
  
       std::auto_ptr<Group> g(new Group());
       g->swap(*i->second);
@@ -124,3 +128,4 @@ namespace edm {
     }
   }
 }
+
