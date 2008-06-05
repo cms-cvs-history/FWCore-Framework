@@ -4,6 +4,7 @@
 #include <vector>
 
 
+#include "FWCore/Framework/interface/GroupSelectorRules.h"
 #include "FWCore/Framework/interface/GroupSelector.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "DataFormats/Provenance/interface/BranchDescription.h"
@@ -30,8 +31,9 @@ int doTest(edm::ParameterSet const& params,
 	     VCBDP const&  allbranches,
 	     vector<bool>& expected)
 {
-  edm::GroupSelector gs(params);
-  gs.initialize(allbranches);
+  edm::GroupSelectorRules gsr(params, "outputCommands", testname);
+  edm::GroupSelector gs;
+  gs.initialize(gsr, allbranches);
   std::cout << "GroupSelector from "
 	    << testname
 	    << ": "
@@ -261,8 +263,9 @@ int work()
 	vector<std::string> cmds;
 	cmds.push_back(bad_rule);
 	bad.addUntrackedParameter<vector<std::string> >("outputCommands", cmds);
-	edm::GroupSelector gs(bad);	
-        gs.initialize(allbranches);
+	edm::GroupSelectorRules gsr(bad, "outputCommands", "GroupSelectorTest");
+	edm::GroupSelector gs;
+        gs.initialize(gsr, allbranches);
 	std::cerr << "Failed to throw required exception\n";
 	rc += 1;
     }
