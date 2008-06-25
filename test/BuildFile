@@ -38,13 +38,13 @@
  <flags EDM_PLUGIN=1>
 </library>
 
-<library file=stubs/TestSchedulerModule1.cc name=TestSchedulerModule1>   
- <flags EDM_PLUGIN=1> 
-</library>	
+<library file=stubs/TestSchedulerModule1.cc name=TestSchedulerModule1>
+ <flags EDM_PLUGIN=1>
+</library>
 
 <library file=stubs/TestSchedulerModule2.cc name=TestSchedulerModule2>
  <flags EDM_PLUGIN=1>
-</library> 
+</library>
 
 <library file=stubs/LoadableDummyFinder.cc name=TestLoadableDummyFinder>
   <flags EDM_PLUGIN=1>
@@ -94,7 +94,7 @@
 
 
 <bin name=TestFWCoreFramework file=testRunner.cpp,DummySource.cc,callback_t.cppunit.cc,datakey_t.cppunit.cc,dependentrecord_t.cppunit.cc,esproducer_t.cppunit.cc,esproducts_t.cppunit.cc,eventsetupplugin_t.cppunit.cc,eventsetuprecord_t.cppunit.cc,eventsetup_t.cppunit.cc,fullchain_t.cppunit.cc,interval_t.cppunit.cc,proxyfactoryproducer_t.cppunit.cc,maker2_t.cppunit.cc,maker_t.cppunit.cc,iovsyncvalue_t.cppunit.cc,productregistry.cppunit.cc,edproducer_productregistry_callback.cc,generichandle_t.cppunit.cc,event_getrefbeforeput_t.cppunit.cc>
-  <lib name=FWCoreFrameworkTestDummyForEventSetup> 
+  <lib name=FWCoreFrameworkTestDummyForEventSetup>
   <use name=boost_regex>
 </bin>
 
@@ -136,6 +136,10 @@
 
 <bin name=TestFWCoreFrameworkTrigMask file=TestDriver.cpp>
   <flags TEST_RUNNER_ARGS=" /bin/bash FWCore/Framework/test run_trigmask.sh">
+</bin>
+
+<bin name=TestXMLSafeException file=TestDriver.cpp>
+  <flags TEST_RUNNER_ARGS=" /bin/bash FWCore/Framework/test run_XMLException.sh">
 </bin>
 
 <bin name=TestFWCoreFrameworkGroupSelector file=GroupSelector_t.cpp>
