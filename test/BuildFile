@@ -3,6 +3,8 @@
 <use name=FWCore/Framework>
 <use name=FWCore/PluginManager>
 <use name=DataFormats/TestObjects>
+<use name=DataFormats/Provenance>
+<use name=FWCore/ServiceRegistry>
 
 <library file="DummyData.cc,DummyRecord.cc,DepRecord.cc,Dummy2Record.cc,DepOn2Record.cc" name=FWCoreFrameworkTestDummyForEventSetup>
 </library>
