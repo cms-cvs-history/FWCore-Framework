@@ -1,3 +1,0 @@
-	untracked PSet options = {
-		include "FWCore/Framework/test/cmsExceptionsFatalOption.cff"
-	}
