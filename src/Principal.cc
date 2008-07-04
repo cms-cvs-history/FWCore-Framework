@@ -1,5 +1,5 @@
 /**----------------------------------------------------------------------
-  $Id: Principal.cc,v 1.28 2008/02/28 20:51:06 wmtan Exp $
+  $Id: Principal.cc,v 1.29 2008/04/04 22:46:16 wmtan Exp $
   ----------------------------------------------------------------------*/
 
 #include <algorithm>
@@ -47,6 +47,10 @@ namespace edm {
   Group*
   Principal::getExistingGroup(Group const& group) {
     unsigned int index = group.index();
+    if (index >= groups_.size()) {
+	const_cast<ProductID &>(group.provenance().productID()) = ProductID(1U);
+        index = group.index();
+    }
     return groups_[index].get();
   }
 
@@ -59,6 +63,10 @@ namespace edm {
     assert (!bd.processName().empty());
     assert (bd.productID().isValid());
     unsigned int index = group->index();
+    bd.init();
+    if (index >= groups_.size()) {
+      return;    
+    }
     assert (index < groups_.size());
     SharedGroupPtr g(group);
     if (g->entryDescription() == 0) g->provenance().setStore(store_);
