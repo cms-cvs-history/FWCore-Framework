@@ -209,6 +209,9 @@ namespace edm {
 			   ParameterSet& ps) const;
 
   private:
+    ProcessIndex
+    currentProcessIndex() const;
+
     EventPrincipal const&
     eventPrincipal() const;
 
@@ -271,7 +274,7 @@ namespace edm {
       if(bh.failedToGet()) {
           boost::shared_ptr<cms::Exception> whyFailed(new edm::Exception(edm::errors::ProductNotFound) );
           *whyFailed
-              << "get View by ID failed: no product with ID = " << oid.id() <<"\n";
+              << "get View by ID failed: no product with ID = " << oid <<"\n";
           Handle<View<ELEMENT> > temp(whyFailed);
           result.swap(temp);
           return false;
@@ -318,7 +321,8 @@ namespace edm {
     // product.release(); // The object has been copied into the Wrapper.
     // The old copy must be deleted, so we cannot release ownership.
 
-    return(OrphanHandle<PROD>(wp->product(), desc.productIDtoAssign()));
+    return(OrphanHandle<PROD>(wp->product(),
+	ProductID(currentProcessIndex(), desc.productIndexToAssign())));
   }
 
   template <typename PROD>
@@ -329,7 +333,7 @@ namespace edm {
       getBranchDescription(TypeID(*p), productInstanceName);
 
     //should keep track of what Ref's have been requested and make sure they are 'put'
-    return RefProd<PROD>(desc.productIDtoAssign(), prodGetter());
+    return RefProd<PROD>(ProductID(0, desc.productIndexToAssign()), prodGetter());
   }
 
   template <typename PROD>

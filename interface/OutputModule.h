@@ -54,7 +54,6 @@ namespace edm {
 
     bool selected(BranchDescription const& desc) const;
 
-    unsigned int nextID() const;
     void selectProducts();
     std::string const& processName() const {return process_name_;}
     SelectionsArray const& keptProducts() const {return keptProducts_;}
@@ -89,7 +88,6 @@ namespace edm {
     int maxEvents_;
     int remainingEvents_;
 
-    unsigned int nextID_;
     // TODO: Give OutputModule
     // an interface (protected?) that supplies client code with the
     // needed functionality *without* giving away implementation

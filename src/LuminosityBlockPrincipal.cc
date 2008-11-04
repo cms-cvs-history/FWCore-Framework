@@ -1,18 +1,22 @@
 #include "FWCore/Framework/interface/LuminosityBlockPrincipal.h"
 #include "FWCore/Framework/interface/RunPrincipal.h"
 #include "FWCore/Framework/interface/Group.h"
+#include "DataFormats/Provenance/interface/ProductRegistry.h"
 
 namespace edm {
 
   LuminosityBlockPrincipal::LuminosityBlockPrincipal(LuminosityBlockAuxiliary const& aux,
 	boost::shared_ptr<ProductRegistry const> reg,
 	ProcessConfiguration const& pc,
-	ProcessHistoryID const& hist,
 	boost::shared_ptr<BranchMapper> mapper, 
 	boost::shared_ptr<DelayedReader> rtrv) :
-	  Base(reg, pc, hist, mapper, rtrv),
+	  Base(reg, pc, aux.processHistoryID_, mapper, rtrv),
 	  runPrincipal_(),
-	  aux_(aux) {}
+    aux_(aux) {
+      if (reg->productProduced(InLumi)) {
+        addToProcessHistory();
+      }
+  }
 
   void
   LuminosityBlockPrincipal::addOrReplaceGroup(std::auto_ptr<Group> g) {
@@ -64,7 +68,6 @@ namespace edm {
 	<< "put: Cannot put because auto_ptr to product is null."
 	<< "\n";
     }
-    this->addToProcessHistory();
     branchMapperPtr()->insert(*entryInfo);
     // Group assumes ownership
     this->addGroup(edp, bd, entryInfo);

@@ -150,7 +150,7 @@ class GenericObjectOwner
       // product.release(); // The object has been copied into the Wrapper.
       // The old copy must be deleted, so we cannot release ownership.
       
-      return(OrphanHandle<GenericObjectOwner>(oWrapper.Get("obj"), desc.productIDtoAssign()));
+      return(OrphanHandle<GenericObjectOwner>(oWrapper.Get("obj"), ProductID(currentProcessIndex(), desc.productIndexToAssign())));
    }
    
 }

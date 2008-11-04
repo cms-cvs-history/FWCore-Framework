@@ -10,7 +10,7 @@ such code sees the Run class, which is a proxy for RunPrincipal.
 The major internal component of the RunPrincipal
 is the DataBlock.
 
-$Id: RunPrincipal.h,v 1.25 2008/06/24 23:25:39 wmtan Exp $
+$Id: RunPrincipal.h,v 1.26 2008/08/22 01:44:37 wmtan Exp $
 
 ----------------------------------------------------------------------*/
 
@@ -32,15 +32,11 @@ namespace edm {
     RunPrincipal(RunAuxiliary const& aux,
 	boost::shared_ptr<ProductRegistry const> reg,
 	ProcessConfiguration const& pc,
-	ProcessHistoryID const& hist = ProcessHistoryID(),
 	boost::shared_ptr<BranchMapper> mapper = boost::shared_ptr<BranchMapper>(new BranchMapper),
-	boost::shared_ptr<DelayedReader> rtrv = boost::shared_ptr<DelayedReader>(new NoDelayedReader)) :
-	  Base(reg, pc, hist, mapper, rtrv),
-	  aux_(aux) {}
+	boost::shared_ptr<DelayedReader> rtrv = boost::shared_ptr<DelayedReader>(new NoDelayedReader));
     ~RunPrincipal() {}
 
     RunAuxiliary const& aux() const {
-      aux_.processHistoryID_ = processHistoryID();
       return aux_;
     }
 
@@ -88,6 +84,10 @@ namespace edm {
     virtual void addOrReplaceGroup(std::auto_ptr<Group> g);
 
     virtual void resolveProvenance(Group const& g) const;
+
+    virtual ProcessHistoryID const& processHistoryID() const {return aux().processHistoryID_;}
+
+    virtual ProcessHistoryID& processHistoryID() {return aux().processHistoryID_;}
 
     virtual bool unscheduledFill(std::string const&) const {return false;}
 

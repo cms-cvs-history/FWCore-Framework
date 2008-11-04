@@ -54,7 +54,7 @@ void testEventGetRefBeforePut::failGetProductNotRegisteredTest() {
 
   edm::ProductRegistry *preg = new edm::ProductRegistry;
   preg->setFrozen();
-  preg->setProductIDs(1U);
+  preg->setProductIDs();
   edm::EventID col(1L, 1L);
   std::string uuid = edm::createGlobalIdentifier();
   edm::Timestamp fakeTime;
@@ -116,7 +116,7 @@ void testEventGetRefBeforePut::getRefTest() {
   edm::ProductRegistry *preg = new edm::ProductRegistry;
   preg->addProduct(product);
   preg->setFrozen();
-  preg->setProductIDs(1U);
+  preg->setProductIDs();
   edm::EventID col(1L, 1L);
   std::string uuid = edm::createGlobalIdentifier();
   edm::Timestamp fakeTime;

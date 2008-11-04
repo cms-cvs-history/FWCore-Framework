@@ -51,7 +51,7 @@ namespace edm {
 
     Principal(boost::shared_ptr<ProductRegistry const> reg,
 	      ProcessConfiguration const& pc,
-              ProcessHistoryID const& hist = ProcessHistoryID(),
+	      ProcessHistoryID const& hist = ProcessHistoryID(),
               boost::shared_ptr<BranchMapper> mapper = boost::shared_ptr<BranchMapper>(new BranchMapper),
               boost::shared_ptr<DelayedReader> rtrv = boost::shared_ptr<DelayedReader>(new NoDelayedReader));
 
@@ -99,10 +99,6 @@ namespace edm {
 
     ProcessHistory const& processHistory() const;    
 
-    ProcessHistoryID const& processHistoryID() const {
-      return processHistoryID_;   
-    }
-
     ProcessConfiguration const& processConfiguration() const {return processConfiguration_;}
 
     ProductRegistry const& productRegistry() const {return *preg_;}
@@ -143,6 +139,10 @@ namespace edm {
 
     virtual void resolveProvenance(Group const& g) const = 0;
 
+    virtual ProcessHistoryID const& processHistoryID() const = 0;
+
+    virtual ProcessHistoryID& processHistoryID() = 0;
+
     virtual bool unscheduledFill(std::string const& moduleLabel) const = 0;
 
     // Used for indices to find groups by type and process
@@ -166,8 +166,6 @@ namespace edm {
     // We do not change the *number* of groups through this call, and so
     // *this is const.
     void resolveProduct(Group const& g, bool fillOnDemand) const;
-
-    mutable ProcessHistoryID processHistoryID_;
 
     boost::shared_ptr<ProcessHistory> processHistoryPtr_;
 

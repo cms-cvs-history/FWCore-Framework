@@ -117,7 +117,6 @@ namespace edm {
   OutputModule::OutputModule(ParameterSet const& pset) : 
     maxEvents_(-1),
     remainingEvents_(maxEvents_),
-    nextID_(),
     keptProducts_(),
     hasNewlyDroppedBranch_(),
     process_name_(),
@@ -177,7 +176,6 @@ namespace edm {
     if (groupSelector_.initialized()) return;
     groupSelector_.initialize(groupSelectorRules_, getAllBranchDescriptions());
     Service<ConstProductRegistry> reg;
-    nextID_ = reg->nextID();
 
     // TODO: See if we can collapse keptProducts_ and groupSelector_ into a
     // single object. See the notes in the header for GroupSelector
@@ -402,10 +400,6 @@ namespace edm {
     return groupSelector_.selected(desc);
   }
 
-  unsigned int OutputModule::nextID() const {
-    return nextID_;
-  }
-  
   void
   OutputModule::fillDescription(ParameterSetDescription& iDesc) {
     iDesc.setUnknown();

@@ -26,7 +26,6 @@ namespace edm {
 		       boost::shared_ptr<BranchMapper> mapper,
 		       boost::shared_ptr<DelayedReader> rtrv) :
     EDProductGetter(),
-    processHistoryID_(hist),
     processHistoryPtr_(boost::shared_ptr<ProcessHistory>(new ProcessHistory)),
     processConfiguration_(pc),
     processHistoryModified_(false),
@@ -35,10 +34,10 @@ namespace edm {
     branchMapperPtr_(mapper),
     store_(rtrv)
   {
-    if (processHistoryID_.isValid()) {
+    if (hist.isValid()) {
       ProcessHistoryRegistry& history(*ProcessHistoryRegistry::instance());
       assert(history.notEmpty());
-      bool found = history.getMapped(processHistoryID_, *processHistoryPtr_);
+      bool found = history.getMapped(hist, *processHistoryPtr_);
       assert(found);
     }
   }
@@ -96,7 +95,7 @@ namespace edm {
     // It would probably be better to move the ProcessHistory construction out to somewhere
     // which persists for longer than one Event
     ProcessHistoryRegistry::instance()->insertMapped(ph);
-    processHistoryID_ = ph.id();
+    const_cast<Principal *>(this)->processHistoryID() = ph.id();
     processHistoryModified_ = true;
   }
 

@@ -204,7 +204,7 @@ namespace edm {
   boost::shared_ptr<FileBlock>
   InputSource::readFile_() {
     if (primary()) {
-      productRegistryUpdate().setProductIDs(1U);
+      productRegistryUpdate().setProductIDs();
     }
     return boost::shared_ptr<FileBlock>(new FileBlock);
   }

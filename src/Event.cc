@@ -31,6 +31,11 @@ namespace edm {
       return dynamic_cast<EventPrincipal const&>(principal());
     }
 
+    ProcessIndex
+    Event::currentProcessIndex() const {
+      return eventPrincipal().currentProcessIndex();
+    }
+
     Run const&
     Event::getRun() const {
       return getLuminosityBlock().getRun();
@@ -141,7 +146,7 @@ namespace edm {
 		new EventEntryInfo(pit->second->branchID(),
 				   productstatus::present(),
 				   pit->second->moduleDescriptionID(),
-				   pit->second->productIDtoAssign(),
+				   ProductID(currentProcessIndex(), pit->second->productIndexToAssign()),
 				   gotBranchIDVector));
 	ep.put(pr, *pit->second, eventEntryInfoPtr);
 	++pit;

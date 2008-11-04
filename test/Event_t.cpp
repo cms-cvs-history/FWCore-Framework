@@ -20,6 +20,7 @@ Test program for edm::Event.
 #include "DataFormats/Provenance/interface/BranchDescription.h"
 #include "DataFormats/Provenance/interface/EventID.h"
 #include "DataFormats/Provenance/interface/ModuleDescription.h"
+#include "DataFormats/Provenance/interface/History.h"
 #include "DataFormats/Provenance/interface/ProcessHistory.h"
 #include "DataFormats/Provenance/interface/ProductRegistry.h"
 #include "DataFormats/Provenance/interface/Timestamp.h"
@@ -268,7 +269,7 @@ testEvent::testEvent() :
 
   // Freeze the product registry before we make the Event.
   availableProducts_->setFrozen();
-  availableProducts_->setProductIDs(1U);
+  availableProducts_->setProductIDs();
 }
 
 testEvent::~testEvent()
@@ -354,10 +355,12 @@ void testEvent::setUp()
   boost::shared_ptr<LuminosityBlockPrincipal>lbp(new LuminosityBlockPrincipal(lumiAux, preg, pc));
   lbp->setRunPrincipal(rp);
   EventAuxiliary eventAux(id, uuid, time, lbp->luminosityBlock(), true);
+  boost::shared_ptr<History> history(new History);
+  history->processHistoryID() = processHistoryID;
   principal_  = new EventPrincipal(eventAux,
 				   preg,
                                    pc,
-                                   processHistoryID);
+                                   history);
 
   principal_->setLuminosityBlockPrincipal(lbp);
   currentEvent_ = new Event(*principal_, *currentModuleDescription_);
@@ -451,7 +454,7 @@ void testEvent::getByProductID()
   ProductID invalid;
   CPPUNIT_ASSERT_THROW(currentEvent_->get(invalid, h), cms::Exception);
   CPPUNIT_ASSERT(!h.isValid());
-  ProductID notpresent(std::numeric_limits<unsigned int>::max());
+  ProductID notpresent(0, std::numeric_limits<unsigned short>::max());
   CPPUNIT_ASSERT(!currentEvent_->get(notpresent, h));
   CPPUNIT_ASSERT(!h.isValid());
   CPPUNIT_ASSERT(h.failedToGet());

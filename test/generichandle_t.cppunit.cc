@@ -145,7 +145,7 @@ void testGenericHandle::getbyLabelTest() {
   edm::ProductRegistry *preg = new edm::ProductRegistry;
   preg->addProduct(product);
   preg->setFrozen();
-  preg->setProductIDs(1U);
+  preg->setProductIDs();
 
   edm::ProductRegistry::ProductList const& pl = preg->productList();
   edm::BranchKey const bk(product);
@@ -170,7 +170,7 @@ void testGenericHandle::getbyLabelTest() {
   std::auto_ptr<edm::EventEntryInfo> branchEntryInfoPtr(
       new edm::EventEntryInfo(branchFromRegistry.branchID(),
                               edm::productstatus::present(),
-                              branchFromRegistry.productIDtoAssign(),
+                              edm::ProductID(0, branchFromRegistry.productIndexToAssign()),
                               entryDescriptionPtr));
   edm::ConstBranchDescription const desc(branchFromRegistry);
   ep.put(pprod, desc, branchEntryInfoPtr);

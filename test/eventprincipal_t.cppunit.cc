@@ -160,7 +160,7 @@ void test_ep::setUp()
   pProductRegistry_->addProduct(*fake_single_process_branch("user", "USER"));
   pProductRegistry_->addProduct(*fake_single_process_branch("rick", "USER2", "rick"));
   pProductRegistry_->setFrozen();
-  pProductRegistry_->setProductIDs(1U);
+  pProductRegistry_->setProductIDs();
  
   // Put products we'll look for into the EventPrincipal.
   {
@@ -185,7 +185,7 @@ void test_ep::setUp()
     std::auto_ptr<edm::EventEntryInfo> branchEntryInfoPtr(
       new edm::EventEntryInfo(branchFromRegistry.branchID(),
                                edm::productstatus::present(),
-                               branchFromRegistry.productIDtoAssign(),
+                               edm::ProductID(0, branchFromRegistry.productIndexToAssign()),
                                entryDescriptionPtr));
 
     edm::ProcessConfiguration* process = processConfigurations_[tag];
@@ -237,7 +237,7 @@ void test_ep::failgetbyIdTest()
   edm::ProductID invalid;
   CPPUNIT_ASSERT_THROW(pEvent_->getByProductID(invalid), edm::Exception);
 
-  edm::ProductID notpresent(10000000);
+  edm::ProductID notpresent(0, 10000);
   edm::BasicHandle h(pEvent_->getByProductID(notpresent));
   CPPUNIT_ASSERT(h.failedToGet());
 }

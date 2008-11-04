@@ -5,6 +5,7 @@
 #include "FWCore/Utilities/interface/Algorithms.h"
 #include "DataFormats/Common/interface/BasicHandle.h"
 #include "DataFormats/Provenance/interface/Provenance.h"
+#include "DataFormats/Provenance/interface/ProductRegistry.h"
 
 #include <algorithm>
 
@@ -12,15 +13,19 @@ namespace edm {
   EventPrincipal::EventPrincipal(EventAuxiliary const& aux,
 	boost::shared_ptr<ProductRegistry const> reg,
 	ProcessConfiguration const& pc,
-	ProcessHistoryID const& hist,
+	boost::shared_ptr<History> history,
 	boost::shared_ptr<BranchMapper> mapper,
 	boost::shared_ptr<DelayedReader> rtrv) :
-	  Base(reg, pc, hist, mapper, rtrv),
+	  Base(reg, pc, history->processHistoryID(), mapper, rtrv),
 	  aux_(aux),
 	  luminosityBlockPrincipal_(),
 	  unscheduledHandler_(),
 	  moduleLabelsRunning_(),
-	  eventHistory_() {
+	  history_(history) {
+	    if (reg->productProduced(InEvent)) {
+	      addToProcessHistory();
+	      history_->addEntry(reg->currentIndex());
+	    }
 	  }
 
   RunPrincipal const&
@@ -106,7 +111,6 @@ namespace edm {
 	<< "put: Cannot put because auto_ptr to product is null."
 	<< "\n";
     }
-    this->addToProcessHistory();
     // Group assumes ownership
     if (!entryInfo->productID().isValid()) {
       throw edm::Exception(edm::errors::InsertFailure,"Null Product ID")
@@ -117,18 +121,28 @@ namespace edm {
     this->addGroup(edp, bd, entryInfo);
   }
 
+  BranchID
+  EventPrincipal::productIDToBranchID(ProductID const& pid) const {
+    if (!pid.isValid()) {
+      throw edm::Exception(edm::errors::ProductNotFound,"InvalidID")
+        << "get by product ID: invalid ProductID supplied\n";
+    }
+    std::cerr << "Index: " << pid.processIndex() << " size: " << history().branchListIndexes().size() <<std::endl;
+    BranchListIndex blix = history().branchListIndexes().at(pid.processIndex());
+    std::cerr << "Index: " << blix << " size: " << productRegistry().branchIDListVector().size() <<std::endl;
+    BranchIDList const& blist = productRegistry().branchIDListVector().at(blix);
+    std::cerr << "Index: " << (pid.productIndex() - 1) << " size: " << blist.size() <<std::endl;
+    return blist.at(pid.productIndex() - 1);
+  }
+
   BasicHandle
-  EventPrincipal::getByProductID(ProductID const& oid) const {
-    BranchID bid = branchMapperPtr()->productToBranch(oid);
+  EventPrincipal::getByProductID(ProductID const& pid) const {
+    BranchID bid = productIDToBranchID(pid);
     SharedConstGroupPtr const& g = getGroup(bid, true, true, true);
     if (g.get() == 0) {
-      if (!oid.isValid()) {
-        throw edm::Exception(edm::errors::ProductNotFound,"InvalidID")
-	  << "get by product ID: invalid ProductID supplied\n";
-      }
       boost::shared_ptr<cms::Exception> whyFailed( new edm::Exception(edm::errors::ProductNotFound,"InvalidID") );
       *whyFailed
-	<< "get by product ID: no product with given id: "<< oid << "\n";
+	<< "get by product ID: no product with given id: "<< pid << "\n";
       return BasicHandle(whyFailed);
     }
 
@@ -137,7 +151,7 @@ namespace edm {
     if (g->onDemand()) {
       boost::shared_ptr<cms::Exception> whyFailed( new edm::Exception(edm::errors::ProductNotFound,"InvalidID") );
       *whyFailed
-	<< "get by product ID: no product with given id: " << oid << "\n"
+	<< "get by product ID: no product with given id: " << pid << "\n"
         << "onDemand production failed to produce it.\n";
       return BasicHandle(whyFailed);
     }
@@ -145,8 +159,8 @@ namespace edm {
   }
 
   EDProduct const *
-  EventPrincipal::getIt(ProductID const& oid) const {
-    return getByProductID(oid).wrapper();
+  EventPrincipal::getIt(ProductID const& pid) const {
+    return getByProductID(pid).wrapper();
   }
 
   Provenance
@@ -172,7 +186,7 @@ namespace edm {
 
   Provenance
   EventPrincipal::getProvenance(ProductID const& pid) const {
-    BranchID bid = branchMapperPtr()->productToBranch(pid);
+    BranchID bid = productIDToBranchID(pid);
     return getProvenance(bid);
   }
 
@@ -209,13 +223,13 @@ namespace edm {
   EventSelectionIDVector const&
   EventPrincipal::eventSelectionIDs() const
   {
-    return eventHistory_.eventSelectionIDs();
+    return history_->eventSelectionIDs();
   }
 
   History const&
   EventPrincipal::history() const
   {
-    return eventHistory_;
+    return *history_;
   }
 
   bool
@@ -248,8 +262,4 @@ namespace edm {
     return true;
   }
 
-  void
-  EventPrincipal::setHistory(History const& h) {
-    eventHistory_ = h;
-  }
 }

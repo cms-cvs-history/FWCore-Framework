@@ -10,7 +10,7 @@ such code sees the LuminosityBlock class, which is a proxy for LuminosityBlockPr
 The major internal component of the LuminosityBlockPrincipal
 is the DataBlock.
 
-$Id: LuminosityBlockPrincipal.h,v 1.33 2008/07/03 04:32:39 wmtan Exp $
+$Id: LuminosityBlockPrincipal.h,v 1.34 2008/08/22 01:44:37 wmtan Exp $
 
 ----------------------------------------------------------------------*/
 
@@ -33,7 +33,6 @@ namespace edm {
     LuminosityBlockPrincipal(LuminosityBlockAuxiliary const& aux,
 	boost::shared_ptr<ProductRegistry const> reg,
 	ProcessConfiguration const& pc,
-	ProcessHistoryID const& hist = ProcessHistoryID(),
 	boost::shared_ptr<BranchMapper> mapper = boost::shared_ptr<BranchMapper>(new BranchMapper),
 	boost::shared_ptr<DelayedReader> rtrv = boost::shared_ptr<DelayedReader>(new NoDelayedReader));
 
@@ -77,7 +76,6 @@ namespace edm {
     }
 
     LuminosityBlockAuxiliary const& aux() const {
-      aux_.processHistoryID_ = processHistoryID();
       return aux_;
     }
 
@@ -108,6 +106,10 @@ namespace edm {
     virtual void addOrReplaceGroup(std::auto_ptr<Group> g);
 
     virtual void resolveProvenance(Group const& g) const;
+
+    virtual ProcessHistoryID const& processHistoryID() const {return aux().processHistoryID_;}
+
+    virtual ProcessHistoryID& processHistoryID() {return aux().processHistoryID_;}
 
     virtual bool unscheduledFill(std::string const&) const {return false;}
 
