@@ -127,12 +127,9 @@ namespace edm {
       throw edm::Exception(edm::errors::ProductNotFound,"InvalidID")
         << "get by product ID: invalid ProductID supplied\n";
     }
-    std::cerr << "Index: " << pid.processIndex() << " size: " << history().branchListIndexes().size() <<std::endl;
-    BranchListIndex blix = history().branchListIndexes().at(pid.processIndex());
-    std::cerr << "Index: " << blix << " size: " << productRegistry().branchIDListVector().size() <<std::endl;
-    BranchIDList const& blist = productRegistry().branchIDListVector().at(blix);
-    std::cerr << "Index: " << (pid.productIndex() - 1) << " size: " << blist.size() <<std::endl;
-    return blist.at(pid.productIndex() - 1);
+    BranchListIndex blix = history().branchListIndexes()[pid.processIndex()];
+    BranchIDList const& blist = productRegistry().branchIDListVector()[blix];
+    return blist[pid.productIndex()-1];
   }
 
   BasicHandle
