@@ -31,7 +31,7 @@ namespace edm {
 			      iDesc);
       if (!p->branchAlias_.empty()) pdesc.branchAliases().insert(p->branchAlias_);
       iReg.addProduct(pdesc, iIsListener);
-      ModuleDescriptionRegistry::instance()->insertMapped(iDesc);
+      ModuleDescriptionRegistry::instance()->registryPut(iDesc);
     }//for
   }
 }

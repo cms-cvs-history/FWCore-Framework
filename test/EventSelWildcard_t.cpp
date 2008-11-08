@@ -133,7 +133,7 @@ void testone(const Strings& paths,
   ParameterSet trigger_pset;
   trigger_pset.addParameter<Strings>("@trigger_paths", paths);
   pset::Registry* psetRegistry = pset::Registry::instance();
-  psetRegistry->insertMapped(trigger_pset);
+  psetRegistry->registryPut(trigger_pset);
 
   TriggerResults results_id(bm, trigger_pset.id());
 

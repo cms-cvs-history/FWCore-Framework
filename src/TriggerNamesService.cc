@@ -3,7 +3,7 @@
 // Implementation:
 //
 // Original Author:  Jim Kowalkowski
-// $Id: TriggerNamesService.cc,v 1.11 2007/09/27 14:30:25 paterno Exp $
+// $Id: TriggerNamesService.cc,v 1.12 2007/11/07 08:04:55 wmtan Exp $
 //
 
 #include "FWCore/Framework/interface/TriggerNamesService.h"
@@ -51,7 +51,7 @@ namespace edm {
       // using the ID from TriggerResults as the key used to find it.
       ParameterSet pset;
       pset::Registry* psetRegistry = pset::Registry::instance();
-      if (psetRegistry->getMapped(triggerResults.parameterSetID(),
+      if (psetRegistry->registryGet(triggerResults.parameterSetID(),
                                   pset)) {
 
         // Check to make sure the parameter set contains

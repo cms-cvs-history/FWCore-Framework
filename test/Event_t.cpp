@@ -29,6 +29,7 @@ Test program for edm::Event.
 #include "DataFormats/Provenance/interface/RunAuxiliary.h"
 #include "DataFormats/TestObjects/interface/Thing.h"
 #include "DataFormats/TestObjects/interface/ToyProducts.h"
+#include "DataFormats/Provenance/interface/BranchIDListHelper.h"
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Framework/interface/EventPrincipal.h"
 #include "FWCore/Framework/interface/LuminosityBlockPrincipal.h"
@@ -325,7 +326,7 @@ void testEvent::setUp()
   processHistory->push_back(processEarly);
   processHistory->push_back(processLate);
 
-  ProcessHistoryRegistry::instance()->insertMapped(ph);
+  ProcessHistoryRegistry::instance()->registryPut(ph);
 
   ProcessHistoryID processHistoryID = ph.id();
 

@@ -378,6 +378,7 @@ namespace edm {
     writeModuleDescriptionRegistry();
     writeParameterSetRegistry();
     writeProductDescriptionRegistry();
+    writeBranchIDListRegistry();
     writeProductDependencies();
     writeEntryDescriptions();
     writeBranchMapper();
@@ -429,7 +430,7 @@ namespace edm {
       for (std::set<EntryDescriptionID>::const_iterator it = eIds.begin(), itEnd = eIds.end();
           it != itEnd; ++it) {
         EventEntryDescription entryDesc;
-        EntryDescriptionRegistry::instance()->getMapped(*it, entryDesc);
+        EntryDescriptionRegistry::instance()->registryGet(*it, entryDesc);
 	std::vector<BranchID> const& parents = entryDesc.parents();
 	for (std::vector<BranchID>::const_iterator j = parents.begin(), jEnd = parents.end();
 	  j != jEnd; ++j) {

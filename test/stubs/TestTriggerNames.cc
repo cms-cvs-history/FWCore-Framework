@@ -180,7 +180,7 @@ namespace edmtest
         ParameterSetID trigpathsID = prod[0].provenance()->moduleDescription().parameterSetID();
         pset::Registry* psetRegistry = pset::Registry::instance();
         ParameterSet trigpset;
-        bool status = psetRegistry->getMapped(trigpathsID, trigpset);
+        bool status = psetRegistry->registryGet(trigpathsID, trigpset);
         if (status) {
           Strings trigpaths = trigpset.getParameter<Strings>("@trigger_paths");
           if (trigpaths.size() != expected_trigger_previous_.size()) {

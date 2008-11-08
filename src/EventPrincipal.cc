@@ -4,6 +4,9 @@
 #include "FWCore/Framework/interface/Group.h"
 #include "FWCore/Utilities/interface/Algorithms.h"
 #include "DataFormats/Common/interface/BasicHandle.h"
+#include "DataFormats/Provenance/interface/BranchListIndex.h"
+#include "DataFormats/Provenance/interface/BranchIDList.h"
+#include "DataFormats/Provenance/interface/BranchIDListRegistry.h"
 #include "DataFormats/Provenance/interface/Provenance.h"
 #include "DataFormats/Provenance/interface/ProductRegistry.h"
 
@@ -24,7 +27,7 @@ namespace edm {
 	  history_(history) {
 	    if (reg->productProduced(InEvent)) {
 	      addToProcessHistory();
-	      history_->addEntry(reg->currentIndex());
+	      history_->addEntry(BranchIDListRegistry::instance()->extra().currentIndex());
 	    }
 	  }
 
@@ -127,9 +130,16 @@ namespace edm {
       throw edm::Exception(edm::errors::ProductNotFound,"InvalidID")
         << "get by product ID: invalid ProductID supplied\n";
     }
-    BranchListIndex blix = history().branchListIndexes()[pid.processIndex()];
-    BranchIDList const& blist = productRegistry().branchIDListVector()[blix];
-    return blist[pid.productIndex()-1];
+    BranchID::value_type bid = 0;
+    try {
+      BranchListIndex blix = history().branchListIndexes().at(pid.processIndex());
+      BranchIDList const& blist = BranchIDListRegistry::instance()->data().at(blix);
+      bid = blist.at(pid.productIndex()-1);
+    }
+    catch (std::exception) {
+      return BranchID();
+    }
+    return BranchID(bid);
   }
 
   BasicHandle

@@ -16,7 +16,7 @@ Usage:
 //
 // Original Author:  Chris Jones
 //         Created:  Thu Sep 22 18:01:21 CEST 2005
-// $Id: ConstProductRegistry.h,v 1.6 2008/06/05 23:15:08 wmtan Exp $
+// $Id: ConstProductRegistry.h,v 1.6.4.1 2008/11/04 19:25:38 wmtan Exp $
 //
 
 // system include files
@@ -41,8 +41,6 @@ namespace edm {
     ProductRegistry const& productRegistry() const {return *reg_;}
 
     ProductList const& productList() const {return reg_->productList();}
-
-    BranchIDListVector const& branchIDListVector() const {return reg_->branchIDListVector();}
 
     // Return all the branch names currently known to *this.  This
     // does a return-by-value of the vector so that it may be used in
