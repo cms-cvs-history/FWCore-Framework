@@ -37,7 +37,7 @@ namespace edm {
     if (hist.isValid()) {
       ProcessHistoryRegistry& history(*ProcessHistoryRegistry::instance());
       assert(history.notEmpty());
-      bool found = history.registryGet(hist, *processHistoryPtr_);
+      bool found = history.getMapped(hist, *processHistoryPtr_);
       assert(found);
     }
   }
@@ -91,10 +91,10 @@ namespace edm {
     // For very simple Sources (e.g. EmptySource) this routine takes up nearly 50% of the time per event.
     // 96% of the time for this routine is being spent in computing the
     // ProcessHistory id which happens because we are reconstructing the ProcessHistory for each event.
-    // (The process ID is first computed in the call to 'registryPut(..)' below.)
+    // (The process ID is first computed in the call to 'insertMapped(..)' below.)
     // It would probably be better to move the ProcessHistory construction out to somewhere
     // which persists for longer than one Event
-    ProcessHistoryRegistry::instance()->registryPut(ph);
+    ProcessHistoryRegistry::instance()->insertMapped(ph);
     const_cast<Principal *>(this)->processHistoryID() = ph.id();
     processHistoryModified_ = true;
   }

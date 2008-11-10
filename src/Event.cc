@@ -85,7 +85,7 @@ namespace edm {
     // Get the ProcessHistory for this event.
     ProcessHistoryRegistry* phr = ProcessHistoryRegistry::instance();
     ProcessHistory ph;
-    if (!phr->registryGet(processHistoryID(), ph))
+    if (!phr->getMapped(processHistoryID(), ph))
       {
 	throw Exception(errors::NotFound) 
 	  << "ProcessHistoryID " << processHistoryID()
@@ -97,7 +97,7 @@ namespace edm {
     ProcessConfiguration config;
     bool process_found = ph.getConfigurationForProcess(processName, config);
     if (process_found)
-      pset::Registry::instance()->registryGet(config.parameterSetID(), ps);
+      pset::Registry::instance()->getMapped(config.parameterSetID(), ps);
     return process_found;
   }
 

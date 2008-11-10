@@ -326,7 +326,7 @@ void testEvent::setUp()
   processHistory->push_back(processEarly);
   processHistory->push_back(processLate);
 
-  ProcessHistoryRegistry::instance()->registryPut(ph);
+  ProcessHistoryRegistry::instance()->insertMapped(ph);
 
   ProcessHistoryID processHistoryID = ph.id();
 

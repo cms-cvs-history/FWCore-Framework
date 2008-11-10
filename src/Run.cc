@@ -54,7 +54,7 @@ namespace edm {
 	 ++i)
       {
 	ProcessHistory temp;
-	phreg->registryGet(*i, temp);
+	phreg->getMapped(*i, temp);
       }
 
     // Look up the ParameterSets for these IDs.
@@ -66,7 +66,7 @@ namespace edm {
 	 ++i)
       {
 	ParameterSet temp;
-	psreg->registryGet(*i, temp);
+	psreg->getMapped(*i, temp);
 	psets.push_back(temp);	  
       }
 
