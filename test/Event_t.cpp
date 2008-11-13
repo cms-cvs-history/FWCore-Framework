@@ -27,6 +27,7 @@ Test program for edm::Event.
 #include "DataFormats/Provenance/interface/EventAuxiliary.h"
 #include "DataFormats/Provenance/interface/LuminosityBlockAuxiliary.h"
 #include "DataFormats/Provenance/interface/RunAuxiliary.h"
+#include "DataFormats/Provenance/interface/BranchIDListHelper.h"
 #include "DataFormats/TestObjects/interface/Thing.h"
 #include "DataFormats/TestObjects/interface/ToyProducts.h"
 #include "DataFormats/Provenance/interface/BranchIDListHelper.h"
@@ -215,6 +216,8 @@ testEvent::testEvent() :
   currentModuleDescription_(0),
   moduleDescriptions_()
 {
+  BranchIDListHelper::clearRegistry();
+
   typedef edmtest::IntProduct prod_t;
   typedef std::vector<edmtest::Thing> vec_t;
 
@@ -271,6 +274,7 @@ testEvent::testEvent() :
   // Freeze the product registry before we make the Event.
   availableProducts_->setFrozen();
   availableProducts_->setProductIDs();
+  BranchIDListHelper::updateRegistry(*availableProducts_);
 }
 
 testEvent::~testEvent()

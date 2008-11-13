@@ -27,7 +27,7 @@ pointer to a Group, when queried.
 #include "DataFormats/Provenance/interface/ProvenanceFwd.h"
 #include "DataFormats/Provenance/interface/BranchID.h"
 #include "DataFormats/Provenance/interface/BranchMapper.h"
-#include "DataFormats/Provenance/interface/EventEntryInfo.h"
+#include "DataFormats/Provenance/interface/ProductProvenance.h"
 #include "DataFormats/Common/interface/EDProductGetter.h"
 #include "DataFormats/Common/interface/OutputHandle.h"
 #include "DataFormats/Provenance/interface/ProcessHistory.h"
@@ -199,16 +199,16 @@ namespace edm {
     if (getProd && (g->product() == 0 || !g->product()->isPresent()) &&
 	    g->productDescription().present() &&
 	    g->productDescription().branchType() == InEvent &&
-            productstatus::present(g->entryInfoPtr()->productStatus())) {
+            productstatus::present(g->productProvenancePtr()->productStatus())) {
         throw edm::Exception(edm::errors::LogicError, "Principal::getForOutput\n")
          << "A product with a status of 'present' is not actually present.\n"
          << "The branch name is " << g->productDescription().branchName() << "\n"
          << "Contact a framework developer.\n";
     }
-    if (!g->product() && !g->entryInfoPtr()) {
+    if (!g->product() && !g->productProvenancePtr()) {
       return OutputHandle<T>();
     }
-    return OutputHandle<T>(g->product(), &g->productDescription(), g->entryInfoPtr());
+    return OutputHandle<T>(g->product(), &g->productDescription(), g->productProvenancePtr());
   }
 
 }

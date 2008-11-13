@@ -8,7 +8,6 @@
 #include "FWCore/Framework/interface/RunPrincipal.h"
 #include "FWCore/Framework/interface/LuminosityBlock.h"
 #include "FWCore/Framework/interface/FileBlock.h"
-#include "DataFormats/Provenance/interface/BranchIDListHelper.h"
 #include "FWCore/Framework/interface/Run.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "FWCore/MessageLogger/interface/MessageLogger.h"
@@ -192,9 +191,6 @@ namespace edm {
     assert(!limitReached());
     doneReadAhead_ = false;
     boost::shared_ptr<FileBlock> fb = readFile_();
-    if (primary()) {
-      productRegistryUpdate().setProductIDs();
-    }
     return fb;
   }
 

@@ -409,13 +409,13 @@ namespace edm {
   void
   OutputModule::updateBranchParents(EventPrincipal const& ep) {
     for (EventPrincipal::const_iterator i = ep.begin(), iEnd = ep.end(); i != iEnd; ++i) {
-      if (i->second->entryInfoPtr() != 0) {
+      if (i->second->productProvenancePtr() != 0) {
 	BranchID const& bid = i->first;
 	BranchParents::iterator it = branchParents_.find(bid);
 	if (it == branchParents_.end()) {
 	   it = branchParents_.insert(std::make_pair(bid, std::set<EntryDescriptionID>())).first;
 	}
-	it->second.insert(i->second->entryInfoPtr()->entryDescriptionID());
+	it->second.insert(i->second->productProvenancePtr()->entryDescriptionID());
 	branchChildren_.insertEmpty(bid);
       }
     }

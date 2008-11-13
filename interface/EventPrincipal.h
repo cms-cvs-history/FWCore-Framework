@@ -31,7 +31,7 @@ namespace edm {
   class EventPrincipal : public Principal {
   public:
     typedef EventAuxiliary Auxiliary;
-    typedef std::vector<EventEntryInfo> EntryInfoVector;
+    typedef std::vector<ProductProvenance> EntryInfoVector;
 
     typedef Principal Base;
 
@@ -123,25 +123,30 @@ namespace edm {
     BasicHandle
     getByProductID(ProductID const& oid) const;
 
-    void put(std::auto_ptr<EDProduct> edp, ConstBranchDescription const& bd, std::auto_ptr<EventEntryInfo> entryInfo);
+    void put(std::auto_ptr<EDProduct> edp, ConstBranchDescription const& bd,
+	 std::auto_ptr<ProductProvenance> productProvenance);
 
     void addGroup(ConstBranchDescription const& bd);
 
-    void addGroup(std::auto_ptr<EDProduct> prod, ConstBranchDescription const& bd, std::auto_ptr<EventEntryInfo> entryInfo);
+    void addGroup(std::auto_ptr<EDProduct> prod, ConstBranchDescription const& bd,
+	 std::auto_ptr<ProductProvenance> productProvenance);
 
-    void addGroup(ConstBranchDescription const& bd, std::auto_ptr<EventEntryInfo> entryInfo);
+    void addGroup(ConstBranchDescription const& bd, std::auto_ptr<ProductProvenance> productProvenance);
 
-    void addGroup(std::auto_ptr<EDProduct> prod, ConstBranchDescription const& bd, boost::shared_ptr<EventEntryInfo> entryInfo);
+    void addGroup(std::auto_ptr<EDProduct> prod, ConstBranchDescription const& bd,
+	 boost::shared_ptr<ProductProvenance> productProvenance);
 
-    void addGroup(ConstBranchDescription const& bd, boost::shared_ptr<EventEntryInfo> entryInfo);
+    void addGroup(ConstBranchDescription const& bd, boost::shared_ptr<ProductProvenance> productProvenance);
 
     virtual EDProduct const* getIt(ProductID const& pid) const;
 
     ProcessIndex currentProcessIndex() const {return history().currentProcessIndex();}
 
-    BranchID productIDToBranchID(ProductID const& pid) const;
+    ProductID branchIDToProductID(BranchID const& bid) const;
 
   private:
+
+    BranchID productIDToBranchID(ProductID const& pid) const;
 
     virtual void addOrReplaceGroup(std::auto_ptr<Group> g);
 
@@ -162,6 +167,8 @@ namespace edm {
     mutable std::vector<std::string> moduleLabelsRunning_;
 
     boost::shared_ptr<History> history_;
+
+    std::map<BranchListIndex, ProcessIndex> branchToProductIDHelper_;
 
   };
 

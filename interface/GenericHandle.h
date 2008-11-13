@@ -24,7 +24,7 @@
 //
 // Original Author:  Chris Jones
 //         Created:  Sat Jan  7 15:40:43 EST 2006
-// $Id: GenericHandle.h,v 1.13 2008/05/12 18:14:07 wmtan Exp $
+// $Id: GenericHandle.h,v 1.13.4.1 2008/11/04 19:25:39 wmtan Exp $
 //
 
 // system include files
@@ -81,11 +81,11 @@ public:
    whyFailed_(h.whyFailed_)
    { }
    
-   Handle(ROOT::Reflex::Object const& prod, Provenance const* prov):
+   Handle(ROOT::Reflex::Object const& prod, Provenance const* prov, ProductID const& pid):
    type_(prod.TypeOf()),
    prod_(prod),
    prov_(prov),
-   id_(prov->productID()) { 
+   id_(pid) { 
       assert(prod_);
       assert(prov_);
       assert(id_ != ProductID());

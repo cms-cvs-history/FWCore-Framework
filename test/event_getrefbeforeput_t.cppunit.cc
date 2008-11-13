@@ -20,6 +20,7 @@ Test of the EventPrincipal class.
 #include "DataFormats/Provenance/interface/RunAuxiliary.h"
 #include "DataFormats/Provenance/interface/ProductRegistry.h"
 #include "DataFormats/Provenance/interface/BranchDescription.h"
+#include "DataFormats/Provenance/interface/BranchIDListHelper.h"
 #include "DataFormats/Provenance/interface/Timestamp.h"
 //#include "FWCore/Framework/interface/Selector.h"
 #include "DataFormats/TestObjects/interface/ToyProducts.h"
@@ -55,6 +56,7 @@ void testEventGetRefBeforePut::failGetProductNotRegisteredTest() {
   edm::ProductRegistry *preg = new edm::ProductRegistry;
   preg->setFrozen();
   preg->setProductIDs();
+  edm::BranchIDListHelper::updateRegistry(*preg);
   edm::EventID col(1L, 1L);
   std::string uuid = edm::createGlobalIdentifier();
   edm::Timestamp fakeTime;
@@ -117,6 +119,7 @@ void testEventGetRefBeforePut::getRefTest() {
   preg->addProduct(product);
   preg->setFrozen();
   preg->setProductIDs();
+  edm::BranchIDListHelper::updateRegistry(*preg);
   edm::EventID col(1L, 1L);
   std::string uuid = edm::createGlobalIdentifier();
   edm::Timestamp fakeTime;

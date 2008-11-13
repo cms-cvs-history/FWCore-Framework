@@ -31,6 +31,11 @@ namespace edm {
       return dynamic_cast<EventPrincipal const&>(principal());
     }
 
+    ProductID
+    Event::makeProductID(ConstBranchDescription const& desc) const {
+      return eventPrincipal().branchIDToProductID(desc.branchID());
+    }
+
     ProcessIndex
     Event::currentProcessIndex() const {
       return eventPrincipal().currentProcessIndex();
@@ -142,13 +147,12 @@ namespace edm {
 	pit->first = 0;
 
 	// set provenance
-	std::auto_ptr<EventEntryInfo> eventEntryInfoPtr(
-		new EventEntryInfo(pit->second->branchID(),
+	std::auto_ptr<ProductProvenance> productProvenancePtr(
+		new ProductProvenance(pit->second->branchID(),
 				   productstatus::present(),
 				   pit->second->moduleDescriptionID(),
-				   ProductID(currentProcessIndex(), pit->second->productIndexToAssign()),
 				   gotBranchIDVector));
-	ep.put(pr, *pit->second, eventEntryInfoPtr);
+	ep.put(pr, *pit->second, productProvenancePtr);
 	++pit;
     }
 

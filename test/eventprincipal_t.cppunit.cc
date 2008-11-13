@@ -13,6 +13,7 @@ Test of the EventPrincipal class.
 
 #include "DataFormats/Provenance/interface/BranchDescription.h"
 #include "DataFormats/Provenance/interface/BranchID.h"
+#include "DataFormats/Provenance/interface/BranchIDListHelper.h"
 #include "DataFormats/Provenance/interface/EventEntryDescription.h"
 #include "DataFormats/Provenance/interface/ModuleDescription.h"
 #include "DataFormats/Provenance/interface/ParameterSetID.h"
@@ -23,7 +24,7 @@ Test of the EventPrincipal class.
 #include "DataFormats/Provenance/interface/Provenance.h"
 #include "DataFormats/Provenance/interface/Timestamp.h"
 #include "DataFormats/Provenance/interface/EventAuxiliary.h"
-#include "DataFormats/Provenance/interface/EventEntryInfo.h"
+#include "DataFormats/Provenance/interface/ProductProvenance.h"
 #include "DataFormats/Provenance/interface/LuminosityBlockAuxiliary.h"
 #include "DataFormats/Provenance/interface/RunAuxiliary.h"
 #include "DataFormats/Common/interface/Wrapper.h"
@@ -148,6 +149,8 @@ test_ep::fake_single_process_branch(std::string const& tag,
 
 void test_ep::setUp()
 {
+  edm::BranchIDListHelper::clearRegistry();
+
   // Making a functional EventPrincipal is not trivial, so we do it
   // all here.
   eventID_ = edm::EventID(101, 20);
@@ -161,6 +164,7 @@ void test_ep::setUp()
   pProductRegistry_->addProduct(*fake_single_process_branch("rick", "USER2", "rick"));
   pProductRegistry_->setFrozen();
   pProductRegistry_->setProductIDs();
+  edm::BranchIDListHelper::updateRegistry(*pProductRegistry_);
  
   // Put products we'll look for into the EventPrincipal.
   {
@@ -182,10 +186,9 @@ void test_ep::setUp()
 
     boost::shared_ptr<edm::EventEntryDescription> entryDescriptionPtr(new edm::EventEntryDescription);
     entryDescriptionPtr->moduleDescriptionID() = branchFromRegistry.moduleDescriptionID();
-    std::auto_ptr<edm::EventEntryInfo> branchEntryInfoPtr(
-      new edm::EventEntryInfo(branchFromRegistry.branchID(),
+    std::auto_ptr<edm::ProductProvenance> branchEntryInfoPtr(
+      new edm::ProductProvenance(branchFromRegistry.branchID(),
                                edm::productstatus::present(),
-                               edm::ProductID(0, branchFromRegistry.productIndexToAssign()),
                                entryDescriptionPtr));
 
     edm::ProcessConfiguration* process = processConfigurations_[tag];

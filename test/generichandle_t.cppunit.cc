@@ -10,6 +10,7 @@ Test of the EventPrincipal class.
 #include "FWCore/Version/interface/GetReleaseVersion.h"
 #include "FWCore/Utilities/interface/GlobalIdentifier.h"
 #include "FWCore/Utilities/interface/TypeID.h"
+#include "DataFormats/Provenance/interface/BranchIDListHelper.h"
 #include "DataFormats/Provenance/interface/ProductRegistry.h"
 #include "DataFormats/Provenance/interface/ModuleDescription.h"
 #include "DataFormats/Provenance/interface/EventAuxiliary.h"
@@ -146,6 +147,7 @@ void testGenericHandle::getbyLabelTest() {
   preg->addProduct(product);
   preg->setFrozen();
   preg->setProductIDs();
+  edm::BranchIDListHelper::updateRegistry(*preg);
 
   edm::ProductRegistry::ProductList const& pl = preg->productList();
   edm::BranchKey const bk(product);
@@ -167,10 +169,9 @@ void testGenericHandle::getbyLabelTest() {
   const edm::BranchDescription& branchFromRegistry = it->second;
   boost::shared_ptr<edm::EventEntryDescription> entryDescriptionPtr(new edm::EventEntryDescription);
   entryDescriptionPtr->moduleDescriptionID() = branchFromRegistry.moduleDescriptionID();
-  std::auto_ptr<edm::EventEntryInfo> branchEntryInfoPtr(
-      new edm::EventEntryInfo(branchFromRegistry.branchID(),
+  std::auto_ptr<edm::ProductProvenance> branchEntryInfoPtr(
+      new edm::ProductProvenance(branchFromRegistry.branchID(),
                               edm::productstatus::present(),
-                              edm::ProductID(0, branchFromRegistry.productIndexToAssign()),
                               entryDescriptionPtr));
   edm::ConstBranchDescription const desc(branchFromRegistry);
   ep.put(pprod, desc, branchEntryInfoPtr);

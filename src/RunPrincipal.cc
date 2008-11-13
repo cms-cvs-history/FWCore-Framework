@@ -1,5 +1,6 @@
 #include "FWCore/Framework/interface/RunPrincipal.h"
 #include "FWCore/Framework/interface/Group.h"
+#include "DataFormats/Provenance/interface/ProductID.h"
 #include "DataFormats/Provenance/interface/ProductRegistry.h"
 
 namespace edm {
@@ -37,38 +38,38 @@ namespace edm {
 
   void
   RunPrincipal::addGroup(ConstBranchDescription const& bd) {
-    std::auto_ptr<Group> g(new Group(bd));
+    std::auto_ptr<Group> g(new Group(bd, ProductID()));
     addOrReplaceGroup(g);
   }
 
   void
   RunPrincipal::addGroup(std::auto_ptr<EDProduct> prod,
 	ConstBranchDescription const& bd,
-	std::auto_ptr<EventEntryInfo> entryInfo) {
-    std::auto_ptr<Group> g(new Group(prod, bd, entryInfo));
+	std::auto_ptr<ProductProvenance> productProvenance) {
+    std::auto_ptr<Group> g(new Group(prod, bd, ProductID(), productProvenance));
     addOrReplaceGroup(g);
   }
 
   void
   RunPrincipal::addGroup(ConstBranchDescription const& bd,
-	std::auto_ptr<EventEntryInfo> entryInfo) {
-    std::auto_ptr<Group> g(new Group(bd, entryInfo));
+	std::auto_ptr<ProductProvenance> productProvenance) {
+    std::auto_ptr<Group> g(new Group(bd, ProductID(), productProvenance));
     addOrReplaceGroup(g);
   }
 
   void 
   RunPrincipal::put(std::auto_ptr<EDProduct> edp,
 		ConstBranchDescription const& bd,
-		std::auto_ptr<EventEntryInfo> entryInfo) {
+		std::auto_ptr<ProductProvenance> productProvenance) {
 
     if (edp.get() == 0) {
       throw edm::Exception(edm::errors::InsertFailure,"Null Pointer")
 	<< "put: Cannot put because auto_ptr to product is null."
 	<< "\n";
     }
-    branchMapperPtr()->insert(*entryInfo);
+    branchMapperPtr()->insert(*productProvenance);
     // Group assumes ownership
-    this->addGroup(edp, bd, entryInfo);
+    this->addGroup(edp, bd, productProvenance);
   }
 
   Provenance
@@ -101,7 +102,7 @@ namespace edm {
     for (Base::const_iterator i = begin(), iEnd = end(); i != iEnd; ++i) {
       if (i->second->provenanceAvailable()) {
         resolveProvenance(*i->second);
-        if (i->second->provenance()->branchEntryInfoSharedPtr() &&
+        if (i->second->provenance()->productProvenanceSharedPtr() &&
             i->second->provenance()->isPresent() &&
             i->second->provenance()->product().present())
            provenances.push_back(i->second->provenance());
@@ -111,7 +112,7 @@ namespace edm {
 
   void
   RunPrincipal::resolveProvenance(Group const& g) const {
-    if (!g.entryInfoPtr()) {
+    if (!g.productProvenancePtr()) {
       // Now fix up the Group
       g.setProvenance(branchMapperPtr()->branchToEntryInfo(g.productDescription().branchID()));
     }
