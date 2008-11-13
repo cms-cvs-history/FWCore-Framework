@@ -647,7 +647,6 @@ namespace edm {
     //   initialize(iToken,iLegacy);
     FDEBUG(2) << parameterSet->toString() << std::endl;
     connectSigs(this);
-    preg_.setProductIDs();
     BranchIDListHelper::updateRegistry(preg_);
   }
 

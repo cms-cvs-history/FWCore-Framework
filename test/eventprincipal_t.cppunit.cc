@@ -163,7 +163,6 @@ void test_ep::setUp()
   pProductRegistry_->addProduct(*fake_single_process_branch("user", "USER"));
   pProductRegistry_->addProduct(*fake_single_process_branch("rick", "USER2", "rick"));
   pProductRegistry_->setFrozen();
-  pProductRegistry_->setProductIDs();
   edm::BranchIDListHelper::updateRegistry(*pProductRegistry_);
  
   // Put products we'll look for into the EventPrincipal.

@@ -55,7 +55,6 @@ void testEventGetRefBeforePut::failGetProductNotRegisteredTest() {
 
   edm::ProductRegistry *preg = new edm::ProductRegistry;
   preg->setFrozen();
-  preg->setProductIDs();
   edm::BranchIDListHelper::updateRegistry(*preg);
   edm::EventID col(1L, 1L);
   std::string uuid = edm::createGlobalIdentifier();
@@ -118,7 +117,6 @@ void testEventGetRefBeforePut::getRefTest() {
   edm::ProductRegistry *preg = new edm::ProductRegistry;
   preg->addProduct(product);
   preg->setFrozen();
-  preg->setProductIDs();
   edm::BranchIDListHelper::updateRegistry(*preg);
   edm::EventID col(1L, 1L);
   std::string uuid = edm::createGlobalIdentifier();

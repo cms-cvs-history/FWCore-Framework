@@ -146,7 +146,6 @@ void testGenericHandle::getbyLabelTest() {
   edm::ProductRegistry *preg = new edm::ProductRegistry;
   preg->addProduct(product);
   preg->setFrozen();
-  preg->setProductIDs();
   edm::BranchIDListHelper::updateRegistry(*preg);
 
   edm::ProductRegistry::ProductList const& pl = preg->productList();
