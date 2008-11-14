@@ -1,6 +1,6 @@
 /*----------------------------------------------------------------------
   
-$Id: EDAnalyzer.cc,v 1.10 2008/01/11 20:30:08 wmtan Exp $
+$Id: EDAnalyzer.cc,v 1.12 2008/11/14 19:41:21 wdd Exp $
 
 ----------------------------------------------------------------------*/
 
@@ -98,7 +98,8 @@ namespace edm
   }
 
   void
-  EDAnalyzer::fillDescription(ParameterSetDescription& iDesc) {
+  EDAnalyzer::fillDescription(edm::ParameterSetDescription& iDesc,
+                              std::string const& moduleLabel) {
     iDesc.setUnknown();
   }
   

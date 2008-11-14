@@ -6,8 +6,6 @@
 EventProcessor: This defines the 'framework application' object. It is
 configured in the user's main() function, and is set running.
 
-$Id: EventProcessor.h,v 1.70 2008/11/13 20:17:46 paterno Exp $
-
 ----------------------------------------------------------------------*/
 
 #include <string>

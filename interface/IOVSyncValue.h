@@ -16,7 +16,6 @@
 //
 // Original Author:  Chris Jones
 //         Created:  Wed Aug  3 18:35:24 EDT 2005
-// $Id: IOVSyncValue.h,v 1.8 2008/11/10 22:51:37 elmer Exp $
 //
 
 // system include files

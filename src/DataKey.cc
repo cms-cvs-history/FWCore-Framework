@@ -8,7 +8,6 @@
 //
 // Author:      Chris Jones
 // Created:     Thu Mar 31 14:31:13 EST 2005
-// $Id: DataKey.cc,v 1.9 2008/11/10 22:50:41 elmer Exp $
 //
 
 // system include files
