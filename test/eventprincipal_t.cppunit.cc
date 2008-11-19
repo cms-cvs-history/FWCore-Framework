@@ -149,7 +149,7 @@ test_ep::fake_single_process_branch(std::string const& tag,
 
 void test_ep::setUp()
 {
-  edm::BranchIDListHelper::clearRegistry();
+  edm::BranchIDListHelper::clearRegistries();
 
   // Making a functional EventPrincipal is not trivial, so we do it
   // all here.
@@ -163,7 +163,7 @@ void test_ep::setUp()
   pProductRegistry_->addProduct(*fake_single_process_branch("user", "USER"));
   pProductRegistry_->addProduct(*fake_single_process_branch("rick", "USER2", "rick"));
   pProductRegistry_->setFrozen();
-  edm::BranchIDListHelper::updateRegistry(*pProductRegistry_);
+  edm::BranchIDListHelper::updateRegistries(*pProductRegistry_);
  
   // Put products we'll look for into the EventPrincipal.
   {
@@ -184,7 +184,6 @@ void test_ep::setUp()
     const edm::ConstBranchDescription branchFromRegistry(it->second);
 
     boost::shared_ptr<edm::EventEntryDescription> entryDescriptionPtr(new edm::EventEntryDescription);
-    entryDescriptionPtr->moduleDescriptionID() = branchFromRegistry.moduleDescriptionID();
     std::auto_ptr<edm::ProductProvenance> branchEntryInfoPtr(
       new edm::ProductProvenance(branchFromRegistry.branchID(),
                                edm::productstatus::present(),

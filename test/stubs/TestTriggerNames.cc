@@ -13,7 +13,6 @@
 
 #include "DataFormats/Provenance/interface/ParameterSetID.h"
 #include "DataFormats/Provenance/interface/Provenance.h"
-#include "DataFormats/Provenance/interface/ModuleDescription.h"
 
 #include "FWCore/Framework/interface/MakerMacros.h"
 
@@ -177,7 +176,7 @@ namespace edmtest
       // does not save all the provenance.  Turn this test off with the streamerSource
       // parameter in the configuration file in that case.
       if (!streamerSource_) {
-        ParameterSetID trigpathsID = prod[0].provenance()->moduleDescription().parameterSetID();
+        ParameterSetID trigpathsID = e.branchIDToParameterSetID(prod[0].provenance()->branchID());
         pset::Registry* psetRegistry = pset::Registry::instance();
         ParameterSet trigpset;
         bool status = psetRegistry->getMapped(trigpathsID, trigpset);

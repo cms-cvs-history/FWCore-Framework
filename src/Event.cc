@@ -150,7 +150,6 @@ namespace edm {
 	std::auto_ptr<ProductProvenance> productProvenancePtr(
 		new ProductProvenance(pit->second->branchID(),
 				   productstatus::present(),
-				   pit->second->moduleDescriptionID(),
 				   gotBranchIDVector));
 	ep.put(pr, *pit->second, productProvenancePtr);
 	++pit;
@@ -172,6 +171,11 @@ namespace edm {
     } else {
       gotBranchIDs_.insert(prov.branchID());
     }
+  }
+
+  ParameterSetID const&
+  Event::branchIDToParameterSetID(BranchID const& bid) const {
+    return eventPrincipal().branchIDToParameterSetID(bid);
   }
 
 }

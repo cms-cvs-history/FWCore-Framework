@@ -179,9 +179,7 @@ testEvent::registerProduct(std::string const& tag,
 			   product_type.userClassName(),
 			   product_type.friendlyClassName(),
 			   productInstanceName,
-			   localModuleDescription.id(),
-			   std::set<ParameterSetID>(),
-			   std::set<ProcessConfigurationID>()
+			   localModuleDescription
 			  );
 
   moduleDescriptions_[tag] = localModuleDescription;
@@ -216,7 +214,7 @@ testEvent::testEvent() :
   currentModuleDescription_(0),
   moduleDescriptions_()
 {
-  BranchIDListHelper::clearRegistry();
+  BranchIDListHelper::clearRegistries();
 
   typedef edmtest::IntProduct prod_t;
   typedef std::vector<edmtest::Thing> vec_t;
@@ -264,16 +262,14 @@ testEvent::testEvent() :
 			   product_type.userClassName(),
 			   product_type.friendlyClassName(),
 			   productInstanceName,
-			   currentModuleDescription_->id(),
-			   std::set<ParameterSetID>(),
-			   std::set<ProcessConfigurationID>()
+			   *currentModuleDescription_
 			  );
 
   availableProducts_->addProduct(branch);
 
   // Freeze the product registry before we make the Event.
   availableProducts_->setFrozen();
-  BranchIDListHelper::updateRegistry(*availableProducts_);
+  BranchIDListHelper::updateRegistries(*availableProducts_);
 }
 
 testEvent::~testEvent()

@@ -88,8 +88,7 @@ namespace edm {
 	// set provenance
 	std::auto_ptr<ProductProvenance> runEntryInfoPtr(
 		new ProductProvenance(pit->second->branchID(),
-				    productstatus::present(),
-				    pit->second->moduleDescriptionID()));
+				    productstatus::present()));
 	rp.put(pr, *pit->second, runEntryInfoPtr);
 	++pit;
     }

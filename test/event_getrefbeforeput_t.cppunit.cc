@@ -55,7 +55,7 @@ void testEventGetRefBeforePut::failGetProductNotRegisteredTest() {
 
   edm::ProductRegistry *preg = new edm::ProductRegistry;
   preg->setFrozen();
-  edm::BranchIDListHelper::updateRegistry(*preg);
+  edm::BranchIDListHelper::updateRegistries(*preg);
   edm::EventID col(1L, 1L);
   std::string uuid = edm::createGlobalIdentifier();
   edm::Timestamp fakeTime;
@@ -100,6 +100,7 @@ void testEventGetRefBeforePut::getRefTest() {
 
   edm::ModuleDescription modDesc;
   modDesc.moduleName_ = "Blah";
+  modDesc.parameterSetID_ = edm::ParameterSet().id();
 
   edm::BranchDescription product(edm::InEvent,
 				 label,
@@ -107,9 +108,7 @@ void testEventGetRefBeforePut::getRefTest() {
 				 dummytype.userClassName(),
 				 className,
 				 productInstanceName,
-				 modDesc.id(),
-				 std::set<edm::ParameterSetID>(),
-				 std::set<edm::ProcessConfigurationID>()
+				 modDesc
 				);
 
   product.init();
@@ -117,7 +116,7 @@ void testEventGetRefBeforePut::getRefTest() {
   edm::ProductRegistry *preg = new edm::ProductRegistry;
   preg->addProduct(product);
   preg->setFrozen();
-  edm::BranchIDListHelper::updateRegistry(*preg);
+  edm::BranchIDListHelper::updateRegistries(*preg);
   edm::EventID col(1L, 1L);
   std::string uuid = edm::createGlobalIdentifier();
   edm::Timestamp fakeTime;

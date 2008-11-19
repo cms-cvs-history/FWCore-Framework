@@ -7,6 +7,7 @@
 #include "DataFormats/Provenance/interface/BranchListIndex.h"
 #include "DataFormats/Provenance/interface/BranchIDList.h"
 #include "DataFormats/Provenance/interface/BranchIDListRegistry.h"
+#include "DataFormats/Provenance/interface/ParameterSetIDListRegistry.h"
 #include "DataFormats/Provenance/interface/Provenance.h"
 #include "DataFormats/Provenance/interface/ProductRegistry.h"
 
@@ -133,6 +134,17 @@ namespace edm {
     }
     branchMapperPtr()->insert(*productProvenance);
     this->addGroup(edp, bd, productProvenance);
+  }
+
+  ParameterSetID const&
+  EventPrincipal::productIDToParameterSetID(ProductID const& pid) const {
+    if (!pid.isValid()) {
+      throw edm::Exception(edm::errors::ProductNotFound,"InvalidID")
+        << "get by product ID: invalid ProductID supplied\n";
+    }
+    BranchListIndex blix = history().branchListIndexes().at(pid.processIndex());
+    ParameterSetIDList const& blist = ParameterSetIDListRegistry::instance()->data().at(blix);
+    return blist.at(pid.productIndex()-1);
   }
 
   BranchID

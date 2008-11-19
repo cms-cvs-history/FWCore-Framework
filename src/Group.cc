@@ -221,13 +221,6 @@ namespace edm {
       return;
     }
 
-    // Don't support specifying multple modules.  So just null the description
-    // if they are different.    
-
-    if (productProvenance_->moduleDescriptionID() != newGroup->productProvenance_->moduleDescriptionID()) {
-      productProvenance_->setModuleDescriptionID(ModuleDescriptionID());
-    }
-
     if (!productUnavailable() && !newGroup->productUnavailable()) {
 
       if (product_->isMergeable()) {

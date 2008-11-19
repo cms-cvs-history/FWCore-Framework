@@ -144,9 +144,15 @@ namespace edm {
 
     ProductID branchIDToProductID(BranchID const& bid) const;
 
+    ParameterSetID const& branchIDToParameterSetID(BranchID const& bid) const {
+      return productIDToParameterSetID(branchIDToProductID(bid));
+    }
+
   private:
 
     BranchID productIDToBranchID(ProductID const& pid) const;
+
+    ParameterSetID const& productIDToParameterSetID(ProductID const& pid) const;
 
     virtual void addOrReplaceGroup(std::auto_ptr<Group> g);
 

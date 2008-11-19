@@ -6,7 +6,6 @@
 EDProducer: The base class of "modules" whose main purpose is to insert new
 EDProducts into an Event.
 
-$Id: EDProducer.h,v 1.25 2008/11/14 19:41:20 wdd Exp $
 
 ----------------------------------------------------------------------*/
 

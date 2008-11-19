@@ -568,9 +568,9 @@ namespace edm {
 			ServiceToken const& iToken, 
 			serviceregistry::ServiceLegacy iLegacy) {
 
-    // The BranchIDListRegistry is a singleton.  It must be cleared here because
-    // some processes run multiple EventProcessors in succession.
-    BranchIDListHelper::clearRegistry();
+    // The BranchIDListRegistry and ProductIDListRegistry are indexed registries, and are singletons.
+    //  They must be cleared here because some processes run multiple EventProcessors in succession.
+    BranchIDListHelper::clearRegistries();
 
     // TODO: Fix const-correctness. The ParameterSets that are
     // returned here should be const, so that we can be sure they are
@@ -647,7 +647,7 @@ namespace edm {
     //   initialize(iToken,iLegacy);
     FDEBUG(2) << parameterSet->toString() << std::endl;
     connectSigs(this);
-    BranchIDListHelper::updateRegistry(preg_);
+    BranchIDListHelper::updateRegistries(preg_);
   }
 
   EventProcessor::~EventProcessor()

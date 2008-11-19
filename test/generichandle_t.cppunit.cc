@@ -129,6 +129,7 @@ void testGenericHandle::getbyLabelTest() {
 
   edm::ModuleDescription modDesc;
   modDesc.moduleName_ = "Blah";
+  modDesc.parameterSetID_ = edm::ParameterSet().id();
 
   edm::BranchDescription product(edm::InEvent,
 				 label,
@@ -136,9 +137,7 @@ void testGenericHandle::getbyLabelTest() {
 				 dummytype.userClassName(),
 				 className,
 				 productInstanceName,
-				 modDesc.id(),
-				 std::set<edm::ParameterSetID>(),
-				 std::set<edm::ProcessConfigurationID>()
+				 modDesc
 				);
 
   product.init();
@@ -146,7 +145,7 @@ void testGenericHandle::getbyLabelTest() {
   edm::ProductRegistry *preg = new edm::ProductRegistry;
   preg->addProduct(product);
   preg->setFrozen();
-  edm::BranchIDListHelper::updateRegistry(*preg);
+  edm::BranchIDListHelper::updateRegistries(*preg);
 
   edm::ProductRegistry::ProductList const& pl = preg->productList();
   edm::BranchKey const bk(product);
@@ -167,7 +166,6 @@ void testGenericHandle::getbyLabelTest() {
   ep.setLuminosityBlockPrincipal(lbp);
   const edm::BranchDescription& branchFromRegistry = it->second;
   boost::shared_ptr<edm::EventEntryDescription> entryDescriptionPtr(new edm::EventEntryDescription);
-  entryDescriptionPtr->moduleDescriptionID() = branchFromRegistry.moduleDescriptionID();
   std::auto_ptr<edm::ProductProvenance> branchEntryInfoPtr(
       new edm::ProductProvenance(branchFromRegistry.branchID(),
                               edm::productstatus::present(),

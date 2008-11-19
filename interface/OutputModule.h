@@ -217,6 +217,7 @@ namespace edm {
     virtual void writeModuleDescriptionRegistry() {}
     virtual void writeParameterSetRegistry() {}
     virtual void writeBranchIDListRegistry() {}
+    virtual void writeParameterSetIDListRegistry() {}
     virtual void writeProductDescriptionRegistry() {}
     virtual void writeProductDependencies() {}
     virtual void writeEntryDescriptions() {}
