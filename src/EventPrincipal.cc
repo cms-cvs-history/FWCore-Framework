@@ -142,7 +142,7 @@ namespace edm {
       throw edm::Exception(edm::errors::ProductNotFound,"InvalidID")
         << "get by product ID: invalid ProductID supplied\n";
     }
-    BranchListIndex blix = history().branchListIndexes().at(pid.processIndex());
+    BranchListIndex blix = history().branchListIndexes().at(pid.processIndex()-1);
     ParameterSetIDList const& blist = ParameterSetIDListRegistry::instance()->data().at(blix);
     return blist.at(pid.productIndex()-1);
   }
@@ -155,7 +155,7 @@ namespace edm {
     }
     BranchID::value_type bid = 0;
     try {
-      BranchListIndex blix = history().branchListIndexes().at(pid.processIndex());
+      BranchListIndex blix = history().branchListIndexes().at(pid.processIndex()-1);
       BranchIDList const& blist = BranchIDListRegistry::instance()->data().at(blix);
       bid = blist.at(pid.productIndex()-1);
     }
@@ -186,7 +186,7 @@ namespace edm {
         << "branchIDToProductID: productID cannot be determined from BranchID\n";
     }
     ProcessIndex processIndex = i->second;
-    return ProductID(processIndex, productIndex + 1);
+    return ProductID(processIndex+1, productIndex+1);
   }
 
   BasicHandle
