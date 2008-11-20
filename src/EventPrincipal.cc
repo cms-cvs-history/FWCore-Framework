@@ -29,7 +29,7 @@ namespace edm {
 	  branchToProductIDHelper_() {
 	    if (reg->productProduced(InEvent)) {
 	      addToProcessHistory();
-	      // Add list of producted BranchIDs to BranchIDListRegistry;
+	      // Add list of produced BranchIDs to BranchIDListRegistry;
 	      history_->addEntry(BranchIDListRegistry::instance()->extra().currentIndex());
 	    }
 	    // Fill in helper map for Branch to ProductID mapping

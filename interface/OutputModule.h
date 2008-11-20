@@ -15,7 +15,7 @@ output stream.
 
 #include "DataFormats/Provenance/interface/BranchChildren.h"
 #include "DataFormats/Provenance/interface/BranchID.h"
-#include "DataFormats/Provenance/interface/EntryDescriptionID.h"
+#include "DataFormats/Provenance/interface/ParentageID.h"
 #include "DataFormats/Provenance/interface/BranchType.h"
 #include "DataFormats/Provenance/interface/ModuleDescription.h"
 #include "DataFormats/Provenance/interface/Selections.h"
@@ -128,7 +128,7 @@ namespace edm {
     // subsystem.
     ParameterSetID selector_config_id_; 
 
-    typedef std::map<BranchID, std::set<EntryDescriptionID> > BranchParents;
+    typedef std::map<BranchID, std::set<ParentageID> > BranchParents;
     BranchParents branchParents_;
 
     BranchChildren branchChildren_;
@@ -214,13 +214,12 @@ namespace edm {
     virtual void writeEventHistory() {}
     virtual void writeProcessConfigurationRegistry() {}
     virtual void writeProcessHistoryRegistry() {}
-    virtual void writeModuleDescriptionRegistry() {}
     virtual void writeParameterSetRegistry() {}
     virtual void writeBranchIDListRegistry() {}
     virtual void writeParameterSetIDListRegistry() {}
+    virtual void writeParentageRegistry() {}
     virtual void writeProductDescriptionRegistry() {}
     virtual void writeProductDependencies() {}
-    virtual void writeEntryDescriptions() {}
     virtual void writeBranchMapper() {}
     virtual void finishEndFile() {}
   };

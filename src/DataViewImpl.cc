@@ -6,6 +6,7 @@
 #include "FWCore/Framework/interface/DataViewImpl.h"
 #include "DataFormats/Provenance/interface/ProductRegistry.h"
 #include "FWCore/Framework/interface/Principal.h"
+#include "DataFormats/Provenance/interface/ModuleDescription.h"
 #include "DataFormats/Provenance/interface/ProductProvenance.h"
 #include "DataFormats/Provenance/interface/ProductStatus.h"
 #include "FWCore/Framework/interface/Selector.h"

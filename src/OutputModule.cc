@@ -4,7 +4,7 @@
 
 #include "FWCore/Framework/interface/OutputModule.h"
 #include "DataFormats/Provenance/interface/BranchDescription.h"
-#include "DataFormats/Provenance/interface/EntryDescriptionRegistry.h"
+#include "DataFormats/Provenance/interface/ParentageRegistry.h"
 #include "DataFormats/Common/interface/Handle.h"
 #include "FWCore/Framework/interface/ConstProductRegistry.h"
 #include "FWCore/ServiceRegistry/interface/Service.h"
@@ -375,13 +375,12 @@ namespace edm {
     writeEventHistory();
     writeProcessConfigurationRegistry();
     writeProcessHistoryRegistry();
-    writeModuleDescriptionRegistry();
     writeParameterSetRegistry();
     writeProductDescriptionRegistry();
+    writeParentageRegistry();
     writeBranchIDListRegistry();
     writeParameterSetIDListRegistry();
     writeProductDependencies();
-    writeEntryDescriptions();
     writeBranchMapper();
     finishEndFile();
     branchParents_.clear();
@@ -415,9 +414,9 @@ namespace edm {
 	BranchID const& bid = i->first;
 	BranchParents::iterator it = branchParents_.find(bid);
 	if (it == branchParents_.end()) {
-	   it = branchParents_.insert(std::make_pair(bid, std::set<EntryDescriptionID>())).first;
+	   it = branchParents_.insert(std::make_pair(bid, std::set<ParentageID>())).first;
 	}
-	it->second.insert(i->second->productProvenancePtr()->entryDescriptionID());
+	it->second.insert(i->second->productProvenancePtr()->parentageID());
 	branchChildren_.insertEmpty(bid);
       }
     }
@@ -428,11 +427,11 @@ namespace edm {
     for (BranchParents::const_iterator i = branchParents_.begin(), iEnd = branchParents_.end();
         i != iEnd; ++i) {
       BranchID const& child = i->first;
-      std::set<EntryDescriptionID> const& eIds = i->second;
-      for (std::set<EntryDescriptionID>::const_iterator it = eIds.begin(), itEnd = eIds.end();
+      std::set<ParentageID> const& eIds = i->second;
+      for (std::set<ParentageID>::const_iterator it = eIds.begin(), itEnd = eIds.end();
           it != itEnd; ++it) {
-        EventEntryDescription entryDesc;
-        EntryDescriptionRegistry::instance()->getMapped(*it, entryDesc);
+        Parentage entryDesc;
+        ParentageRegistry::instance()->getMapped(*it, entryDesc);
 	std::vector<BranchID> const& parents = entryDesc.parents();
 	for (std::vector<BranchID>::const_iterator j = parents.begin(), jEnd = parents.end();
 	  j != jEnd; ++j) {

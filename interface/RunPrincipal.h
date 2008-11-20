@@ -10,7 +10,7 @@ such code sees the Run class, which is a proxy for RunPrincipal.
 The major internal component of the RunPrincipal
 is the DataBlock.
 
-$Id: RunPrincipal.h,v 1.26.4.1 2008/11/04 19:25:39 wmtan Exp $
+$Id: RunPrincipal.h,v 1.26.4.2 2008/11/13 05:24:14 wmtan Exp $
 
 ----------------------------------------------------------------------*/
 
@@ -26,7 +26,7 @@ namespace edm {
   class RunPrincipal : public Principal {
   public:
     typedef RunAuxiliary Auxiliary;
-    typedef std::vector<RunEntryInfo> EntryInfoVector;
+    typedef std::vector<ProductProvenance> EntryInfoVector;
     typedef Principal Base;
 
     RunPrincipal(RunAuxiliary const& aux,

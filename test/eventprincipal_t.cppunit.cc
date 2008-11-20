@@ -14,7 +14,7 @@ Test of the EventPrincipal class.
 #include "DataFormats/Provenance/interface/BranchDescription.h"
 #include "DataFormats/Provenance/interface/BranchID.h"
 #include "DataFormats/Provenance/interface/BranchIDListHelper.h"
-#include "DataFormats/Provenance/interface/EventEntryDescription.h"
+#include "DataFormats/Provenance/interface/Parentage.h"
 #include "DataFormats/Provenance/interface/ModuleDescription.h"
 #include "DataFormats/Provenance/interface/ParameterSetID.h"
 #include "DataFormats/Provenance/interface/ProcessConfiguration.h"
@@ -183,7 +183,7 @@ void test_ep::setUp()
 
     const edm::ConstBranchDescription branchFromRegistry(it->second);
 
-    boost::shared_ptr<edm::EventEntryDescription> entryDescriptionPtr(new edm::EventEntryDescription);
+    boost::shared_ptr<edm::Parentage> entryDescriptionPtr(new edm::Parentage);
     std::auto_ptr<edm::ProductProvenance> branchEntryInfoPtr(
       new edm::ProductProvenance(branchFromRegistry.branchID(),
                                edm::productstatus::present(),
