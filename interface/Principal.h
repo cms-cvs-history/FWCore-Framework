@@ -208,7 +208,7 @@ namespace edm {
     if (!g->product() && !g->productProvenancePtr()) {
       return OutputHandle<T>();
     }
-    return OutputHandle<T>(g->product(), &g->productDescription(), g->productProvenancePtr());
+    return OutputHandle<T>(g->product().get(), &g->productDescription(), g->productProvenancePtr());
   }
 
 }
