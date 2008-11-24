@@ -36,11 +36,6 @@ namespace edm {
       return eventPrincipal().branchIDToProductID(desc.branchID());
     }
 
-    ProcessIndex
-    Event::currentProcessIndex() const {
-      return eventPrincipal().currentProcessIndex();
-    }
-
     Run const&
     Event::getRun() const {
       return getLuminosityBlock().getRun();

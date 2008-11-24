@@ -213,9 +213,6 @@ namespace edm {
     branchIDToParameterSetID(BranchID const& bid) const;
 
   private:
-    ProcessIndex
-    currentProcessIndex() const;
-
     EventPrincipal const&
     eventPrincipal() const;
 

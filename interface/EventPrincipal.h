@@ -140,8 +140,6 @@ namespace edm {
 
     virtual EDProduct const* getIt(ProductID const& pid) const;
 
-    ProcessIndex currentProcessIndex() const {return history().currentProcessIndex();}
-
     ProductID branchIDToProductID(BranchID const& bid) const;
 
     ParameterSetID const& branchIDToParameterSetID(BranchID const& bid) const {
