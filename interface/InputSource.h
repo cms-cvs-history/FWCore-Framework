@@ -38,7 +38,7 @@ Some examples of InputSource subclasses may be:
  3) DAQInputSource: creats EventPrincipals which contain raw data, as
     delivered by the L1 trigger and event builder. 
 
-$Id: InputSource.h,v 1.47 2008/10/16 23:06:28 wmtan Exp $
+$Id: InputSource.h,v 1.49 2008/11/25 22:03:51 wdd Exp $
 
 ----------------------------------------------------------------------*/
 
@@ -58,6 +58,7 @@ $Id: InputSource.h,v 1.47 2008/10/16 23:06:28 wmtan Exp $
 
 namespace edm {
   class ParameterSet;
+  class ParameterSetDescription;
   class ActivityRegistry;
 
   class InputSource : private ProductRegistryHelper, private boost::noncopyable {
@@ -84,6 +85,9 @@ namespace edm {
 
     /// Destructor
     virtual ~InputSource();
+
+    static void fillDescription(edm::ParameterSetDescription& iDesc,
+                                std::string const& moduleLabel);
 
     ItemType nextItemType();
 
