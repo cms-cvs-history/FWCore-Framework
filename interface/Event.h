@@ -209,9 +209,6 @@ namespace edm {
     getProcessParameterSet(std::string const& processName,
 			   ParameterSet& ps) const;
 
-    ParameterSetID const&
-    branchIDToParameterSetID(BranchID const& bid) const;
-
   private:
     EventPrincipal const&
     eventPrincipal() const;

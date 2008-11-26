@@ -379,7 +379,6 @@ namespace edm {
     writeProductDescriptionRegistry();
     writeParentageRegistry();
     writeBranchIDListRegistry();
-    writeParameterSetIDListRegistry();
     writeProductDependencies();
     writeBranchMapper();
     finishEndFile();

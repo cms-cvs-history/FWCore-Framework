@@ -7,7 +7,6 @@
 #include "DataFormats/Provenance/interface/BranchListIndex.h"
 #include "DataFormats/Provenance/interface/BranchIDList.h"
 #include "DataFormats/Provenance/interface/BranchIDListRegistry.h"
-#include "DataFormats/Provenance/interface/ParameterSetIDListRegistry.h"
 #include "DataFormats/Provenance/interface/Provenance.h"
 #include "DataFormats/Provenance/interface/ProductRegistry.h"
 
@@ -31,8 +30,6 @@ namespace edm {
 	      addToProcessHistory();
 	      // Add index into BranchIDListRegistry for products produced this process
 	      history_->addBranchListIndexEntry(BranchIDListRegistry::instance()->size()-1);
-	      // Add index into ParameterSetIDListRegistry for products produced this process
-	      history_->addParameterSetListIndexEntry(ParameterSetIDListRegistry::instance()->size()-1);
 	    }
 	    // Fill in helper map for Branch to ProductID mapping
 	    for (BranchListIndexes::const_iterator
@@ -136,17 +133,6 @@ namespace edm {
     }
     branchMapperPtr()->insert(*productProvenance);
     this->addGroup(edp, bd, productProvenance);
-  }
-
-  ParameterSetID const&
-  EventPrincipal::productIDToParameterSetID(ProductID const& pid) const {
-    if (!pid.isValid()) {
-      throw edm::Exception(edm::errors::ProductNotFound,"InvalidID")
-        << "get by product ID: invalid ProductID supplied\n";
-    }
-    BranchListIndex blix = history().branchListIndexes().at(pid.processIndex()-1);
-    ParameterSetIDList const& blist = ParameterSetIDListRegistry::instance()->data().at(blix);
-    return blist.at(pid.productIndex()-1);
   }
 
   BranchID

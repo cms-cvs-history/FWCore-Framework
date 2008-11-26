@@ -168,9 +168,4 @@ namespace edm {
     }
   }
 
-  ParameterSetID const&
-  Event::branchIDToParameterSetID(BranchID const& bid) const {
-    return eventPrincipal().branchIDToParameterSetID(bid);
-  }
-
 }
