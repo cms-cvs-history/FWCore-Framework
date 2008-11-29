@@ -10,7 +10,7 @@
  Description: Allows interaction with data in the Event without actually using the C++ class
 
  Usage:
-    The GenericHandle allows one to get data back from the edm::Event as a ROOT::Reflex::Object instead
+    The GenericHandle allows one to get data back from the edm::Event as a Reflex::Object instead
   of as the actual C++ class type.
 
   //make a handle to hold an instance of 'MyClass'
@@ -24,7 +24,7 @@
 //
 // Original Author:  Chris Jones
 //         Created:  Sat Jan  7 15:40:43 EST 2006
-// $Id: GenericHandle.h,v 1.13.4.1 2008/11/04 19:25:39 wmtan Exp $
+// $Id: GenericHandle.h,v 1.13.4.2 2008/11/13 05:24:14 wmtan Exp $
 //
 
 // system include files
@@ -33,6 +33,7 @@
 // user include files
 #include "Reflex/Object.h"
 #include "FWCore/Framework/interface/Event.h"
+#include "FWCore/Utilities/interface/UseReflex.h"
 #include "DataFormats/Common/interface/Handle.h"
 
 // forward declarations
@@ -47,8 +48,8 @@ class Handle<GenericObject> {
 public:
       ///Throws exception if iName is not a known C++ class type
       Handle(const std::string& iName) : 
-        type_(ROOT::Reflex::Type::ByName(iName)), prod_(), prov_(0), id_() {
-           if(type_ == ROOT::Reflex::Type()) {
+        type_(Reflex::Type::ByName(iName)), prod_(), prov_(0), id_() {
+           if(type_ == Reflex::Type()) {
               throw edm::Exception(edm::errors::NotFound)<<"Handle<GenericObject> told to use uknown type '"<<iName<<"'.\n Please check spelling or that a module uses this type in the job.";
            }
            if(type_.IsTypedef()){
@@ -60,10 +61,10 @@ public:
         }
    
    ///Throws exception if iType is invalid
-   Handle(const ROOT::Reflex::Type& iType):
+   Handle(const Reflex::Type& iType):
       type_(iType), prod_(), prov_(0), id_() {
-         if(iType == ROOT::Reflex::Type()) {
-            throw edm::Exception(edm::errors::NotFound)<<"Handle<GenericObject> given an invalid ROOT::Reflex::Type";
+         if(iType == Reflex::Type()) {
+            throw edm::Exception(edm::errors::NotFound)<<"Handle<GenericObject> given an invalid Reflex::Type";
          }
          if(type_.IsTypedef()){
             //For a 'Reflex::Typedef' the 'toType' method returns the actual type
@@ -81,7 +82,7 @@ public:
    whyFailed_(h.whyFailed_)
    { }
    
-   Handle(ROOT::Reflex::Object const& prod, Provenance const* prov, ProductID const& pid):
+   Handle(Reflex::Object const& prod, Provenance const* prov, ProductID const& pid):
    type_(prod.TypeOf()),
    prod_(prod),
    prov_(prov),
@@ -119,16 +120,16 @@ public:
    bool failedToGet() const {
      return 0 != whyFailed_.get();
    }
-   ROOT::Reflex::Object const* product() const { 
+   Reflex::Object const* product() const { 
      if(this->failedToGet()) { 
        throw *whyFailed_;
      } 
      return &prod_;
    }
-   ROOT::Reflex::Object const* operator->() const {return this->product();}
-   ROOT::Reflex::Object const& operator*() const {return *(this->product());}
+   Reflex::Object const* operator->() const {return this->product();}
+   Reflex::Object const& operator*() const {return *(this->product());}
    
-   ROOT::Reflex::Type const& type() const {return type_;}
+   Reflex::Type const& type() const {return type_;}
    Provenance const* provenance() const {return prov_;}
    
    ProductID id() const {return id_;}
@@ -140,8 +141,8 @@ public:
     whyFailed_=iWhyFailed;
   }
 private:
-   ROOT::Reflex::Type type_;
-   ROOT::Reflex::Object prod_;
+   Reflex::Type type_;
+   Reflex::Object prod_;
    Provenance const* prov_;    
    ProductID id_;
    boost::shared_ptr<cms::Exception> whyFailed_;

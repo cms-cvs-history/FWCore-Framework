@@ -8,7 +8,7 @@
 //
 // Original Author:  Chris Jones
 //         Created:  Thu Feb  7 17:21:22 EST 2008
-// $Id: GenericObjectOwner.cc,v 1.1 2008/02/12 21:48:33 chrjones Exp $
+// $Id: GenericObjectOwner.cc,v 1.1.8.1 2008/11/13 05:26:57 wmtan Exp $
 //
 
 // system include files
@@ -62,7 +62,7 @@ GenericObjectOwner::~GenericObjectOwner()
 //
 void 
 GenericObjectOwner::swap(GenericObjectOwner& iOther) {
-   ROOT::Reflex::Object old(m_object);
+   Reflex::Object old(m_object);
    m_object = iOther.m_object;
    iOther.m_object = m_object;
 }
@@ -70,7 +70,7 @@ GenericObjectOwner::swap(GenericObjectOwner& iOther) {
 //
 // const member functions
 //
-ROOT::Reflex::Object 
+Reflex::Object 
 GenericObjectOwner::object() const {
    return m_object;
 }
@@ -101,8 +101,8 @@ Event::put<GenericObjectOwner>(std::auto_ptr<GenericObjectOwner> product, std::s
    ConstBranchDescription const& desc =
    getBranchDescription(TypeID(product->object().TypeOf().TypeInfo()), productInstanceName);
    
-   ROOT::Reflex::Type const wrapperType=ROOT::Reflex::Type::ByName(wrappedClassName(desc.fullClassName()));
-   if(wrapperType == ROOT::Reflex::Type() ) {
+   Reflex::Type const wrapperType=Reflex::Type::ByName(wrappedClassName(desc.fullClassName()));
+   if(wrapperType == Reflex::Type() ) {
       throw edm::Exception(errors::DictionaryNotFound, "NoWrapperDictionary")
       << "Event::put: the class type '" << desc.fullClassName()
       << "' was passed to put but the Reflex dictionary for the required class '"
@@ -117,12 +117,12 @@ Event::put<GenericObjectOwner>(std::auto_ptr<GenericObjectOwner> product, std::s
    std::string s("void(");
    s+=desc.fullClassName();
    s+="*)";
-   ROOT::Reflex::Type ptrT = ROOT::Reflex::Type::ByName(s);
-   ROOT::Reflex::Object oWrapper(wrapperType.Construct(ptrT,args));
+   Reflex::Type ptrT = Reflex::Type::ByName(s);
+   Reflex::Object oWrapper(wrapperType.Construct(ptrT,args));
    //ownership was transfered to the wrapper
    product.release();
 
-   static ROOT::Reflex::Type s_edproductType( ROOT::Reflex::Type::ByTypeInfo(typeid(EDProduct)));
+   static Reflex::Type s_edproductType(Reflex::Type::ByTypeInfo(typeid(EDProduct)));
    EDProduct *wp(reinterpret_cast<EDProduct*>(oWrapper.CastObject(s_edproductType).Address()));
    putProducts().push_back(std::make_pair(wp, &desc));
    

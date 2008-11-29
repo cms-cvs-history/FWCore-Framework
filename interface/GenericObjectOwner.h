@@ -26,6 +26,7 @@
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Utilities/interface/EDMException.h"
 #include "FWCore/Utilities/interface/WrappedClassName.h"
+#include "FWCore/Utilities/interface/UseReflex.h"
 
 // forward declarations
 namespace edm {
@@ -34,13 +35,13 @@ class GenericObjectOwner
 
    public:
       GenericObjectOwner(): m_ownData(false){}
-      explicit GenericObjectOwner(ROOT::Reflex::Object const& iObject,
+      explicit GenericObjectOwner(Reflex::Object const& iObject,
                                   bool iOwnData=true):
          m_object(iObject), m_ownData(iOwnData) {}
       ~GenericObjectOwner();
 
       // ---------- const member functions ---------------------
-      ROOT::Reflex::Object object() const;
+      Reflex::Object object() const;
    
       // ---------- static member functions --------------------
 
@@ -54,7 +55,7 @@ class GenericObjectOwner
       GenericObjectOwner const& operator=(GenericObjectOwner const&); // stop default
 
       // ---------- member data --------------------------------
-      ROOT::Reflex::Object m_object;
+      Reflex::Object m_object;
       bool m_ownData;
 };
 
@@ -68,7 +69,7 @@ class GenericObjectOwner
       OrphanHandle(OrphanHandle<GenericObjectOwner> const& h):
       prod_(h.prod_.object(),false), id_(h.id_) {}
       
-      OrphanHandle(ROOT::Reflex::Object const& prod, ProductID const& id):
+      OrphanHandle(Reflex::Object const& prod, ProductID const& id):
       prod_(prod,false), id_(id) {}
       
       //~OrphanHandle();
