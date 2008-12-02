@@ -95,7 +95,7 @@ namespace edm {
     // It would probably be better to move the ProcessHistory construction out to somewhere
     // which persists for longer than one Event
     ProcessHistoryRegistry::instance()->insertMapped(ph);
-    const_cast<Principal *>(this)->processHistoryID() = ph.id();
+    setProcessHistoryID(ph.id());
     processHistoryModified_ = true;
   }
 

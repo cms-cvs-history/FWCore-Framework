@@ -10,7 +10,7 @@ such code sees the LuminosityBlock class, which is a proxy for LuminosityBlockPr
 The major internal component of the LuminosityBlockPrincipal
 is the DataBlock.
 
-$Id: LuminosityBlockPrincipal.h,v 1.34.4.2 2008/11/13 05:24:14 wmtan Exp $
+$Id: LuminosityBlockPrincipal.h,v 1.34.4.3 2008/11/20 20:32:03 wmtan Exp $
 
 ----------------------------------------------------------------------*/
 
@@ -109,7 +109,7 @@ namespace edm {
 
     virtual ProcessHistoryID const& processHistoryID() const {return aux().processHistoryID_;}
 
-    virtual ProcessHistoryID& processHistoryID() {return aux().processHistoryID_;}
+    virtual void setProcessHistoryID(ProcessHistoryID const& phid) const {return aux().setProcessHistoryID(phid);}
 
     virtual bool unscheduledFill(std::string const&) const {return false;}
 

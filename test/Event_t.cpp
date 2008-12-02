@@ -357,7 +357,7 @@ void testEvent::setUp()
   lbp->setRunPrincipal(rp);
   EventAuxiliary eventAux(id, uuid, time, lbp->luminosityBlock(), true);
   boost::shared_ptr<History> history(new History);
-  history->processHistoryID() = processHistoryID;
+  const_cast<ProcessHistoryID &>(history->processHistoryID()) = processHistoryID;
   principal_  = new EventPrincipal(eventAux,
 				   preg,
                                    pc,

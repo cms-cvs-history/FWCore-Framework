@@ -109,7 +109,9 @@ namespace edm {
 
     EventSelectionIDVector const& eventSelectionIDs() const;
 
-    History const& history() const;
+    History const& history() const {return *history_;}
+
+    History& history() {return *history_;}
 
     Provenance
     getProvenance(BranchID const& bid) const;
@@ -152,7 +154,7 @@ namespace edm {
 
     virtual ProcessHistoryID const& processHistoryID() const {return history().processHistoryID();}
 
-    virtual ProcessHistoryID& processHistoryID() {return history_->processHistoryID();}
+    virtual void setProcessHistoryID(ProcessHistoryID const& phid) const {return history().setProcessHistoryID(phid);}
 
     virtual bool unscheduledFill(std::string const& moduleLabel) const;
 

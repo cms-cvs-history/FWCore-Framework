@@ -268,12 +268,6 @@ namespace edm {
     return history_->eventSelectionIDs();
   }
 
-  History const&
-  EventPrincipal::history() const
-  {
-    return *history_;
-  }
-
   bool
   EventPrincipal::unscheduledFill(std::string const& moduleLabel) const {
 

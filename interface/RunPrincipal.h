@@ -10,7 +10,7 @@ such code sees the Run class, which is a proxy for RunPrincipal.
 The major internal component of the RunPrincipal
 is the DataBlock.
 
-$Id: RunPrincipal.h,v 1.26.4.2 2008/11/13 05:24:14 wmtan Exp $
+$Id: RunPrincipal.h,v 1.26.4.3 2008/11/20 20:32:03 wmtan Exp $
 
 ----------------------------------------------------------------------*/
 
@@ -87,7 +87,7 @@ namespace edm {
 
     virtual ProcessHistoryID const& processHistoryID() const {return aux().processHistoryID_;}
 
-    virtual ProcessHistoryID& processHistoryID() {return aux().processHistoryID_;}
+    virtual void setProcessHistoryID(ProcessHistoryID const& phid) const {return aux().setProcessHistoryID(phid);}
 
     virtual bool unscheduledFill(std::string const&) const {return false;}
 

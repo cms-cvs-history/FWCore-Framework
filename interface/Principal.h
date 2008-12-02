@@ -140,7 +140,7 @@ namespace edm {
 
     virtual ProcessHistoryID const& processHistoryID() const = 0;
 
-    virtual ProcessHistoryID& processHistoryID() = 0;
+    virtual void setProcessHistoryID(ProcessHistoryID const& phid) const = 0;
 
     virtual bool unscheduledFill(std::string const& moduleLabel) const = 0;
 
