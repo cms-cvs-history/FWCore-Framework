@@ -113,14 +113,6 @@ namespace edm {
   }
 
   void
-  LuminosityBlockPrincipal::resolveProvenance(Group const& g) const {
-    if (!g.productProvenancePtr()) {
-      // Now fix up the Group
-      g.setProvenance(branchMapperPtr()->branchToEntryInfo(g.productDescription(). branchID()));
-    }
-  }
-
-  void
   LuminosityBlockPrincipal::mergeLuminosityBlock(boost::shared_ptr<LuminosityBlockPrincipal> lbp) {
 
     aux_.mergeAuxiliary(lbp->aux());

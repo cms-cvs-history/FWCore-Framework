@@ -111,14 +111,6 @@ namespace edm {
   }
 
   void
-  RunPrincipal::resolveProvenance(Group const& g) const {
-    if (!g.productProvenancePtr()) {
-      // Now fix up the Group
-      g.setProvenance(branchMapperPtr()->branchToEntryInfo(g.productDescription().branchID()));
-    }
-  }
-
-  void
   RunPrincipal::mergeRun(boost::shared_ptr<RunPrincipal> rp) {
 
     aux_.mergeAuxiliary(rp->aux());

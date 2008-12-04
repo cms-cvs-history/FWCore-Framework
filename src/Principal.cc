@@ -274,12 +274,19 @@ namespace edm {
 
   void
   Principal::readImmediate() const {
+    readProvenanceImmediate();
+    for (Principal::const_iterator i = begin(), iEnd = end(); i != iEnd; ++i) {
+      if (!i->second->productUnavailable()) {
+        resolveProduct(*i->second, false);
+      }
+    }
+  }
+
+  void
+  Principal::readProvenanceImmediate() const {
     for (Principal::const_iterator i = begin(), iEnd = end(); i != iEnd; ++i) {
       if (i->second->provenanceAvailable()) {
 	resolveProvenance(*i->second);
-      }
-      if (!i->second->productUnavailable()) {
-        resolveProduct(*i->second, false);
       }
     }
     branchMapperPtr_->setDelayedRead(false);
@@ -399,6 +406,14 @@ namespace edm {
 
     // Now fix up the Group
     g.setProduct(edp);
+  }
+
+  void
+  Principal::resolveProvenance(Group const& g) const {
+    if (!g.productProvenancePtr()) {
+      // Now fix up the Group
+      g.setProvenance(branchMapperPtr()->branchToEntryInfo(g.productDescription().branchID()));
+    }
   }
 
   void

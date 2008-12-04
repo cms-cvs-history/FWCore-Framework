@@ -250,14 +250,6 @@ namespace edm {
   }
 
   void
-  EventPrincipal::resolveProvenance(Group const& g) const {
-    if (!g.productProvenancePtr()) {
-      // Now fix up the Group
-      g.setProvenance(branchMapperPtr()->branchToEntryInfo(g.productDescription().branchID()));
-    }
-  }
-
-  void
   EventPrincipal::setUnscheduledHandler(boost::shared_ptr<UnscheduledHandler> iHandler) {
     unscheduledHandler_ = iHandler;
   }

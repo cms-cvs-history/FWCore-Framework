@@ -150,8 +150,6 @@ namespace edm {
 
     virtual void addOrReplaceGroup(std::auto_ptr<Group> g);
 
-    virtual void resolveProvenance(Group const& g) const;
-
     virtual ProcessHistoryID const& processHistoryID() const {return history().processHistoryID();}
 
     virtual void setProcessHistoryID(ProcessHistoryID const& phid) const {return history().setProcessHistoryID(phid);}

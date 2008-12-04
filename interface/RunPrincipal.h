@@ -10,7 +10,7 @@ such code sees the Run class, which is a proxy for RunPrincipal.
 The major internal component of the RunPrincipal
 is the DataBlock.
 
-$Id: RunPrincipal.h,v 1.26.4.3 2008/11/20 20:32:03 wmtan Exp $
+$Id: RunPrincipal.h,v 1.26.4.4 2008/12/02 06:07:29 wmtan Exp $
 
 ----------------------------------------------------------------------*/
 
@@ -82,8 +82,6 @@ namespace edm {
   private:
 
     virtual void addOrReplaceGroup(std::auto_ptr<Group> g);
-
-    virtual void resolveProvenance(Group const& g) const;
 
     virtual ProcessHistoryID const& processHistoryID() const {return aux().processHistoryID_;}
 

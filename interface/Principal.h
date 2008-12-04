@@ -96,6 +96,9 @@ namespace edm {
     void
     readImmediate() const;
 
+    void
+    readProvenanceImmediate() const;
+
     ProcessHistory const& processHistory() const;    
 
     ProcessConfiguration const& processConfiguration() const {return processConfiguration_;}
@@ -131,12 +134,13 @@ namespace edm {
                                        bool resolveProv,
 				       bool fillOnDemand) const;
 
+    void resolveProvenance(Group const& g) const;
+
   private:
     virtual EDProduct const* getIt(ProductID const&) const;
 
     virtual void addOrReplaceGroup(std::auto_ptr<Group> g) = 0;
 
-    virtual void resolveProvenance(Group const& g) const = 0;
 
     virtual ProcessHistoryID const& processHistoryID() const = 0;
 
