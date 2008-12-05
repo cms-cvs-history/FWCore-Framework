@@ -154,6 +154,8 @@ namespace edm {
 
     virtual void setProcessHistoryID(ProcessHistoryID const& phid) const {return history().setProcessHistoryID(phid);}
 
+    virtual ProductID oldToNewProductID_(ProductID const& oldProductID) const;
+
     virtual bool unscheduledFill(std::string const& moduleLabel) const;
 
     EventAuxiliary aux_;

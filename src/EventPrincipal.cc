@@ -290,4 +290,8 @@ namespace edm {
     return true;
   }
 
+  ProductID
+  EventPrincipal::oldToNewProductID_(ProductID const& oldProductID) const {
+    return branchIDToProductID(branchMapperPtr()->oldProductIDToBranchID(oldProductID));
+  }
 }
