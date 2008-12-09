@@ -62,8 +62,7 @@ namespace edm {
 
     EDProductGetter const* prodGetter() const {return this;}
 
-    template <typename T>
-    OutputHandle<T>  getForOutput(BranchID const& bid, bool getProd) const;
+    OutputHandle getForOutput(BranchID const& bid, bool getProd) const;
 
     BasicHandle  getBySelector(TypeID const& tid,
                                SelectorBase const& s) const;
@@ -191,28 +190,6 @@ namespace edm {
     // from the persistent store.
     boost::shared_ptr<DelayedReader> store_;
   };
-
-  template <typename T>
-  OutputHandle<T>
-  Principal::getForOutput(BranchID const& bid, bool getProd) const {
-    SharedConstGroupPtr const& g = getGroup(bid, getProd, true, false);
-    if (g.get() == 0) {
-      return OutputHandle<T>();
-    }
-    if (getProd && (g->product() == 0 || !g->product()->isPresent()) &&
-	    g->productDescription().present() &&
-	    g->productDescription().branchType() == InEvent &&
-            productstatus::present(g->productProvenancePtr()->productStatus())) {
-        throw edm::Exception(edm::errors::LogicError, "Principal::getForOutput\n")
-         << "A product with a status of 'present' is not actually present.\n"
-         << "The branch name is " << g->productDescription().branchName() << "\n"
-         << "Contact a framework developer.\n";
-    }
-    if (!g->product() && !g->productProvenancePtr()) {
-      return OutputHandle<T>();
-    }
-    return OutputHandle<T>(g->product().get(), &g->productDescription(), g->productProvenancePtr());
-  }
 
   template <typename PROD>
   inline

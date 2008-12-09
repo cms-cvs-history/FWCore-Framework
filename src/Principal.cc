@@ -416,6 +416,27 @@ namespace edm {
     }
   }
 
+  OutputHandle
+  Principal::getForOutput(BranchID const& bid, bool getProd) const {
+    SharedConstGroupPtr const& g = getGroup(bid, getProd, true, false);
+    if (g.get() == 0) {
+      return OutputHandle();
+    }
+    if (getProd && (g->product() == 0 || !g->product()->isPresent()) &&
+	    g->productDescription().present() &&
+	    g->productDescription().branchType() == InEvent &&
+            productstatus::present(g->productProvenancePtr()->productStatus())) {
+        throw edm::Exception(edm::errors::LogicError, "Principal::getForOutput\n")
+         << "A product with a status of 'present' is not actually present.\n"
+         << "The branch name is " << g->productDescription().branchName() << "\n"
+         << "Contact a framework developer.\n";
+    }
+    if (!g->product() && !g->productProvenancePtr()) {
+      return OutputHandle();
+    }
+    return OutputHandle(g->product().get(), &g->productDescription(), g->productProvenancePtr());
+  }
+
   void
   Principal::recombine(Principal & other, std::vector<BranchID> const& bids) {
     for (std::vector<BranchID>::const_iterator it = bids.begin(), itEnd = bids.end(); it != itEnd; ++it) {

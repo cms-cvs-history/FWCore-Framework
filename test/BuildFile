@@ -1,6 +1,7 @@
 <use name=boost>
 <use name=cppunit>
 <use name=FWCore/Framework>
+<use name=FWCore/ParameterSet>
 <use name=FWCore/PluginManager>
 <use name=DataFormats/TestObjects>
 <use name=DataFormats/Provenance>
