@@ -72,44 +72,6 @@ namespace edm {
     this->addGroup(edp, bd, productProvenance);
   }
 
-  Provenance
-  RunPrincipal::getProvenance(BranchID const& bid) const {
-    SharedConstGroupPtr const& g = getGroup(bid, false, true, true);
-    if (g.get() == 0) {
-      throw edm::Exception(edm::errors::ProductNotFound,"InvalidID")
-	<< "getProvenance: no product with given branch id: "<< bid << "\n";
-    }
-
-    if (g->onDemand()) {
-      unscheduledFill(g->productDescription().moduleLabel());
-    }
-    // We already tried to produce the unscheduled products above
-    // If they still are not there, then throw
-    if (g->onDemand()) {
-      throw edm::Exception(edm::errors::ProductNotFound)
-	<< "getProvenance: no product with given BranchID: "<< bid <<"\n";
-    }
-
-    return *g->provenance();
-  }
-
-  // This one is mostly for test printout purposes
-  // No attempt to trigger on demand execution
-  // Skips provenance when the EDProduct is not there
-  void
-  RunPrincipal::getAllProvenance(std::vector<Provenance const*> & provenances) const {
-    provenances.clear();
-    for (Base::const_iterator i = begin(), iEnd = end(); i != iEnd; ++i) {
-      if (i->second->provenanceAvailable()) {
-        resolveProvenance(*i->second);
-        if (i->second->provenance()->productProvenanceSharedPtr() &&
-            i->second->provenance()->isPresent() &&
-            i->second->provenance()->product().present())
-           provenances.push_back(i->second->provenance());
-        }
-    }
-  }
-
   void
   RunPrincipal::mergeRun(boost::shared_ptr<RunPrincipal> rp) {
 

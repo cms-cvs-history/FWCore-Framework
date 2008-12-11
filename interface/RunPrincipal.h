@@ -10,7 +10,7 @@ such code sees the Run class, which is a proxy for RunPrincipal.
 The major internal component of the RunPrincipal
 is the DataBlock.
 
-$Id: RunPrincipal.h,v 1.26.4.4 2008/12/02 06:07:29 wmtan Exp $
+$Id: RunPrincipal.h,v 1.26.4.5 2008/12/04 05:56:41 wmtan Exp $
 
 ----------------------------------------------------------------------*/
 
@@ -63,12 +63,6 @@ namespace edm {
     void setUnscheduledHandler(boost::shared_ptr<UnscheduledHandler>) {}
 
     void mergeRun(boost::shared_ptr<RunPrincipal> rp);
-
-    Provenance
-    getProvenance(BranchID const& bid) const;
-
-    void
-    getAllProvenance(std::vector<Provenance const *> & provenances) const;
 
     void put(std::auto_ptr<EDProduct> edp,
 	     ConstBranchDescription const& bd, std::auto_ptr<ProductProvenance> productProvenance);

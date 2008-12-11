@@ -10,7 +10,7 @@ such code sees the LuminosityBlock class, which is a proxy for LuminosityBlockPr
 The major internal component of the LuminosityBlockPrincipal
 is the DataBlock.
 
-$Id: LuminosityBlockPrincipal.h,v 1.34.4.4 2008/12/02 06:07:29 wmtan Exp $
+$Id: LuminosityBlockPrincipal.h,v 1.34.4.5 2008/12/04 05:56:41 wmtan Exp $
 
 ----------------------------------------------------------------------*/
 
@@ -86,12 +86,6 @@ namespace edm {
     void setUnscheduledHandler(boost::shared_ptr<UnscheduledHandler>) {}
 
     void mergeLuminosityBlock(boost::shared_ptr<LuminosityBlockPrincipal> lbp);
-
-    Provenance
-    getProvenance(BranchID const& bid) const;
-
-    void
-    getAllProvenance(std::vector<Provenance const *> & provenances) const;
 
     void put(std::auto_ptr<EDProduct> edp,
 	     ConstBranchDescription const& bd, std::auto_ptr<ProductProvenance> productProvenance);

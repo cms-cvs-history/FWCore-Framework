@@ -63,7 +63,7 @@ namespace edm {
   Provenance
   Event::getProvenance(BranchID const& bid) const
   {
-    return eventPrincipal().getProvenance(bid);
+    return principal().getProvenance(bid);
   }
 
   Provenance
@@ -75,7 +75,7 @@ namespace edm {
   void
   Event::getAllProvenance(std::vector<Provenance const*> & provenances) const
   {
-    eventPrincipal().getAllProvenance(provenances);
+    principal().getAllProvenance(provenances);
   }
 
   bool

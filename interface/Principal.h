@@ -120,6 +120,12 @@ namespace edm {
     const_iterator begin() const {return groups_.begin();}
     const_iterator end() const {return groups_.end();}
 
+    Provenance
+    getProvenance(BranchID const& bid) const;
+
+    void
+    getAllProvenance(std::vector<Provenance const *> & provenances) const;
+
   protected:
     // ----- Add a new Group
     // *this takes ownership of the Group, which in turn owns its

@@ -114,13 +114,7 @@ namespace edm {
     History& history() {return *history_;}
 
     Provenance
-    getProvenance(BranchID const& bid) const;
-
-    Provenance
     getProvenance(ProductID const& pid) const;
-
-    void
-    getAllProvenance(std::vector<Provenance const *> & provenances) const;
 
     BasicHandle
     getByProductID(ProductID const& oid) const;
@@ -143,6 +137,8 @@ namespace edm {
     virtual EDProduct const* getIt(ProductID const& pid) const;
 
     ProductID branchIDToProductID(BranchID const& bid) const;
+
+    using Base::getProvenance;
 
   private:
 
