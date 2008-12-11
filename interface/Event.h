@@ -528,7 +528,7 @@ namespace edm {
     
     addToGotBranchIDs(*bh.provenance());
     gotViews_.push_back(newview);
-    Handle<View<ELEMENT> > h(&*newview, bh.provenance(), bh.id());
+    Handle<View<ELEMENT> > h(&*newview, bh.provenance());
     result.swap(h);
   }
 

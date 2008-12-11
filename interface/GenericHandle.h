@@ -24,7 +24,7 @@
 //
 // Original Author:  Chris Jones
 //         Created:  Sat Jan  7 15:40:43 EST 2006
-// $Id: GenericHandle.h,v 1.13.4.2 2008/11/13 05:24:14 wmtan Exp $
+// $Id: GenericHandle.h,v 1.13.4.3 2008/11/29 05:23:38 wmtan Exp $
 //
 
 // system include files
@@ -47,7 +47,7 @@ template<>
 class Handle<GenericObject> {
 public:
       ///Throws exception if iName is not a known C++ class type
-      Handle(const std::string& iName) : 
+      Handle(std::string const& iName) : 
         type_(Reflex::Type::ByName(iName)), prod_(), prov_(0), id_() {
            if(type_ == Reflex::Type()) {
               throw edm::Exception(edm::errors::NotFound)<<"Handle<GenericObject> told to use uknown type '"<<iName<<"'.\n Please check spelling or that a module uses this type in the job.";
@@ -61,7 +61,7 @@ public:
         }
    
    ///Throws exception if iType is invalid
-   Handle(const Reflex::Type& iType):
+   Handle(Reflex::Type const& iType):
       type_(iType), prod_(), prov_(0), id_() {
          if(iType == Reflex::Type()) {
             throw edm::Exception(edm::errors::NotFound)<<"Handle<GenericObject> given an invalid Reflex::Type";
@@ -74,7 +74,7 @@ public:
          }
       }
    
-   Handle(const Handle<GenericObject>& h):
+   Handle(Handle<GenericObject> const& h):
    type_(h.type_),
    prod_(h.prod_),
    prov_(h.prov_),
@@ -106,7 +106,7 @@ public:
    }
    
    
-   Handle<GenericObject>& operator=(const Handle<GenericObject>& rhs)
+   Handle<GenericObject>& operator=(Handle<GenericObject> const& rhs)
    {
       Handle<GenericObject> temp(rhs);
       this->swap(temp);
@@ -137,7 +137,7 @@ public:
    void clear() { prov_ = 0; id_ = ProductID(); 
    whyFailed_.reset();}
       
-   void setWhyFailed(const boost::shared_ptr<cms::Exception>& iWhyFailed) {
+   void setWhyFailed(boost::shared_ptr<cms::Exception> const& iWhyFailed) {
     whyFailed_=iWhyFailed;
   }
 private:
@@ -160,7 +160,7 @@ void convert_handle(BasicHandle const& orig,
 template<>
 bool
 edm::Event::getByLabel<GenericObject>(std::string const& label,
-                                      const std::string& productInstanceName,
+                                      std::string const& productInstanceName,
                                       Handle<GenericObject>& result) const;
 
 template <> 	 

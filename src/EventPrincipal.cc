@@ -197,7 +197,7 @@ namespace edm {
         << "onDemand production failed to produce it.\n";
       return BasicHandle(whyFailed);
     }
-    return BasicHandle(g->product(), g->provenance(), pid);
+    return BasicHandle(g->product(), g->provenance());
   }
 
   EDProduct const *

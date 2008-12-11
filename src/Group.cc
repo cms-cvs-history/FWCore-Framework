@@ -26,7 +26,7 @@ namespace edm {
     branchDescription_(new ConstBranchDescription(bd)),
     pid_(pid),
     productProvenance_(productProvenance.release()),
-    prov_(new Provenance(*branchDescription_, productProvenance_)),
+    prov_(new Provenance(*branchDescription_, pid_, productProvenance_)),
     dropped_(!branchDescription_->present()),
     onDemand_(false) {
   }
@@ -37,7 +37,7 @@ namespace edm {
     branchDescription_(new ConstBranchDescription(bd)),
     pid_(pid),
     productProvenance_(productProvenance.release()),
-    prov_(new Provenance(*branchDescription_, productProvenance_)),
+    prov_(new Provenance(*branchDescription_, pid, productProvenance_)),
     dropped_(!branchDescription_->present()),
     onDemand_(false) {
   }
@@ -48,7 +48,7 @@ namespace edm {
     branchDescription_(new ConstBranchDescription(bd)),
     pid_(pid),
     productProvenance_(productProvenance),
-    prov_(new Provenance(*branchDescription_, productProvenance_)),
+    prov_(new Provenance(*branchDescription_, pid, productProvenance_)),
     dropped_(!branchDescription_->present()),
     onDemand_(false) {
   }
@@ -59,7 +59,7 @@ namespace edm {
     branchDescription_(new ConstBranchDescription(bd)),
     pid_(pid),
     productProvenance_(productProvenance),
-    prov_(new Provenance(*branchDescription_, productProvenance_)),
+    prov_(new Provenance(*branchDescription_, pid, productProvenance_)),
     dropped_(!branchDescription_->present()),
     onDemand_(false) {
   }
@@ -132,9 +132,9 @@ namespace edm {
   Group::setProvenance(boost::shared_ptr<ProductProvenance> productProvenance) const {
     productProvenance_ = productProvenance;  // Group takes ownership
     if (productProvenance_) {
-      prov_.reset(new Provenance(*branchDescription_, productProvenance_));
+      prov_.reset(new Provenance(*branchDescription_, pid_, productProvenance_));
     } else {
-      prov_.reset(new Provenance(*branchDescription_));
+      prov_.reset(new Provenance(*branchDescription_, pid_));
     }
   }
 
@@ -182,7 +182,7 @@ namespace edm {
   Provenance const *
   Group::provenance() const {
     if (!prov_.get()) {
-      prov_.reset(new Provenance(*branchDescription_, productProvenance_));
+      prov_.reset(new Provenance(*branchDescription_, pid_, productProvenance_));
     }
     return prov_.get();
   }
