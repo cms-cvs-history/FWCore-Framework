@@ -215,9 +215,7 @@ void evSelTest (PathSpecifiers const & ps, TrigResults const & tr, bool ans)
 
   ParameterSet trigger_pset;
   trigger_pset.addParameter<Strings>("@trigger_paths", trigger_path_names);
-  pset::Registry* psetRegistry = pset::Registry::instance();
-  trigger_pset.fillID();
-  psetRegistry->insertMapped(trigger_pset);
+  trigger_pset.fillIDandInsert();
 
   TriggerResults results_id(bm, trigger_pset.id());
 
