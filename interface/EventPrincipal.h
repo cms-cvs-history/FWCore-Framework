@@ -142,7 +142,7 @@ namespace edm {
 
   private:
 
-    BranchID productIDToBranchID(ProductID const& pid) const;
+    BranchID pidToBid(ProductID const& pid) const;
 
     virtual void addOrReplaceGroup(std::auto_ptr<Group> g);
 

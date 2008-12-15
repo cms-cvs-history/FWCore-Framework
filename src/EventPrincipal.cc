@@ -8,6 +8,7 @@
 #include "DataFormats/Provenance/interface/BranchIDList.h"
 #include "DataFormats/Provenance/interface/BranchIDListRegistry.h"
 #include "DataFormats/Provenance/interface/Provenance.h"
+#include "DataFormats/Provenance/interface/ProductIDToBranchID.h"
 #include "DataFormats/Provenance/interface/ProductRegistry.h"
 
 #include <algorithm>
@@ -136,21 +137,12 @@ namespace edm {
   }
 
   BranchID
-  EventPrincipal::productIDToBranchID(ProductID const& pid) const {
+  EventPrincipal::pidToBid(ProductID const& pid) const {
     if (!pid.isValid()) {
       throw edm::Exception(edm::errors::ProductNotFound,"InvalidID")
         << "get by product ID: invalid ProductID supplied\n";
     }
-    BranchID::value_type bid = 0;
-    try {
-      BranchListIndex blix = history().branchListIndexes().at(pid.processIndex()-1);
-      BranchIDList const& blist = BranchIDListRegistry::instance()->data().at(blix);
-      bid = blist.at(pid.productIndex()-1);
-    }
-    catch (std::exception) {
-      return BranchID();
-    }
-    return BranchID(bid);
+    return productIDToBranchID(pid, BranchIDListRegistry::instance()->data(), history().branchListIndexes());
   }
 
   ProductID
@@ -179,7 +171,7 @@ namespace edm {
 
   BasicHandle
   EventPrincipal::getByProductID(ProductID const& pid) const {
-    BranchID bid = productIDToBranchID(pid);
+    BranchID bid = pidToBid(pid);
     SharedConstGroupPtr const& g = getGroup(bid, true, true, true);
     if (g.get() == 0) {
       boost::shared_ptr<cms::Exception> whyFailed( new edm::Exception(edm::errors::ProductNotFound,"InvalidID") );
@@ -207,7 +199,7 @@ namespace edm {
 
   Provenance
   EventPrincipal::getProvenance(ProductID const& pid) const {
-    BranchID bid = productIDToBranchID(pid);
+    BranchID bid = pidToBid(pid);
     return getProvenance(bid);
   }
 
