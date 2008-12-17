@@ -32,6 +32,7 @@ namespace edm {
 	      // Add index into BranchIDListRegistry for products produced this process
 	      history_->addBranchListIndexEntry(BranchIDListRegistry::instance()->size()-1);
 	    }
+	    mapper->processHistoryID() = processHistoryID();
 	    // Fill in helper map for Branch to ProductID mapping
 	    for (BranchListIndexes::const_iterator
 		 it = history->branchListIndexes().begin(),

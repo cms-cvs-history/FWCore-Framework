@@ -14,6 +14,7 @@ namespace edm {
     if (reg->productProduced(InRun)) {
       addToProcessHistory();
     }
+    mapper->processHistoryID() = processHistoryID();
   }
 
   void
