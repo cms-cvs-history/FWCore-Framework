@@ -232,6 +232,7 @@ namespace edm {
       md.moduleLabel_ = "source";
       md.processConfiguration_ = ProcessConfiguration(common.processName_,
 				params.id(), getReleaseVersion(), getPassID());
+      ProcessConfigurationRegistry::instance()->insertMapped(md.processConfiguration_);
 
       sourceSpecified = true;
       InputSourceDescription isdesc(md, preg, areg, common.maxEventsInput_, common.maxLumisInput_);
