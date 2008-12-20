@@ -48,8 +48,7 @@ int doTest(edm::ParameterSet const& params,
 
 int work()
 {
-  edm::ModuleDescription mod;
-  mod.parameterSetID_ = edm::ParameterSet().id();
+  edm::ModuleDescription mod(edm::ParameterSet().trackedID(), "", "");
 
   int rc = 0;
   // We pretend to have one module, with two products. The products
@@ -58,7 +57,7 @@ int work()
   edm::ParameterSet modAparams;
   modAparams.addParameter<int>("i", 2112);
   modAparams.addParameter<std::string>("s", "hi");
-  psetsA.insert(modAparams.id());
+  psetsA.insert(modAparams.trackedID());
 
   //edm::BranchDescription b1(edm::InEvent, "modA", "PROD", "UglyProdTypeA", "ProdTypeA", "i1", md, psetsA);
   //edm::BranchDescription b2(edm::InEvent, "modA", "PROD", "UglyProdTypeA", "ProdTypeA", "i2", md, psetsA);
@@ -72,7 +71,7 @@ int work()
   std::set<edm::ParameterSetID> psetsB;
   edm::ParameterSet modBparams;
   modBparams.addParameter<double>("d", 2.5);
-  psetsB.insert(modBparams.id());
+  psetsB.insert(modBparams.trackedID());
 
   //edm::BranchDescription b3(edm::InEvent, "modB", "HLT", "UglyProdTypeB", "ProdTypeB", "", md, psetsB);
   edm::BranchDescription b3(edm::InEvent, "modB", "HLT", "UglyProdTypeB", "ProdTypeB", "", 
