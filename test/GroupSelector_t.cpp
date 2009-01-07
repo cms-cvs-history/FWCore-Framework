@@ -48,7 +48,9 @@ int doTest(edm::ParameterSet const& params,
 
 int work()
 {
-  edm::ModuleDescription mod(edm::ParameterSet().trackedID(), "", "");
+  edm::ParameterSet pset;
+  pset.registerIt();
+  edm::ModuleDescription mod(pset.trackedID(), "", "");
 
   int rc = 0;
   // We pretend to have one module, with two products. The products
@@ -57,6 +59,7 @@ int work()
   edm::ParameterSet modAparams;
   modAparams.addParameter<int>("i", 2112);
   modAparams.addParameter<std::string>("s", "hi");
+  modAparams.registerIt();
   psetsA.insert(modAparams.trackedID());
 
   //edm::BranchDescription b1(edm::InEvent, "modA", "PROD", "UglyProdTypeA", "ProdTypeA", "i1", md, psetsA);
@@ -71,6 +74,7 @@ int work()
   std::set<edm::ParameterSetID> psetsB;
   edm::ParameterSet modBparams;
   modBparams.addParameter<double>("d", 2.5);
+  modBparams.registerIt();
   psetsB.insert(modBparams.trackedID());
 
   //edm::BranchDescription b3(edm::InEvent, "modB", "HLT", "UglyProdTypeB", "ProdTypeB", "", md, psetsB);
@@ -117,6 +121,7 @@ int work()
     std::vector<std::string> cmds;
     cmds.push_back(keep_i2_rule);
     keep_i2.addUntrackedParameter<std::vector<std::string> >("outputCommands", cmds);
+    keep_i2.registerIt();
 
     rc += doTest(keep_i2, "keep_i2 parameters", allbranches, expected);
   }
@@ -133,6 +138,7 @@ int work()
     cmds.push_back(drop_i2_rule1);
     cmds.push_back(drop_i2_rule2);
     drop_i2.addUntrackedParameter<std::vector<std::string> >("outputCommands", cmds);
+    drop_i2.registerIt();
 
     rc += doTest(drop_i2, "drop_i2 parameters", allbranches, expected);
   }
@@ -150,6 +156,7 @@ int work()
     cmds.push_back(drop_foo_rule1);
     cmds.push_back(drop_foo_rule2);
     drop_foo.addUntrackedParameter<std::vector<std::string> >("outputCommands", cmds);
+    drop_foo.registerIt();
 
     rc += doTest(drop_foo, "drop_foo parameters", allbranches, expected);
   }
@@ -166,6 +173,7 @@ int work()
     cmds.push_back(drop_ProdTypeA_rule1);
     cmds.push_back(drop_ProdTypeA_rule2);
     drop_ProdTypeA.addUntrackedParameter<std::vector<std::string> >("outputCommands", cmds);
+    drop_ProdTypeA.registerIt();
 
     rc += doTest(drop_ProdTypeA,
 		 "drop_ProdTypeA",
@@ -182,6 +190,7 @@ int work()
     std::vector<std::string> cmds;
     cmds.push_back(keep_i1prod_rule);
     keep_i1prod.addUntrackedParameter<std::vector<std::string> >("outputCommands", cmds);
+    keep_i1prod.registerIt();
 
     rc += doTest(keep_i1prod,
 		 "keep_i1prod",
@@ -203,6 +212,7 @@ int work()
     cmds.push_back(indecisive_rule2);
     cmds.push_back(indecisive_rule3);
     indecisive.addUntrackedParameter<std::vector<std::string> >("outputCommands", cmds);
+    indecisive.registerIt();
 
     rc += doTest(indecisive,
 		 "indecisive",
@@ -224,6 +234,7 @@ int work()
     cmds.push_back(rule2);
     cmds.push_back(rule3);
     params.addUntrackedParameter<std::vector<std::string> >("outputCommands", cmds);
+    params.registerIt();
 
     rc += doTest(params,
 		 "drop_modA_keep_user",
@@ -244,6 +255,7 @@ int work()
     cmds.push_back(rule2);
     cmds.push_back(rule3);
     params.addUntrackedParameter<std::vector<std::string> >("outputCommands", cmds);
+    params.registerIt();
 
     rc += doTest(params,
 		 "excercise wildcards1",
@@ -258,6 +270,7 @@ int work()
 	std::vector<std::string> cmds;
 	cmds.push_back(bad_rule);
 	bad.addUntrackedParameter<std::vector<std::string> >("outputCommands", cmds);
+	bad.registerIt();
 	edm::GroupSelectorRules gsr(bad, "outputCommands", "GroupSelectorTest");
 	edm::GroupSelector gs;
         gs.initialize(gsr, allbranches);
