@@ -50,7 +50,7 @@ int work()
 {
   edm::ParameterSet pset;
   pset.registerIt();
-  edm::ModuleDescription mod(pset.trackedID(), "", "");
+  edm::ModuleDescription mod(pset.id(), "", "");
 
   int rc = 0;
   // We pretend to have one module, with two products. The products
@@ -60,7 +60,7 @@ int work()
   modAparams.addParameter<int>("i", 2112);
   modAparams.addParameter<std::string>("s", "hi");
   modAparams.registerIt();
-  psetsA.insert(modAparams.trackedID());
+  psetsA.insert(modAparams.id());
 
   //edm::BranchDescription b1(edm::InEvent, "modA", "PROD", "UglyProdTypeA", "ProdTypeA", "i1", md, psetsA);
   //edm::BranchDescription b2(edm::InEvent, "modA", "PROD", "UglyProdTypeA", "ProdTypeA", "i2", md, psetsA);
@@ -75,7 +75,7 @@ int work()
   edm::ParameterSet modBparams;
   modBparams.addParameter<double>("d", 2.5);
   modBparams.registerIt();
-  psetsB.insert(modBparams.trackedID());
+  psetsB.insert(modBparams.id());
 
   //edm::BranchDescription b3(edm::InEvent, "modB", "HLT", "UglyProdTypeB", "ProdTypeB", "", md, psetsB);
   edm::BranchDescription b3(edm::InEvent, "modB", "HLT", "UglyProdTypeB", "ProdTypeB", "", 
