@@ -9,7 +9,10 @@
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "DataFormats/Provenance/interface/BranchDescription.h"
 #include "DataFormats/Provenance/interface/ModuleDescription.h"
+#include "DataFormats/Provenance/interface/ProcessConfiguration.h"
 #include "FWCore/Utilities/interface/EDMException.h"
+
+#include "boost/shared_ptr.hpp"
 
 typedef std::vector<edm::BranchDescription const*> VCBDP;
 
@@ -48,9 +51,15 @@ int doTest(edm::ParameterSet const& params,
 
 int work()
 {
+  edm::ParameterSet dummyProcessPset;
+  dummyProcessPset.registerIt();
+  boost::shared_ptr<edm::ProcessConfiguration> processConfiguration(
+    new edm::ProcessConfiguration());
+  processConfiguration->setParameterSetID(dummyProcessPset.id());
+
   edm::ParameterSet pset;
   pset.registerIt();
-  edm::ModuleDescription mod(pset.id(), "", "");
+  edm::ModuleDescription mod(pset.id(), "", "", processConfiguration);
 
   int rc = 0;
   // We pretend to have one module, with two products. The products
