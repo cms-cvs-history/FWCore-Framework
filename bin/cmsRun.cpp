@@ -1,8 +1,7 @@
 /*----------------------------------------------------------------------
 
 This is a generic main that can be used with any plugin and a 
-PSet script.   See notes in EventProcessor.cpp for details about
-it.
+PSet script.   See notes in EventProcessor.cpp for details about it.
 
 
 ----------------------------------------------------------------------*/  
@@ -32,6 +31,7 @@ it.
 #include "FWCore/ServiceRegistry/interface/ServiceRegistry.h"
 #include "FWCore/ServiceRegistry/interface/ServiceToken.h"
 #include "FWCore/ServiceRegistry/interface/ServiceWrapper.h"
+#include "FWCore/Version/interface/GetReleaseVersion.h"
 
 #include "TError.h"
 
@@ -45,6 +45,8 @@ static char const* const kHelpOpt = "help";
 static char const* const kHelpCommandOpt = "help,h";
 static char const* const kStrictOpt = "strict";
 static char const* const kProgramName = "cmsRun";
+static char const* const kVersionOpt = "version";
+static char const* const kVersionCommandOpt = "version,v";
 
 // -----------------------------------------------
 namespace {
@@ -145,7 +147,9 @@ int main(int argc, char* argv[])
     	"enable job report files (if any) specified in configuration file")
     (kJobModeCommandOpt, boost::program_options::value<std::string>(),
     	"Job Mode for MessageLogger defaults - default mode is grid")
-    (kStrictOpt, "strict parsing");
+    (kStrictOpt, "strict parsing")
+    (kVersionCommandOpt, "print version");
+
 
   boost::program_options::positional_options_description p;
   p.add(kParameterSetOpt, 1).add(kPythonOpt, -1);
@@ -156,7 +160,7 @@ int main(int argc, char* argv[])
   // state machine code.
   boost::program_options::options_description hidden("hidden options");
   hidden.add_options()("fwk", "For use only by Framework Developers")
-    (kPythonOpt, boost::program_options::value< std::vector<std::string> >(),
+    (kPythonOpt, boost::program_options::value< std::vector<std::string> >(), 
      "options at the end to be passed to python");
   
   boost::program_options::options_description all_options("All Options");
@@ -178,6 +182,12 @@ int main(int argc, char* argv[])
     return 0;
   }
   
+  if(vm.count(kVersionOpt)) {
+    std::cout << edm::getReleaseVersion() <<std::endl;
+    if(!vm.count(kParameterSetOpt)) edm::HaltMessageLogging();
+    return 0;
+  }
+
   if(!vm.count(kParameterSetOpt)) {
     std::string shortDesc("ConfigFileNotFound");
     std::ostringstream longDesc;
@@ -217,9 +227,9 @@ int main(int argc, char* argv[])
   std::auto_ptr<std::ofstream> jobReportStreamPtr;
   if (vm.count("jobreport")) {
     std::string jobReportFile = vm["jobreport"].as<std::string>();
-    jobReportStreamPtr = std::auto_ptr<std::ofstream>( new std::ofstream(jobReportFile.c_str()) );
+    jobReportStreamPtr = std::auto_ptr<std::ofstream>(new std::ofstream(jobReportFile.c_str()));
   } else if (vm.count("enablejobreport")) {
-    jobReportStreamPtr = std::auto_ptr<std::ofstream>( new std::ofstream("FrameworkJobReport.xml") );
+    jobReportStreamPtr = std::auto_ptr<std::ofstream>(new std::ofstream("FrameworkJobReport.xml"));
   } 
   //
   // Make JobReport Service up front
@@ -227,7 +237,7 @@ int main(int argc, char* argv[])
   //NOTE: JobReport must have a lifetime shorter than jobReportStreamPtr so that when the JobReport destructor
   // is called jobReportStreamPtr is still valid
   std::auto_ptr<edm::JobReport> jobRepPtr(new edm::JobReport(jobReportStreamPtr.get()));  
-  boost::shared_ptr<edm::serviceregistry::ServiceWrapper<edm::JobReport> > jobRep( new edm::serviceregistry::ServiceWrapper<edm::JobReport>(jobRepPtr) );
+  boost::shared_ptr<edm::serviceregistry::ServiceWrapper<edm::JobReport> > jobRep(new edm::serviceregistry::ServiceWrapper<edm::JobReport>(jobRepPtr));
   edm::ServiceToken jobReportToken = 
     edm::ServiceRegistry::createContaining(jobRep);
   
