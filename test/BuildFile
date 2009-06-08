@@ -179,3 +179,7 @@
 <bin name=TestFWCoreFrameworkStatemachineSH file=TestDriver.cpp>
   <flags TEST_RUNNER_ARGS=" /bin/bash FWCore/Framework/test run_statemachine.sh">
 </bin>
+
+<bin name=TestFWCoreFrameworkInputTagFailure file=TestDriver.cpp>
+  <flags TEST_RUNNER_ARGS=" /bin/bash FWCore/Framework/test test_InputTag_cache_failure.sh">
+</bin>
