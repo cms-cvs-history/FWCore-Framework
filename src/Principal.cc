@@ -420,6 +420,9 @@ namespace edm {
     }
 
     if(range.first == range.second) {
+      if (toBeCached) {
+        cachedOffset = typeLookup.end() - typeLookup.begin();
+      }
       return false;
     }
 
@@ -579,6 +582,19 @@ namespace edm {
   Principal::getIt(ProductID const& pid) const {
     assert(0);
     return 0;
+  }
+
+  void
+  Principal::maybeFlushCache(TypeID const& tid, InputTag const& tag) const {
+    if (tag.typeID() != tid ||
+	tag.branchType() != branchType() ||
+	tag.productRegistry() != &productRegistry()) {
+      tag.fillCount() = 0;
+      tag.cachedOffset() = 0U;
+      tag.typeID() = tid;
+      tag.branchType() = branchType();
+      tag.productRegistry() = &productRegistry();
+    }
   }
 
   void
