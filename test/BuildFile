@@ -104,6 +104,7 @@
 
 <bin name=TestFWCoreFrameworkeventprocessor  file=testRunner.cpp,eventprocessor_t.cppunit.cc,eventprocessor2_t.cppunit.cc,stubs/TestBeginEndJobAnalyzer.cc>
   <use name=DataFormats/WrappedStdDictionaries>
+  <use name=FWCore/PythonParameterSet>
 </bin>
 
 <bin name=TestFWCoreFrameworkeventprincipal  file=testRunner.cpp,eventprincipal_t.cppunit.cc></bin>
