@@ -29,8 +29,6 @@ For its usage, see "FWCore/Framework/interface/PrincipalGetAdapter.h"
 #include "DataFormats/Provenance/interface/RunID.h"
 #include "DataFormats/Provenance/interface/Timestamp.h"
 
-#include "DataFormats/Common/interface/EventBase.h"
-
 #include "DataFormats/Common/interface/Handle.h"
 #include "DataFormats/Common/interface/BasicHandle.h"
 #include "DataFormats/Common/interface/OrphanHandle.h"
@@ -44,12 +42,20 @@ namespace edm {
 
   class ConstBranchDescription;
 
-  class Event : public EventBase {
+  class Event {
   public:
     Event(EventPrincipal& ep, ModuleDescription const& md);
     ~Event(){}
 
-    // AUX functions are defined in EventBase
+    // AUX functions.
+    EventID id() const {return aux_.id();}
+    Timestamp time() const {return aux_.time();}
+    LuminosityBlockNumber_t
+    luminosityBlock() const {return aux_.luminosityBlock();}
+    bool isRealData() const {return aux_.isRealData();}
+    EventAuxiliary::ExperimentType experimentType() const {return aux_.experimentType();}
+    int bunchCrossing() const {return aux_.bunchCrossing();}
+    int orbitNumber() const {return aux_.orbitNumber();}
     EventAuxiliary const& eventAuxiliary() const {return aux_;}
 
     LuminosityBlock const&
@@ -180,9 +186,6 @@ namespace edm {
 
     ProductID
     makeProductID(ConstBranchDescription const& desc) const;
-
-    //override used by EventBase class
-    virtual BasicHandle getByLabelImpl(const std::type_info& iWrapperType, const std::type_info& iProductType, const InputTag& iTag) const;
 
     // commit_() is called to complete the transaction represented by
     // this PrincipalGetAdapter. The friendships required seems gross, but any
