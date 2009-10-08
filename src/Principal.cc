@@ -608,4 +608,18 @@ namespace edm {
     std::swap(branchMapperPtr_,iOther.branchMapperPtr_);
     std::swap(store_,iOther.store_);
   }
+
+
+  void
+  Principal::adjustIndexesAfterProductRegistryAddition() {
+    if (preg_->constProductList().size() > groups_.size()) {
+      GroupCollection newGroups(preg_->constProductList().size(), SharedGroupPtr());
+      for (Principal::const_iterator i = begin(), iEnd = end(); i != iEnd; ++i) {
+        ProductTransientIndex index = preg_->indexFrom((*i)->provenance()->branchID());
+        assert(index != ProductRegistry::kInvalidIndex);
+        newGroups[index] = *i;
+      }
+      groups_.swap(newGroups);
+    }
+  }
 }

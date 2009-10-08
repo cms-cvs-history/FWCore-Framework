@@ -2,7 +2,7 @@
 #define FWCore_Framework_PrincipalCache_h
 
 /*
-$Id$
+$Id: PrincipalCache.h,v 1.1 2008/01/07 23:29:45 wdd Exp $
 
 Designed to save RunPrincipal's and LuminosityBlockPrincipal's
 in memory.  Manages merging of products in those principals
@@ -76,6 +76,8 @@ namespace edm {
 
     void deleteRun(int run);
     void deleteLumi(int run, int lumi);
+
+    void adjustIndexesAfterProductRegistryAddition();
 
   private:
 
