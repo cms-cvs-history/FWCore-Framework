@@ -764,7 +764,11 @@ namespace edm {
       ServiceRegistry::Operate operate(serviceToken_);
       
       {
+        size_t  size = preg_.size();
         input_->skipEvents(numberToSkip);
+        if (preg_.size() > size) {
+          principalCache_.adjustIndexesAfterProductRegistryAddition();
+        }
       }
       changeState(mCountComplete);
       toerror.succeeded();
@@ -1567,7 +1571,11 @@ namespace edm {
 
   void EventProcessor::readFile() {
     FDEBUG(1) << " \treadFile\n";
+    size_t  size = preg_.size();
     fb_ = input_->readFile();
+    if (preg_.size() > size) {
+      principalCache_.adjustIndexesAfterProductRegistryAddition();
+    }
   }
 
   void EventProcessor::closeInputFile() {
