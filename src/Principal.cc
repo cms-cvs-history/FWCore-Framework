@@ -620,6 +620,24 @@ namespace edm {
         newGroups[index] = *i;
       }
       groups_.swap(newGroups);
+      // Now we must add new groups for any new product registry entries.
+      ProductRegistry::ProductList const& prodsList = preg_->productList();
+      for(ProductRegistry::ProductList::const_iterator itProdInfo = prodsList.begin(),
+          itProdInfoEnd = prodsList.end();
+          itProdInfo != itProdInfoEnd;
+          ++itProdInfo) {
+        if (itProdInfo->second.branchType() == branchType_) {
+          ProductTransientIndex index = preg_->indexFrom(itProdInfo->second.branchID());
+          assert(index != ProductRegistry::kInvalidIndex);
+          if (!groups_[index]) {
+            // no group.  Must add one. The new entry must be an input group.
+            assert(!itProdInfo->second.produced());
+            std::auto_ptr<ConstBranchDescription> bd(new ConstBranchDescription(itProdInfo->second));
+            std::auto_ptr<Group> g(new Group(*bd.release(), ProductID()));
+            addOrReplaceGroup(g);
+          }
+        }
+      }
     }
   }
 }
