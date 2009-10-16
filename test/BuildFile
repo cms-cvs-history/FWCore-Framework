@@ -146,7 +146,6 @@
   <use name=DataFormats/Common>
   <use name=DataFormats/Provenance>
   <use name=DataFormats/TestObjects>
-  <use name=DataFormats/WrappedStdDictionaries>
   <use name=FWCore/ParameterSet>
   <use name=FWCore/Utilities>
   <use name=FWCore/Version>
@@ -155,7 +154,6 @@
 
 <bin name=TestFWCoreFrameworkeventprocessor  file=testRunner.cpp,eventprocessor_t.cppunit.cc,eventprocessor2_t.cppunit.cc,stubs/TestBeginEndJobAnalyzer.cc>
   <use name=DataFormats/Provenance>
-  <use name=DataFormats/WrappedStdDictionaries>
   <use name=FWCore/Framework>
   <use name=FWCore/ServiceRegistry>
   <use name=FWCore/Utilities>
