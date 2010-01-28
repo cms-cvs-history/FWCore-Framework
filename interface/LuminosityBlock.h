@@ -26,27 +26,17 @@ For its usage, see "FWCore/Framework/interface/PrincipalGetAdapter.h"
 
 #include "FWCore/Framework/interface/PrincipalGetAdapter.h"
 #include "FWCore/Framework/interface/Frameworkfwd.h"
+#include "FWCore/Common/interface/LuminosityBlockBase.h"
 
 namespace edm {
 
-  class LuminosityBlock {
+  class LuminosityBlock : public LuminosityBlockBase {
   public:
     LuminosityBlock(LuminosityBlockPrincipal& lbp, ModuleDescription const& md);
     ~LuminosityBlock();
 
-    // AUX functions.
-    LuminosityBlockNumber_t luminosityBlock() const {return aux_.luminosityBlock();}
-
-    RunNumber_t run() const {
-      return aux_.run();
-    }
-
-    LuminosityBlockID id() const {
-      return aux_.id();
-    }
-
-    Timestamp const& beginTime() const {return aux_.beginTime();}
-    Timestamp const& endTime() const {return aux_.endTime();}
+    // AUX functions are defined in LuminosityBlockBase
+    LuminosityBlockAuxiliary const& luminosityBlockAuxiliary() const {return aux_;}
 
     template <typename PROD>
     bool
@@ -62,10 +52,10 @@ namespace edm {
                std::string const& productInstanceName,
                Handle<PROD>& result) const;
 
-    /// same as above, but using the InputTag class 	
-    template <typename PROD> 	
-    bool 	
-    getByLabel(InputTag const& tag, Handle<PROD>& result) const; 	
+    /// same as above, but using the InputTag class
+    template <typename PROD>
+    bool
+    getByLabel(InputTag const& tag, Handle<PROD>& result) const;
 
     template <typename PROD>
     void
@@ -110,6 +100,9 @@ namespace edm {
     LuminosityBlockPrincipal&
     luminosityBlockPrincipal();
 
+    // Override version from LuminosityBlockBase class
+    virtual BasicHandle getByLabelImpl(const std::type_info& iWrapperType, const std::type_info& iProductType, const InputTag& iTag) const;
+
     typedef std::vector<std::pair<EDProduct*, ConstBranchDescription const*> > ProductPtrVec;
     ProductPtrVec& putProducts() {return putProducts_;}
     ProductPtrVec const& putProducts() const {return putProducts_;}
@@ -131,6 +124,9 @@ namespace edm {
     ProductPtrVec putProducts_;
     LuminosityBlockAuxiliary const& aux_;
     boost::shared_ptr<Run const> const run_;
+    typedef std::set<BranchID> BranchIDSet;
+    mutable BranchIDSet gotBranchIDs_;
+    void addToGotBranchIDs(Provenance const& prov) const;
   };
 
   template <typename PROD>
@@ -179,9 +175,9 @@ namespace edm {
     return provRecorder_.getByLabel(label,productInstanceName,result);
   }
 
-  /// same as above, but using the InputTag class 	
-  template <typename PROD> 	
-  bool 	
+  /// same as above, but using the InputTag class
+  template <typename PROD>
+  bool
   LuminosityBlock::getByLabel(InputTag const& tag, Handle<PROD>& result) const {
     return provRecorder_.getByLabel(tag,result);
   }
