@@ -27,6 +27,7 @@ Test of the EventProcessor class.
 
 #include "DataFormats/Provenance/interface/ModuleDescription.h"
 
+#include "FWCore/ParameterSet/interface/Registry.h"
 
 #include "cppunit/extensions/HelperMacros.h"
 
@@ -41,6 +42,7 @@ class testeventprocessor: public CppUnit::TestFixture
   CPPUNIT_TEST(moduleFailureTest);
   CPPUNIT_TEST(endpathTest);
   CPPUNIT_TEST(asyncTest);
+  CPPUNIT_TEST(serviceConfigSaveTest);
   CPPUNIT_TEST_SUITE_END();
 
  public:
@@ -59,6 +61,7 @@ class testeventprocessor: public CppUnit::TestFixture
   void activityRegistryTest();
   void moduleFailureTest();
   void endpathTest();
+  void serviceConfigSaveTest();
 
   void asyncTest();
   bool asyncRunAsync(edm::EventProcessor& ep);
@@ -385,7 +388,11 @@ void testeventprocessor::beginEndTest()
     CPPUNIT_ASSERT(!TestBeginEndJobAnalyzer::beginLumiCalled);
     CPPUNIT_ASSERT(!TestBeginEndJobAnalyzer::endLumiCalled);
     CPPUNIT_ASSERT(0 == proc.totalEvents());
+     
+     CPPUNIT_ASSERT(not edm::pset::Registry::instance()->empty());
   }
+  CPPUNIT_ASSERT(edm::pset::Registry::instance()->empty());
+
   {
     TestBeginEndJobAnalyzer::beginJobCalled = false;
     TestBeginEndJobAnalyzer::endJobCalled = false;
@@ -404,7 +411,9 @@ void testeventprocessor::beginEndTest()
     CPPUNIT_ASSERT(TestBeginEndJobAnalyzer::beginLumiCalled);
     CPPUNIT_ASSERT(TestBeginEndJobAnalyzer::endLumiCalled);
     CPPUNIT_ASSERT(10 == proc.totalEvents());
+    CPPUNIT_ASSERT(not edm::pset::Registry::instance()->empty());
   }
+  CPPUNIT_ASSERT(edm::pset::Registry::instance()->empty());
   {
     TestBeginEndJobAnalyzer::beginJobCalled = false;
     TestBeginEndJobAnalyzer::endJobCalled = false;
@@ -833,6 +842,24 @@ testeventprocessor::moduleFailureTest()
   }
 }
 
+void
+testeventprocessor::serviceConfigSaveTest()
+{
+   std::string configuration(
+                             "import FWCore.ParameterSet.Config as cms\n"
+                             "process = cms.Process('p')\n"
+                             "process.add_(cms.Service('DummyStoreConfigService'))\n"
+                             "process.maxEvents = cms.untracked.PSet(\n"
+                             "    input = cms.untracked.int32(5))\n"
+                             "process.source = cms.Source('EmptySource')\n"
+                             "process.m1 = cms.EDProducer('TestMod',\n"
+                             "   ivalue = cms.int32(-3))\n"
+                             "process.p1 = cms.Path(process.m1)\n");
+   
+   edm::EventProcessor proc(configuration, true);
+   edm::ParameterSet topPset( edm::getProcessParameterSet());
+   CPPUNIT_ASSERT(topPset.existsAs<edm::ParameterSet>("DummyStoreConfigService",true));
+}
 void
 testeventprocessor::endpathTest()
 {
