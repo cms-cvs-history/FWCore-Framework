@@ -18,6 +18,12 @@
 #include "DataFormats/Provenance/interface/ProcessConfigurationRegistry.h"
 #include "DataFormats/Provenance/interface/BranchType.h"
 #include "DataFormats/Provenance/interface/BranchIDListHelper.h"
+#include "DataFormats/Provenance/interface/ParameterSetID.h"
+#include "DataFormats/Provenance/interface/EntryDescriptionRegistry.h"
+#include "DataFormats/Provenance/interface/ParentageRegistry.h"
+#include "DataFormats/Provenance/interface/ProcessConfigurationRegistry.h"
+#include "DataFormats/Provenance/interface/ProcessHistoryRegistry.h"
+#include "DataFormats/Provenance/interface/BranchIDListRegistry.h"
 #include "FWCore/Utilities/interface/DebugMacros.h"
 #include "FWCore/Utilities/interface/EDMException.h"
 #include "FWCore/Version/interface/GetReleaseVersion.h"
@@ -49,6 +55,7 @@
 #include "FWCore/ParameterSet/interface/ConfigurationDescriptions.h"
 #include "FWCore/ParameterSet/interface/ParameterSetDescriptionFillerBase.h"
 #include "FWCore/ParameterSet/interface/ParameterSetDescriptionFillerPluginFactory.h"
+#include "FWCore/ParameterSet/interface/Registry.h"
 
 #include "FWCore/ServiceRegistry/interface/ServiceRegistry.h"
 #include "FWCore/MessageLogger/interface/MessageLogger.h"
@@ -456,6 +463,7 @@ namespace edm {
     shouldWeStop_(false),
     alreadyHandlingException_(false),
     forceLooperToEnd_(false),
+    looperBeginJobRun_(false),
     numberOfForkedChildren_(0),
     numberOfSequentialEventsPerChild_(1) {
     boost::shared_ptr<ProcessDesc> processDesc = PythonProcessDesc(config).processDesc();
@@ -495,6 +503,7 @@ namespace edm {
     shouldWeStop_(false),
     alreadyHandlingException_(false),
     forceLooperToEnd_(false),
+    looperBeginJobRun_(false),
     numberOfForkedChildren_(0),
     numberOfSequentialEventsPerChild_(1) {
     boost::shared_ptr<ProcessDesc> processDesc = PythonProcessDesc(config).processDesc();
@@ -533,7 +542,8 @@ namespace edm {
     looper_(),
     shouldWeStop_(false),
     alreadyHandlingException_(false),
-    forceLooperToEnd_(false) {
+    forceLooperToEnd_(false),
+    looperBeginJobRun_(false) {
     init(processDesc, token, legacy);
   }
 
@@ -567,7 +577,8 @@ namespace edm {
     looper_(),
     shouldWeStop_(false),
     alreadyHandlingException_(false),
-    forceLooperToEnd_(false) {
+    forceLooperToEnd_(false),
+    looperBeginJobRun_(false) {
     if(isPython) {
       boost::shared_ptr<ProcessDesc> processDesc = PythonProcessDesc(config).processDesc();
       init(processDesc, ServiceToken(), serviceregistry::kOverlapIsError);
@@ -615,6 +626,14 @@ namespace edm {
     //create the services
     ServiceToken tempToken(ServiceRegistry::createSet(*pServiceSets, iToken, iLegacy));
 
+    //see if any of the Services have to have their PSets stored
+    for(std::vector<ParameterSet>::const_iterator it = pServiceSets->begin(), itEnd = pServiceSets->end();
+        it != itEnd;
+        ++it) {
+      if(it->exists("@save_config")) {
+        parameterSet->addParameter(it->getParameter<std::string>("@service_type"),*it);
+      }
+    }
     // Copy slots that hold all the registered callback functions like
     // PostBeginJob into an ActivityRegistry that is owned by EventProcessor
     tempToken.copySlotsTo(*actReg_); 
@@ -707,6 +726,16 @@ namespace edm {
     looper_.reset();
     wreg_.clear();
     actReg_.reset();
+
+    pset::Registry* psetRegistry = pset::Registry::instance();
+    psetRegistry->data().clear();
+    psetRegistry->extra().setID(ParameterSetID());
+
+    EntryDescriptionRegistry::instance()->data().clear();
+    ParentageRegistry::instance()->data().clear();
+    ProcessConfigurationRegistry::instance()->data().clear();
+    ProcessHistoryRegistry::instance()->data().clear();
+    BranchIDListHelper::clearRegistries();
   }
 
   void
@@ -822,12 +851,19 @@ namespace edm {
     // added and do 'run'
     // again.  In that case the newly added Module needs its 'beginJob'
     // to be called.
-    EventSetup const& es =
-      esp_->eventSetupForInstance(IOVSyncValue::beginOfTime());
-    if(looper_) {
-       looper_->beginOfJob(es);
-    }
+    
+    //NOTE: in future we should have a beginOfJob for looper which takes no arguments
+    //  For now we delay calling beginOfJob until first beginOfRun
+    //if(looper_) {
+    //   looper_->beginOfJob(es);
+    //}
     try {
+      //using presently empty ESSource
+      // this will go away when all 'doBeginJob' taking
+      // the EventSetup as argument are removed
+      EventSetup const& es =
+      esp_->eventSetup();
+      
       input_->doBeginJob(es);
     } catch(cms::Exception& e) {
       LogError("BeginJob") << "A cms::Exception happened while processing the beginJob of the 'source'\n";
@@ -840,12 +876,20 @@ namespace edm {
       LogError("BeginJob") << "An unknown exception happened while processing the beginJob of the 'source'\n";
       throw;
     }
+    //using presently empty ESSource
+    // this will go away when all 'doBeginJob' taking
+    // the EventSetup as argument are removed
+    EventSetup const& es =
+    esp_->eventSetup();
+    
     schedule_->beginJob(es);
     if (!allModuleNames().empty()) {
-      cms::Exception exception("Modules still calling beginJob(EventSetup):\n");
+      cms::Exception exception("The following modules still define beginJob(EventSetup):\n");
       for (std::set<std::string>::const_iterator it = allModuleNames().begin(), itEnd = allModuleNames().end(); it != itEnd; ++it) {
 	exception << *it << "\n";
       }
+      exception << "beginJob(EventSetup) is obsolete. It should be replaced by beginJob() (no arguments).\n";
+      exception << "If the module needs EventSetup, EventSetup must be provided by a different function (e.g. beginRun()).\n";
       throw exception;
     }
     actReg_->postBeginJobSignal_();
@@ -884,6 +928,7 @@ namespace edm {
   namespace {
     volatile bool child_failed = false;
     volatile unsigned int num_children_done = 0;
+    volatile int child_fail_exit_status = 0;
     
     extern "C" {
       void ep_sigchld(int, siginfo_t*, void*) {
@@ -897,6 +942,7 @@ namespace edm {
             ++num_children_done;
             if(0 != WEXITSTATUS(stat_loc)) {
               child_failed = true;
+              child_fail_exit_status = WEXITSTATUS(stat_loc);
             }
           }
           if(WIFSIGNALED(stat_loc)) {
@@ -1063,7 +1109,10 @@ namespace edm {
 	sigsuspend(&unblockingSigSet);
       } 
       pthread_sigmask(SIG_SETMASK, &oldSigSet, NULL);
-    }  
+    }
+    if(child_failed) {
+      throw cms::Exception("ForkedChildFailed")<<"child process ended abnormally with exit code "<<child_fail_exit_status;
+    }
     return false;
   }
 
@@ -1675,7 +1724,9 @@ namespace edm {
 
   void EventProcessor::startingNewLoop() {
     shouldWeStop_ = false;
-    if (looper_) {
+    //NOTE: for first loop, need to delay calling 'doStartingNewLoop'
+    // until after we've called beginOfJob
+    if (looper_ && looperBeginJobRun_) {
       looper_->doStartingNewLoop();
     }
     FDEBUG(1) << "\tstartingNewLoop\n";
@@ -1742,6 +1793,11 @@ namespace edm {
     IOVSyncValue ts(EventID(runPrincipal.run(), 0, 0),
                     runPrincipal.beginTime());
     EventSetup const& es = esp_->eventSetupForInstance(ts);
+    if(looper_ && looperBeginJobRun_==false) {
+      looper_->beginOfJob(es);
+      looperBeginJobRun_=true;
+      looper_->doStartingNewLoop();
+    }
     schedule_->processOneOccurrence<OccurrenceTraits<RunPrincipal, BranchActionBegin> >(runPrincipal, es);
     FDEBUG(1) << "\tbeginRun " << run << "\n";
     if (looper_) {
