@@ -27,7 +27,7 @@ Maker::throwValidationException(WorkerParams const& p,
   std::string moduleName = conf.getParameter<std::string>("@module_type");
   std::string moduleLabel = conf.getParameter<std::string>("@module_label");
 
-  Exception toThrow(errors::Configuration,
+  edm::Exception toThrow(edm::errors::Configuration,
                          "Error occurred while validating and registering configuration\n");
   toThrow << "for module of type \'" << moduleName << "\' with label \'" << moduleLabel << "\'\n";
   toThrow.append(iException);
@@ -38,7 +38,7 @@ void
 Maker::throwConfigurationException(ModuleDescription const& md, 
                                    sigc::signal<void, ModuleDescription const&>& post, 
                                    cms::Exception const& iException) const {
-  Exception toThrow(errors::Configuration,"Error occurred while creating ");
+  edm::Exception toThrow(edm::errors::Configuration,"Error occurred while creating ");
   toThrow << md.moduleName() << " with label " << md.moduleLabel() << "\n";
   toThrow.append(iException);
   post(md);
@@ -49,11 +49,8 @@ void
 Maker::validateEDMType(std::string const& edmType, WorkerParams const& p) const {
   std::string expected = p.pset_->getUntrackedParameter<std::string>("@module_edm_type");
   if(edmType != expected) {
-    Exception toThrow(errors::Configuration,"Error occurred while creating module.\n");
-    toThrow <<  p.pset_->getParameter<std::string>("@module_type") <<  " with label " << p.pset_->getParameter<std::string>("@module_label")
-      << " is of type " << edmType << ", but declared in the configuration as " << expected << ".\n"
-      << "Please replace " << expected << " with " << edmType << " in the appropriate configuration file(s).\n";
-    throw toThrow;
+    LogDebug("WorkerMaker") << "Module " << p.pset_->getParameter<std::string>("@module_label")
+      << " is of type " << edmType << ", but declared in the configuration as " << expected;
   }
 }
   
@@ -74,8 +71,8 @@ Maker::makeWorker(WorkerParams const& p,
   ModuleDescription md = createModuleDescription(p);
   
   std::auto_ptr<Worker> worker;
-  validateEDMType(baseType(), p);
   try {
+    validateEDMType(baseType(), p);
     pre(md);    
     worker = makeWorker(p,md);
 
