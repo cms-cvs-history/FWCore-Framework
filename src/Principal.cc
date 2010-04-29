@@ -147,7 +147,6 @@ namespace edm {
       assert(history.notEmpty());
       bool found = history.getMapped(hist, *processHistoryPtr_);
       assert(found);
-      checkProcessHistory();
     }
     preg_->productLookup().reorderIfNecessary(branchType_, *processHistoryPtr_,
 					 processConfiguration_->processName());
@@ -227,9 +226,16 @@ namespace edm {
     // (The process ID is first computed in the call to 'insertMapped(..)' below.)
     // It would probably be better to move the ProcessHistory construction out to somewhere
     // which persists for longer than one Event
+
     ProcessHistoryRegistry::instance()->insertMapped(ph);
     setProcessHistoryID(ph.id());
     processHistoryModified_ = true;
+  }
+
+  void
+  Principal::setProcessHistory(Principal const& principal) {
+    processHistoryPtr_ = principal.processHistoryPtr_;
+    setProcessHistoryID(processHistoryPtr_->id());
   }
 
   ProcessHistory const&

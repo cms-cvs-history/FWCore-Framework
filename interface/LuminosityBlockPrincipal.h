@@ -91,9 +91,10 @@ namespace edm {
     void readImmediate() const;
 
     void swap(LuminosityBlockPrincipal&);
-  private:
-    virtual ProcessHistoryID const& processHistoryID() const {return aux().processHistoryID();}
 
+    ProcessHistoryID const& processHistoryID() const {return aux().processHistoryID();}
+
+  private:
     virtual void setProcessHistoryID(ProcessHistoryID const& phid) const {return aux().setProcessHistoryID(phid);}
 
     virtual bool unscheduledFill(std::string const&) const {return false;}

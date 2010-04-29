@@ -16,6 +16,9 @@ namespace edm {
   RunPrincipal::fillRunPrincipal(
     boost::shared_ptr<BranchMapper> mapper,
     boost::shared_ptr<DelayedReader> rtrv) {
+    if (productRegistry().anyProductProduced()) {
+      checkProcessHistory();
+    }
     fillPrincipal(aux_->processHistoryID(), mapper, rtrv);
     if (productRegistry().anyProductProduced()) {
       addToProcessHistory();

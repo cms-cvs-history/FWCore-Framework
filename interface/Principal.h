@@ -181,10 +181,10 @@ namespace edm {
 
     void putOrMerge(std::auto_ptr<EDProduct> prod, std::auto_ptr<ProductProvenance> prov, Group* group);
 
+    void setProcessHistory(Principal const& principal);
+
   private:
     virtual EDProduct const* getIt(ProductID const&) const;
-
-    virtual ProcessHistoryID const& processHistoryID() const = 0;
 
     virtual void setProcessHistoryID(ProcessHistoryID const& phid) const = 0;
 
