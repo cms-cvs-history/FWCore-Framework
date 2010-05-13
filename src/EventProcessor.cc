@@ -464,6 +464,7 @@ namespace edm {
     alreadyHandlingException_(false),
     forceLooperToEnd_(false),
     looperBeginJobRun_(false),
+    forceESCacheClearOnNewRun_(false),
     numberOfForkedChildren_(0),
     numberOfSequentialEventsPerChild_(1) {
     boost::shared_ptr<ProcessDesc> processDesc = PythonProcessDesc(config).processDesc();
@@ -504,6 +505,7 @@ namespace edm {
     alreadyHandlingException_(false),
     forceLooperToEnd_(false),
     looperBeginJobRun_(false),
+    forceESCacheClearOnNewRun_(false),
     numberOfForkedChildren_(0),
     numberOfSequentialEventsPerChild_(1) {
     boost::shared_ptr<ProcessDesc> processDesc = PythonProcessDesc(config).processDesc();
@@ -543,7 +545,9 @@ namespace edm {
     shouldWeStop_(false),
     alreadyHandlingException_(false),
     forceLooperToEnd_(false),
-    looperBeginJobRun_(false) {
+    looperBeginJobRun_(false),
+    forceESCacheClearOnNewRun_(false)
+  {
     init(processDesc, token, legacy);
   }
 
@@ -578,7 +582,9 @@ namespace edm {
     shouldWeStop_(false),
     alreadyHandlingException_(false),
     forceLooperToEnd_(false),
-    looperBeginJobRun_(false) {
+    looperBeginJobRun_(false),
+    forceESCacheClearOnNewRun_(false)
+  {
     if(isPython) {
       boost::shared_ptr<ProcessDesc> processDesc = PythonProcessDesc(config).processDesc();
       init(processDesc, ServiceToken(), serviceregistry::kOverlapIsError);
@@ -605,6 +611,7 @@ namespace edm {
     fileMode_ = optionsPset.getUntrackedParameter<std::string>("fileMode", "");
     handleEmptyRuns_ = optionsPset.getUntrackedParameter<bool>("handleEmptyRuns", true);
     handleEmptyLumis_ = optionsPset.getUntrackedParameter<bool>("handleEmptyLumis", true);
+    forceESCacheClearOnNewRun_ = optionsPset.getUntrackedParameter<bool>("forceEventSetupCacheClearOnNewRun",false);
     ParameterSet forking = optionsPset.getUntrackedParameter<ParameterSet>("multiProcesses", ParameterSet());
     numberOfForkedChildren_ = forking.getUntrackedParameter<int>("maxChildProcesses", 0);
     numberOfSequentialEventsPerChild_ = forking.getUntrackedParameter<unsigned int>("maxSequentialEventsPerChild", 1);
@@ -616,7 +623,6 @@ namespace edm {
                                                 std::make_pair(itPS->getUntrackedParameter<std::string>("type","*"),
                                                                itPS->getUntrackedParameter<std::string>("label","")));
     }
-    
     maxEventsPset_ = parameterSet->getUntrackedParameter<ParameterSet>("maxEvents", ParameterSet());
     maxLumisPset_ = parameterSet->getUntrackedParameter<ParameterSet>("maxLuminosityBlocks", ParameterSet());
 
@@ -963,8 +969,22 @@ namespace edm {
     kMaxChildAction
   };
   
+  namespace {
+    unsigned int numberOfDigitsInChildIndex(unsigned int numberOfChildren) {
+      unsigned int n = 0;
+      while (numberOfChildren != 0) {
+        ++n;
+        numberOfChildren /= 10;
+      }
+      if (n == 0) {
+        n = 3; // Protect against zero numberOfChildren
+      }
+      return n;
+    }
+  }
+
   bool 
-  EventProcessor::forkProcess() {
+  EventProcessor::forkProcess(std::string const& jobReportFile) {
 
     if(0 == numberOfForkedChildren_) {return true;}
     assert(0<numberOfForkedChildren_);
@@ -1031,33 +1051,57 @@ namespace edm {
       }
     }
     std::cout <<"  done prefetching"<<std::endl;
+{
+    // make the services available
+    ServiceRegistry::Operate operate(serviceToken_);
+    Service<JobReport> jobReport;
+    jobReport->parentBeforeFork(jobReportFile, numberOfForkedChildren_);
 
     //Now actually do the forking
     actReg_->preForkReleaseResourcesSignal_();
     input_->doPreForkReleaseResources();
     schedule_->preForkReleaseResources();
-
+}
     installCustomHandler(SIGCHLD, ep_sigchld);
+
     unsigned int childIndex = 0;
     unsigned int const kMaxChildren = numberOfForkedChildren_;
+    unsigned int const numberOfDigitsInIndex = numberOfDigitsInChildIndex(kMaxChildren);
     std::vector<pid_t> childrenIds;
     childrenIds.reserve(kMaxChildren);
+{
+    // make the services available
+    ServiceRegistry::Operate operate(serviceToken_);
+    Service<JobReport> jobReport;
     for(; childIndex < kMaxChildren; ++childIndex) {
       pid_t value = fork();
       if(value == 0) {
+        // this is the child process, redirect stdout and stderr to a log file
+        fflush(stdout);
+        fflush(stderr);
+        std::stringstream stout;
+        stout << "redirectout_" << getpgrp() << "_" << std::setw(numberOfDigitsInIndex) << std::setfill('0') << childIndex << ".log";
+        if (0 == freopen(stout.str().c_str(), "w", stdout)) {
+          std::cerr << "Error during freopen of child process " 
+          << childIndex << std::endl;
+        }
+        if (dup2(fileno(stdout), fileno(stderr)) < 0) {
+          std::cerr << "Error during dup2 of child process" 
+          << childIndex << std::endl;
+        }
+        
         std::cout << "I am child " << childIndex << " with pgid " << getpgrp() << std::endl;
         break;
       }
       if(value < 0) {
-        std::cout << "failed to create a child" << std::endl;
+        std::cerr << "failed to create a child" << std::endl;
         exit(-1);
       }
       childrenIds.push_back(value);
     }
 
     if(childIndex < kMaxChildren) {
-      //make the services available
-      ServiceRegistry::Operate operate(serviceToken_);
+      jobReport->childAfterFork(jobReportFile, childIndex, kMaxChildren);
       actReg_->postForkReacquireResourcesSignal_(childIndex, kMaxChildren);
       input_->doPostForkReacquireResources(childIndex, kMaxChildren, numberOfSequentialEventsPerChild_);
       schedule_->postForkReacquireResources(childIndex, kMaxChildren);
@@ -1065,6 +1109,8 @@ namespace edm {
       //rewindInput();
       return true;
     }
+    jobReport->parentAfterFork(jobReportFile);
+}
     
     //this is the original which is now the master for all the children
     
@@ -1792,6 +1838,9 @@ namespace edm {
     input_->doBeginRun(runPrincipal);
     IOVSyncValue ts(EventID(runPrincipal.run(), 0, 0),
                     runPrincipal.beginTime());
+    if(forceESCacheClearOnNewRun_){
+      esp_->forceCacheClear();
+    }
     EventSetup const& es = esp_->eventSetupForInstance(ts);
     if(looper_ && looperBeginJobRun_==false) {
       looper_->beginOfJob(es);

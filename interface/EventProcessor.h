@@ -339,7 +339,7 @@ namespace edm {
     virtual bool alreadyHandlingException() const;
 
      //returns 'true' if this was a child and we should continue processing
-     bool forkProcess();
+     bool forkProcess(std::string const& jobReportFile);
 
   private:
     //------------------------------------------------------------------
@@ -417,6 +417,7 @@ namespace edm {
     bool                                          alreadyHandlingException_;
     bool                                          forceLooperToEnd_;
     bool                                          looperBeginJobRun_;
+    bool                                          forceESCacheClearOnNewRun_;
 
     int                                           numberOfForkedChildren_;
     unsigned int                                  numberOfSequentialEventsPerChild_;
