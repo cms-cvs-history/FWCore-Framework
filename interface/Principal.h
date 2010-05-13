@@ -115,17 +115,13 @@ namespace edm {
 			        SelectorBase const& selector,
 			        BasicHandle& result) const;
 
-    ProcessHistory const& processHistory() const;
+    ProcessHistory const& processHistory() const {
+      return *processHistoryPtr_;
+    }
 
     ProcessConfiguration const& processConfiguration() const {return *processConfiguration_;}
 
     ProductRegistry const& productRegistry() const {return *preg_;}
-
-    // ----- Mark this Principal as having been updated in the
-    // current Process.
-    void addToProcessHistory() const;
-
-    void checkProcessHistory() const;
 
     // merge Principals containing different groups.
     void recombine(Principal& other, std::vector<BranchID> const& bids);
@@ -147,6 +143,10 @@ namespace edm {
     void maybeFlushCache(TypeID const& tid, InputTag const& tag) const;
 
   protected:
+    ProcessHistory& processHistoryUpdate() {
+      return *processHistoryPtr_;
+    }
+
     // ----- Add a new Group
     // *this takes ownership of the Group, which in turn owns its
     // data.
@@ -218,8 +218,6 @@ namespace edm {
     boost::shared_ptr<ProcessHistory> processHistoryPtr_;
 
     ProcessConfiguration const* processConfiguration_;
-
-    mutable bool processHistoryModified_;
 
     // A vector of groups.
     GroupCollection groups_; // products and provenances are persistent

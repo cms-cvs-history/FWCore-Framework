@@ -66,6 +66,11 @@ namespace edm {
       return aux_->mergeAuxiliary(aux);
     }
 
+    // ----- Mark this RunPrincipal as having been updated in the current Process.
+    void addToProcessHistory();
+
+    void checkProcessHistory() const;
+
     void setUnscheduledHandler(boost::shared_ptr<UnscheduledHandler>) {}
 
     void put(
@@ -87,6 +92,9 @@ namespace edm {
 
     void resolveProductImmediate(Group const& g) const;
 
+    bool processHistoryModified_;
+
+    // A vector of groups.
     boost::shared_ptr<RunAuxiliary> aux_;
   };
 }

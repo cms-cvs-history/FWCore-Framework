@@ -553,7 +553,6 @@ namespace edm {
 
   void
   InputSource::respondToClearingLumiCache() {
-    if (lumiAuxiliary_) lumiAuxiliary_->setProcessHistoryID(deleteFromProcessHistory(lumiAuxiliary_->processHistoryID(), processConfiguration().processName()));
   }
 
   void
