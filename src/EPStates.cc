@@ -9,14 +9,17 @@
 
 namespace statemachine {
   namespace {
-    HandleLumis::LumiID const InvalidLumiID = HandleLumis::LumiID(INVALID_RUN, INVALID_LUMI);
+    int const INVALID_RUN_NUMBER = 0;
+    Run const INVALID_RUN(edm::ProcessHistoryID(), INVALID_RUN_NUMBER);
+    HandleLumis::LumiID const InvalidLumiID = HandleLumis::LumiID(edm::ProcessHistoryID(), INVALID_RUN_NUMBER, INVALID_LUMI);
   }
 
-  Run::Run(int id) : id_(id) {}
-  int Run::id() const { return id_; }
+  Run::Run(edm::ProcessHistoryID const& phid, int runNumber) :
+    processHistoryID_(phid),
+    runNumber_(runNumber) {
+  }
 
   Lumi::Lumi(int id) : id_(id) {}
-  int Lumi::id() const { return id_; }
 
   Machine::Machine(edm::IEventProcessor* ep,
                    FileMode fileMode,
@@ -310,7 +313,7 @@ namespace statemachine {
   }
 
   bool HandleRuns::beginRunCalled() const { return beginRunCalled_; }
-  int HandleRuns::currentRun() const { return currentRun_; }
+  Run const& HandleRuns::currentRun() const { return currentRun_; }
   bool HandleRuns::runException() const { return runException_; }
 
   void HandleRuns::setupCurrentRun() {
@@ -320,7 +323,7 @@ namespace statemachine {
     if (context<Machine>().fileMode() == FULLLUMIMERGE || context<Machine>().fileMode() == MERGE) {
       if (previousRuns_.find(currentRun_) != previousRuns_.end()) {
         throw cms::Exception("Merge failure:") << 
-            "Run " << currentRun_ << " is discontinuous, and cannot be merged in this mode.\n"
+	    "Run " << currentRun_.runNumber() << " is discontinuous, and cannot be merged in this mode.\n"
             "The run is split across two or more input files,\n"
             "and either the run is not the last run in the previous input file,\n"
             "or it is not the first run in the current input file.\n"
@@ -335,7 +338,7 @@ namespace statemachine {
     }
   }
 
-  void HandleRuns::beginRun(int run) {
+  void HandleRuns::beginRun(Run const& run) {
     beginRunCalled_ = true;
 
     runException_ = true;
@@ -343,7 +346,7 @@ namespace statemachine {
     runException_ = false;
   }
 
-  void HandleRuns::endRun(int run) {
+  void HandleRuns::endRun(Run const& run) {
     beginRunCalled_ = false;
 
     runException_ = true;
@@ -418,7 +421,7 @@ namespace statemachine {
   {
     checkInvariant();
 
-    if (context<HandleRuns>().currentRun() != run.id()) {
+    if (context<HandleRuns>().currentRun() != run) {
       return transit<NewRun, HandleRuns, Run>(&HandleRuns::finalizeRun, run);
     }
     else {
@@ -459,6 +462,12 @@ namespace statemachine {
       return transit<HandleNewInputFile2>();
     }
     return forward_event();
+  }
+
+  HandleLumis::LumiID::LumiID(edm::ProcessHistoryID const& phid, int run, int lumi) :
+    processHistoryID_(phid),
+    run_(run),
+    lumi_(lumi) {
   }
 
   HandleLumis::HandleLumis(my_context ctx) :
@@ -538,7 +547,7 @@ namespace statemachine {
     return true;
   }
 
-  HandleLumis::LumiID HandleLumis::currentLumi() const { return currentLumi_; }
+  HandleLumis::LumiID const& HandleLumis::currentLumi() const { return currentLumi_; }
 
   bool HandleLumis::currentLumiEmpty() const { return currentLumiEmpty_; }
 
@@ -549,14 +558,14 @@ namespace statemachine {
 
   void HandleLumis::setupCurrentLumi() {
 
-    int run = context<HandleRuns>().currentRun();
+    Run const& run = context<HandleRuns>().currentRun();
     assert (run != INVALID_RUN);
     lumiException_ = true;
-    currentLumi_ = HandleLumis::LumiID(run, ep_.readAndCacheLumi());
+    currentLumi_ = HandleLumis::LumiID(run.processHistoryID(), run.runNumber(), ep_.readAndCacheLumi());
     if (context<Machine>().fileMode() == MERGE) {
       if (previousLumis_.find(currentLumi_) != previousLumis_.end()) {
         throw cms::Exception("Merge failure:") << 
-            "Luminosity Section " << currentLumi_.first <<":" << currentLumi_.second << " is discontinuous, and cannot be merged in this mode.\n"
+	  "Luminosity Section " << currentLumi_.run() <<":" << currentLumi_.lumi() << " is discontinuous, and cannot be merged in this mode.\n"
             "The lumi section is split across two or more input files,\n"
             "and either the lumi section is not the last run in the previous input file,\n"
             "or it is not the first lumi section in the current input file.\n"
@@ -583,12 +592,12 @@ namespace statemachine {
     if (currentLumiEmpty_) {
       if (context<Machine>().handleEmptyLumis()) {
         if (context<HandleRuns>().beginRunCalled()) {
-          ep_.beginLumi(currentLumi().first, currentLumi().second);
-          ep_.endLumi(currentLumi().first, currentLumi().second);
+          ep_.beginLumi(currentLumi().processHistoryID(), currentLumi().run(), currentLumi().lumi());
+          ep_.endLumi(currentLumi().processHistoryID(), currentLumi().run(), currentLumi().lumi());
           if (context<Machine>().fileMode() == NOMERGE ||
               context<Machine>().fileMode() == MERGE) {
-            ep_.writeLumi(currentLumi().first, currentLumi().second);
-            ep_.deleteLumiFromCache(currentLumi().first, currentLumi().second);
+            ep_.writeLumi(currentLumi().processHistoryID(), currentLumi().run(), currentLumi().lumi());
+            ep_.deleteLumiFromCache(currentLumi().processHistoryID(), currentLumi().run(), currentLumi().lumi());
 	    previousLumis_.insert(currentLumi_);
           }
         }
@@ -600,18 +609,18 @@ namespace statemachine {
       else {
         if (context<Machine>().fileMode() == NOMERGE ||
             context<Machine>().fileMode() == MERGE) {
-          ep_.writeLumi(currentLumi().first, currentLumi().second);
-          ep_.deleteLumiFromCache(currentLumi().first, currentLumi().second);
+          ep_.writeLumi(currentLumi().processHistoryID(), currentLumi().run(), currentLumi().lumi());
+          ep_.deleteLumiFromCache(currentLumi().processHistoryID(), currentLumi().run(), currentLumi().lumi());
           previousLumis_.insert(currentLumi_);
         }
       }
     }
     else { 
-      ep_.endLumi(currentLumi().first, currentLumi().second);
+      ep_.endLumi(currentLumi().processHistoryID(), currentLumi().run(), currentLumi().lumi());
       if (context<Machine>().fileMode() == NOMERGE ||
           context<Machine>().fileMode() == MERGE) {
-        ep_.writeLumi(currentLumi().first, currentLumi().second);
-        ep_.deleteLumiFromCache(currentLumi().first, currentLumi().second);
+        ep_.writeLumi(currentLumi().processHistoryID(), currentLumi().run(), currentLumi().lumi());
+        ep_.deleteLumiFromCache(currentLumi().processHistoryID(), currentLumi().run(), currentLumi().lumi());
         previousLumis_.insert(currentLumi_);
       }
     }
@@ -627,12 +636,12 @@ namespace statemachine {
     for (std::vector<LumiID>::const_iterator iter = unhandledLumis_.begin();
          iter != unhandledLumis_.end();
          ++iter) {
-      ep_.beginLumi(iter->first, iter->second);
-      ep_.endLumi(iter->first, iter->second);
+      ep_.beginLumi(iter->processHistoryID(), iter->run(), iter->lumi());
+      ep_.endLumi(iter->processHistoryID(), iter->run(), iter->lumi());
       if (context<Machine>().fileMode() == NOMERGE ||
           context<Machine>().fileMode() == MERGE) {
-        ep_.writeLumi(iter->first, iter->second);
-        ep_.deleteLumiFromCache(iter->first, iter->second);
+        ep_.writeLumi(iter->processHistoryID(), iter->run(), iter->lumi());
+        ep_.deleteLumiFromCache(iter->processHistoryID(), iter->run(), iter->lumi());
         previousLumis_.insert(*iter);
       }
     }
@@ -646,7 +655,7 @@ namespace statemachine {
       finalizeOutstandingLumis();
 
       lumiException_ = true;
-      ep_.beginLumi(currentLumi().first, currentLumi().second);
+      ep_.beginLumi(currentLumi().processHistoryID(), currentLumi().run(), currentLumi().lumi());
       lumiException_ = false;
 
       currentLumiEmpty_ = false;
@@ -666,8 +675,9 @@ namespace statemachine {
 
   bool FirstLumi::checkInvariant() {
     assert(context<HandleRuns>().currentRun() != INVALID_RUN);
-    assert(context<HandleLumis>().currentLumi().first == context<HandleRuns>().currentRun());
-    assert(context<HandleLumis>().currentLumi().second != INVALID_LUMI);
+    assert(context<HandleLumis>().currentLumi().processHistoryID() == context<HandleRuns>().currentRun().processHistoryID());
+    assert(context<HandleLumis>().currentLumi().run() == context<HandleRuns>().currentRun().runNumber());
+    assert(context<HandleLumis>().currentLumi().lumi() != INVALID_LUMI);
     assert(context<HandleLumis>().unhandledLumis().empty());
     assert(context<HandleLumis>().currentLumiEmpty() == true);
     return true;
@@ -696,8 +706,9 @@ namespace statemachine {
 
   bool AnotherLumi::checkInvariant() {
     assert(context<HandleRuns>().currentRun() != INVALID_RUN);
-    assert(context<HandleLumis>().currentLumi().first == context<HandleRuns>().currentRun());
-    assert(context<HandleLumis>().currentLumi().second != INVALID_LUMI);
+    assert(context<HandleLumis>().currentLumi().processHistoryID() == context<HandleRuns>().currentRun().processHistoryID());
+    assert(context<HandleLumis>().currentLumi().run() == context<HandleRuns>().currentRun().runNumber());
+    assert(context<HandleLumis>().currentLumi().lumi() != INVALID_LUMI);
     assert(context<HandleLumis>().currentLumiEmpty() == true);
     return true;
   }
@@ -726,8 +737,9 @@ namespace statemachine {
   bool HandleEvent::checkInvariant() {
     assert(context<HandleRuns>().currentRun() != INVALID_RUN);
     assert(context<HandleRuns>().beginRunCalled());
-    assert(context<HandleLumis>().currentLumi().first == context<HandleRuns>().currentRun());
-    assert(context<HandleLumis>().currentLumi().second != INVALID_LUMI);
+    assert(context<HandleLumis>().currentLumi().processHistoryID() == context<HandleRuns>().currentRun().processHistoryID());
+    assert(context<HandleLumis>().currentLumi().run() == context<HandleRuns>().currentRun().runNumber());
+    assert(context<HandleLumis>().currentLumi().lumi() != INVALID_LUMI);
     assert(context<HandleLumis>().unhandledLumis().empty());
     assert(context<HandleLumis>().currentLumiEmpty() == false);
     return true;
@@ -767,8 +779,9 @@ namespace statemachine {
 
   bool HandleNewInputFile3::checkInvariant() {
     assert(context<HandleRuns>().currentRun() != INVALID_RUN);
-    assert(context<HandleLumis>().currentLumi().first == context<HandleRuns>().currentRun());
-    assert(context<HandleLumis>().currentLumi().second != INVALID_LUMI);
+    assert(context<HandleLumis>().currentLumi().processHistoryID() == context<HandleRuns>().currentRun().processHistoryID());
+    assert(context<HandleLumis>().currentLumi().run() == context<HandleRuns>().currentRun().runNumber());
+    assert(context<HandleLumis>().currentLumi().lumi() != INVALID_LUMI);
     return true;
   }
 
@@ -776,7 +789,7 @@ namespace statemachine {
   {
     checkInvariant();
 
-    if (context<HandleRuns>().currentRun() == run.id()) {
+    if (context<HandleRuns>().currentRun() == run) {
       return transit<ContinueRun2>();
     }
     return forward_event();
@@ -805,8 +818,9 @@ namespace statemachine {
 
   bool ContinueRun2::checkInvariant() {
     assert(context<HandleRuns>().currentRun() != INVALID_RUN);
-    assert(context<HandleLumis>().currentLumi().first == context<HandleRuns>().currentRun());
-    assert(context<HandleLumis>().currentLumi().second != INVALID_LUMI);
+    assert(context<HandleLumis>().currentLumi().processHistoryID() == context<HandleRuns>().currentRun().processHistoryID());
+    assert(context<HandleLumis>().currentLumi().run() == context<HandleRuns>().currentRun().runNumber());
+    assert(context<HandleLumis>().currentLumi().lumi() != INVALID_LUMI);
     return true;
   }
 
@@ -814,7 +828,7 @@ namespace statemachine {
   {
     checkInvariant();
 
-    if (context<HandleLumis>().currentLumi().second != lumi.id()) {
+    if (context<HandleLumis>().currentLumi().lumi() != lumi.id()) {
       return transit<AnotherLumi>();
     }
     else {
@@ -845,8 +859,9 @@ namespace statemachine {
 
   bool ContinueLumi::checkInvariant() {
     assert(context<HandleRuns>().currentRun() != INVALID_RUN);
-    assert(context<HandleLumis>().currentLumi().first == context<HandleRuns>().currentRun());
-    assert(context<HandleLumis>().currentLumi().second != INVALID_LUMI);
+    assert(context<HandleLumis>().currentLumi().processHistoryID() == context<HandleRuns>().currentRun().processHistoryID());
+    assert(context<HandleLumis>().currentLumi().run() == context<HandleRuns>().currentRun().runNumber());
+    assert(context<HandleLumis>().currentLumi().lumi() != INVALID_LUMI);
     return true;
   }
 

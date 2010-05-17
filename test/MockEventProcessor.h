@@ -9,9 +9,15 @@ Original Authors: W. David Dagenhart, Marc Paterno
 */
 
 #include "FWCore/Framework/interface/IEventProcessor.h"
+#include "DataFormats/Provenance/interface/ProcessHistoryID.h"
 #include "FWCore/Framework/src/EPStates.h"
+
 #include <iostream>
 #include <string>
+
+namespace statemachine {
+  class Run;
+}
 
 namespace edm {
   class MockEventProcessor : public IEventProcessor {
@@ -46,18 +52,18 @@ namespace edm {
 
     virtual void doErrorStuff();
 
-    virtual void beginRun(int run);
-    virtual void endRun(int run);
+    virtual void beginRun(statemachine::Run const& run);
+    virtual void endRun(statemachine::Run const& run);
 
-    virtual void beginLumi(int run, int lumi);
-    virtual void endLumi(int run, int lumi);
+    virtual void beginLumi(ProcessHistoryID const& phid, int run, int lumi);
+    virtual void endLumi(ProcessHistoryID const& phid, int run, int lumi);
 
-    virtual int readAndCacheRun();
+    virtual statemachine::Run readAndCacheRun();
     virtual int readAndCacheLumi();
-    virtual void writeRun(int run);
-    virtual void deleteRunFromCache(int run);
-    virtual void writeLumi(int run, int lumi);
-    virtual void deleteLumiFromCache(int run, int lumi);
+    virtual void writeRun(statemachine::Run const& run);
+    virtual void deleteRunFromCache(statemachine::Run const& run);
+    virtual void writeLumi(ProcessHistoryID const& phid, int run, int lumi);
+    virtual void deleteLumiFromCache(ProcessHistoryID const& phid, int run, int lumi);
 
     virtual void readAndProcessEvent();
     virtual bool shouldWeStop() const;

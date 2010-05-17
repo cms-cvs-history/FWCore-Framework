@@ -2,7 +2,7 @@
 #define Framework_EPStates_h
 
 /*
-$Id: EPStates.h,v 1.7 2008/07/29 02:17:36 wmtan Exp $
+$Id: EPStates.h,v 1.8 2008/08/04 20:00:45 wdd Exp $
 
 The state machine that controls the processing of runs, luminosity
 blocks, events, and loops is implemented using the boost statechart
@@ -11,6 +11,8 @@ used by the EventProcessor.
 
 Original Authors: W. David Dagenhart, Marc Paterno
 */
+
+#include "DataFormats/Provenance/interface/ProcessHistoryID.h"
 
 #include "boost/statechart/event.hpp"
 #include "boost/statechart/state_machine.hpp"
@@ -31,7 +33,6 @@ namespace edm {
 namespace statemachine {
 
   enum FileMode { NOMERGE, MERGE, FULLLUMIMERGE, FULLMERGE };
-  int const INVALID_RUN = 0;
   int const INVALID_LUMI = 0;
 
   // Define the classes representing the "boost statechart events".
@@ -39,16 +40,36 @@ namespace statemachine {
 
   class Run : public sc::event<Run> {
   public:
-    Run(int id);
-    int id() const;
+    Run(edm::ProcessHistoryID const& phid, int runNumber);
+    edm::ProcessHistoryID const& processHistoryID() const { return processHistoryID_; }
+    int runNumber() const { return runNumber_; }
+
+    bool operator<(Run const& rh) const {
+      if (processHistoryID() == rh.processHistoryID()) {
+        return runNumber() < rh.runNumber();
+      }
+      return processHistoryID() < rh.processHistoryID();
+    }
+
+    bool operator==(Run const& rh) const {
+      return (runNumber_ == rh.runNumber()) &&
+	     (processHistoryID_ == rh.processHistoryID());
+    }
+
+    bool operator!=(Run const& rh) const {
+      return (runNumber_ != rh.runNumber()) ||
+	     (processHistoryID_ != rh.processHistoryID());
+    }
+
   private:
-    int id_;
+    edm::ProcessHistoryID processHistoryID_;
+    int runNumber_;
   };
 
   class Lumi : public sc::event<Lumi> {
   public:
     Lumi(int id);
-    int id() const;
+    int id() const { return id_; }
   private:
     int id_;
   };
@@ -226,11 +247,11 @@ namespace statemachine {
     typedef sc::transition<File, NewInputAndOutputFiles> reactions;
 
     bool beginRunCalled() const;
-    int currentRun() const;
+    Run const& currentRun() const;
     bool runException() const;
     void setupCurrentRun();
-    void beginRun(int run);
-    void endRun(int run);
+    void beginRun(Run const& run);
+    void endRun(Run const& run);
     void finalizeRun(Run const&);
     void finalizeRun();
     void beginRunIfNotDoneAlready();
@@ -238,8 +259,8 @@ namespace statemachine {
     edm::IEventProcessor & ep_;
     bool exitCalled_;
     bool beginRunCalled_;
-    int currentRun_;
-    std::set<int> previousRuns_;
+    Run currentRun_;
+    std::set<Run> previousRuns_;
     bool runException_;
   };
 
@@ -298,13 +319,34 @@ namespace statemachine {
   class HandleLumis : public sc::state<HandleLumis, HandleRuns, FirstLumi>
   {
   public:
-    typedef std::pair<int, int> LumiID;
+    class LumiID {
+    public:
+      LumiID(edm::ProcessHistoryID const& phid, int run, int lumi);
+      edm::ProcessHistoryID const& processHistoryID() const { return processHistoryID_; }
+      int run() const { return run_; }
+      int lumi() const { return lumi_; }
+
+      bool operator<(LumiID const& rh) const {
+        if (processHistoryID() == rh.processHistoryID()) {
+          if (run() == rh.run()) {
+            return lumi() < rh.lumi();
+          }
+          return run() < rh.run();
+        }
+        return processHistoryID() < rh.processHistoryID();
+      }
+
+    private:
+      edm::ProcessHistoryID processHistoryID_;
+      int run_;
+      int lumi_;
+    };
     HandleLumis(my_context ctx);
     void exit();
     ~HandleLumis();
     bool checkInvariant();
 
-    LumiID currentLumi() const;
+    LumiID const& currentLumi() const;
     bool currentLumiEmpty() const;
     std::vector<LumiID> const& unhandledLumis() const;
     void setupCurrentLumi();

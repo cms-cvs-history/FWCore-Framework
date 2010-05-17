@@ -1004,7 +1004,8 @@ namespace edm {
       itemType = input_->nextItemType();
       assert(itemType == InputSource::IsRun);
       
-      int run = readAndCacheRun();
+      // WMTANPH need to fix this
+      int run = readAndCacheRun().runNumber();
       
       RunPrincipal& runPrincipal = principalCache_.runPrincipal(run);
       std::cout <<" prefetching for run "<<runPrincipal.run()<<std::endl;
@@ -1592,7 +1593,8 @@ namespace edm {
           machine_->process_event(statemachine::File());
         }
         else if (itemType == InputSource::IsRun) {
-          machine_->process_event(statemachine::Run(input_->run()));
+          // WMTANPH next line needs a ProcessHistoryID from the input source
+          machine_->process_event(statemachine::Run(ProcessHistoryID(), input_->run()));
         }
         else if (itemType == InputSource::IsLumi) {
           machine_->process_event(statemachine::Lumi(input_->luminosityBlock()));
@@ -1833,8 +1835,9 @@ namespace edm {
     stateMachineWasInErrorState_ = true;
   }
 
-  void EventProcessor::beginRun(int run) {
-    RunPrincipal& runPrincipal = principalCache_.runPrincipal(run);
+  // WMTANPH
+  void EventProcessor::beginRun(statemachine::Run const& run) {
+    RunPrincipal& runPrincipal = principalCache_.runPrincipal(run.runNumber());
     input_->doBeginRun(runPrincipal);
     IOVSyncValue ts(EventID(runPrincipal.run(), 0, 0),
                     runPrincipal.beginTime());
@@ -1848,26 +1851,28 @@ namespace edm {
       looper_->doStartingNewLoop();
     }
     schedule_->processOneOccurrence<OccurrenceTraits<RunPrincipal, BranchActionBegin> >(runPrincipal, es);
-    FDEBUG(1) << "\tbeginRun " << run << "\n";
+    FDEBUG(1) << "\tbeginRun " << run.runNumber() << "\n";
     if (looper_) {
       looper_->doBeginRun(runPrincipal, es);
     }
   }
 
-  void EventProcessor::endRun(int run) {
-    RunPrincipal& runPrincipal = principalCache_.runPrincipal(run);
+  // WMTANPH
+  void EventProcessor::endRun(statemachine::Run const& run) {
+    RunPrincipal& runPrincipal = principalCache_.runPrincipal(run.runNumber());
     input_->doEndRun(runPrincipal);
     IOVSyncValue ts(EventID(runPrincipal.run(), LuminosityBlockID::maxLuminosityBlockNumber(), EventID::maxEventNumber()),
                     runPrincipal.endTime());
     EventSetup const& es = esp_->eventSetupForInstance(ts);
     schedule_->processOneOccurrence<OccurrenceTraits<RunPrincipal, BranchActionEnd> >(runPrincipal, es);
-    FDEBUG(1) << "\tendRun " << run << "\n";
+    FDEBUG(1) << "\tendRun " << run.runNumber() << "\n";
     if (looper_) {
       looper_->doEndRun(runPrincipal, es);
     }
   }
 
-  void EventProcessor::beginLumi(int run, int lumi) {
+  //WMTANPH
+  void EventProcessor::beginLumi(ProcessHistoryID const& phid, int run, int lumi) {
     LuminosityBlockPrincipal& lumiPrincipal = principalCache_.lumiPrincipal(run, lumi);
     input_->doBeginLumi(lumiPrincipal);
     // NOTE: Using 0 as the event number for the begin of a lumi block is a bad idea
@@ -1881,7 +1886,8 @@ namespace edm {
     }
   }
 
-  void EventProcessor::endLumi(int run, int lumi) {
+  //WMTAN
+  void EventProcessor::endLumi(ProcessHistoryID const& phid, int run, int lumi) {
     LuminosityBlockPrincipal& lumiPrincipal = principalCache_.lumiPrincipal(run, lumi);
     input_->doEndLumi(lumiPrincipal);
     //NOTE: Using the max event number for the end of a lumi block is a bad idea
@@ -1896,9 +1902,12 @@ namespace edm {
     }
   }
 
-  int EventProcessor::readAndCacheRun() {
+  statemachine::Run EventProcessor::readAndCacheRun() {
+
     input_->readAndCacheRun();
-    return input_->markRun();
+    int run =  input_->markRun();
+    // WMTANPH
+    return statemachine::Run(ProcessHistoryID(), run);
   }
 
   int EventProcessor::readAndCacheLumi() {
@@ -1906,22 +1915,26 @@ namespace edm {
     return input_->markLumi();
   }
 
-  void EventProcessor::writeRun(int run) {
-    schedule_->writeRun(principalCache_.runPrincipal(run));
-    FDEBUG(1) << "\twriteRun " << run << "\n";
+  //WMTANPH
+  void EventProcessor::writeRun(statemachine::Run const& run) {
+    schedule_->writeRun(principalCache_.runPrincipal(run.runNumber()));
+    FDEBUG(1) << "\twriteRun " << run.runNumber() << "\n";
   }
 
-  void EventProcessor::deleteRunFromCache(int run) {
-    principalCache_.deleteRun(run);
-    FDEBUG(1) << "\tdeleteRunFromCache " << run << "\n";
+  //WMTANPH
+  void EventProcessor::deleteRunFromCache(statemachine::Run const& run) {
+    principalCache_.deleteRun(run.runNumber());
+    FDEBUG(1) << "\tdeleteRunFromCache " << run.runNumber() << "\n";
   }
 
-  void EventProcessor::writeLumi(int run, int lumi) {
+  //WMTANPH
+  void EventProcessor::writeLumi(ProcessHistoryID const& phid, int run, int lumi) {
     schedule_->writeLumi(principalCache_.lumiPrincipal(run, lumi));
     FDEBUG(1) << "\twriteLumi " << run << "/" << lumi << "\n";
   }
 
-  void EventProcessor::deleteLumiFromCache(int run, int lumi) {
+  //WMTANPH
+  void EventProcessor::deleteLumiFromCache(ProcessHistoryID const& phid, int run, int lumi) {
     principalCache_.deleteLumi(run, lumi);
     FDEBUG(1) << "\tdeleteLumiFromCache " << run << "/" << lumi << "\n";
   }
