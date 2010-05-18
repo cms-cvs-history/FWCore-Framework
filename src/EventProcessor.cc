@@ -1004,10 +1004,9 @@ namespace edm {
       itemType = input_->nextItemType();
       assert(itemType == InputSource::IsRun);
       
-      // WMTANPH need to fix this
-      int run = readAndCacheRun().runNumber();
-      
-      RunPrincipal& runPrincipal = principalCache_.runPrincipal(run);
+      statemachine::Run run = readAndCacheRun();
+
+      RunPrincipal& runPrincipal = principalCache_.runPrincipal(run.processHistoryID(), run.runNumber());
       std::cout <<" prefetching for run "<<runPrincipal.run()<<std::endl;
       IOVSyncValue ts(EventID(runPrincipal.run(), 0, 0),
                       runPrincipal.beginTime());
@@ -1835,9 +1834,8 @@ namespace edm {
     stateMachineWasInErrorState_ = true;
   }
 
-  // WMTANPH
   void EventProcessor::beginRun(statemachine::Run const& run) {
-    RunPrincipal& runPrincipal = principalCache_.runPrincipal(run.runNumber());
+    RunPrincipal& runPrincipal = principalCache_.runPrincipal(run.processHistoryID(), run.runNumber());
     input_->doBeginRun(runPrincipal);
     IOVSyncValue ts(EventID(runPrincipal.run(), 0, 0),
                     runPrincipal.beginTime());
@@ -1857,9 +1855,8 @@ namespace edm {
     }
   }
 
-  // WMTANPH
   void EventProcessor::endRun(statemachine::Run const& run) {
-    RunPrincipal& runPrincipal = principalCache_.runPrincipal(run.runNumber());
+    RunPrincipal& runPrincipal = principalCache_.runPrincipal(run.processHistoryID(), run.runNumber());
     input_->doEndRun(runPrincipal);
     IOVSyncValue ts(EventID(runPrincipal.run(), LuminosityBlockID::maxLuminosityBlockNumber(), EventID::maxEventNumber()),
                     runPrincipal.endTime());
@@ -1871,9 +1868,8 @@ namespace edm {
     }
   }
 
-  //WMTANPH
   void EventProcessor::beginLumi(ProcessHistoryID const& phid, int run, int lumi) {
-    LuminosityBlockPrincipal& lumiPrincipal = principalCache_.lumiPrincipal(run, lumi);
+    LuminosityBlockPrincipal& lumiPrincipal = principalCache_.lumiPrincipal(phid, run, lumi);
     input_->doBeginLumi(lumiPrincipal);
     // NOTE: Using 0 as the event number for the begin of a lumi block is a bad idea
     // lumi blocks know their start and end times why not also start and end events?
@@ -1886,9 +1882,8 @@ namespace edm {
     }
   }
 
-  //WMTAN
   void EventProcessor::endLumi(ProcessHistoryID const& phid, int run, int lumi) {
-    LuminosityBlockPrincipal& lumiPrincipal = principalCache_.lumiPrincipal(run, lumi);
+    LuminosityBlockPrincipal& lumiPrincipal = principalCache_.lumiPrincipal(phid, run, lumi);
     input_->doEndLumi(lumiPrincipal);
     //NOTE: Using the max event number for the end of a lumi block is a bad idea
     // lumi blocks know their start and end times why not also start and end events?
@@ -1915,27 +1910,23 @@ namespace edm {
     return input_->markLumi();
   }
 
-  //WMTANPH
   void EventProcessor::writeRun(statemachine::Run const& run) {
-    schedule_->writeRun(principalCache_.runPrincipal(run.runNumber()));
+    schedule_->writeRun(principalCache_.runPrincipal(run.processHistoryID(), run.runNumber()));
     FDEBUG(1) << "\twriteRun " << run.runNumber() << "\n";
   }
 
-  //WMTANPH
   void EventProcessor::deleteRunFromCache(statemachine::Run const& run) {
-    principalCache_.deleteRun(run.runNumber());
+    principalCache_.deleteRun(run.processHistoryID(), run.runNumber());
     FDEBUG(1) << "\tdeleteRunFromCache " << run.runNumber() << "\n";
   }
 
-  //WMTANPH
   void EventProcessor::writeLumi(ProcessHistoryID const& phid, int run, int lumi) {
-    schedule_->writeLumi(principalCache_.lumiPrincipal(run, lumi));
+    schedule_->writeLumi(principalCache_.lumiPrincipal(phid, run, lumi));
     FDEBUG(1) << "\twriteLumi " << run << "/" << lumi << "\n";
   }
 
-  //WMTANPH
   void EventProcessor::deleteLumiFromCache(ProcessHistoryID const& phid, int run, int lumi) {
-    principalCache_.deleteLumi(run, lumi);
+    principalCache_.deleteLumi(phid, run, lumi);
     FDEBUG(1) << "\tdeleteLumiFromCache " << run << "/" << lumi << "\n";
   }
 
