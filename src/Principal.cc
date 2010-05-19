@@ -26,6 +26,7 @@ namespace edm {
                        BranchType bt) :
     EDProductGetter(),
     processHistoryPtr_(boost::shared_ptr<ProcessHistory>(new ProcessHistory)),
+    processHistoryID_(processHistoryPtr_->id()),
     processConfiguration_(&pc),
     groups_(reg->constProductList().size(), SharedGroupPtr()),
     preg_(reg),
@@ -127,6 +128,7 @@ namespace edm {
   void
   Principal::clearPrincipal() {
     processHistoryPtr_.reset(new ProcessHistory);
+    processHistoryID_ = processHistoryPtr_->id();
     branchMapperPtr_.reset();
     store_.reset();
     for (Principal::const_iterator i = begin(), iEnd = end(); i != iEnd; ++i) {
@@ -200,8 +202,8 @@ namespace edm {
 
   void
   Principal::setProcessHistory(Principal const& principal) {
-    processHistoryPtr_ = principal.processHistoryPtr_;
-    setProcessHistoryID(processHistoryPtr_->id());
+    *processHistoryPtr_ = *principal.processHistoryPtr_;
+    processHistoryID_ = processHistoryPtr_->id();
   }
 
   Principal::SharedConstGroupPtr const
@@ -644,6 +646,7 @@ namespace edm {
   void
   Principal::swapBase(Principal& iOther) {
     std::swap(processHistoryPtr_, iOther.processHistoryPtr_);
+    std::swap(processHistoryID_, iOther.processHistoryID_);
     std::swap(processConfiguration_,iOther.processConfiguration_);
     std::swap(groups_,iOther.groups_);
     std::swap(preg_, iOther.preg_);

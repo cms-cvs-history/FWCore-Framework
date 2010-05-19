@@ -22,7 +22,6 @@ namespace edm {
       boost::shared_ptr<DelayedReader> rtrv) {
 
     fillPrincipal(aux_->processHistoryID(), mapper, rtrv);
-
     if (runPrincipal_) {
       setProcessHistory(*runPrincipal_);
     }

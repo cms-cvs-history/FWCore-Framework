@@ -10,7 +10,6 @@ namespace edm {
     boost::shared_ptr<ProductRegistry const> reg,
     ProcessConfiguration const& pc) :
       Base(reg, pc, InRun),
-      processHistoryModified_(false),
       aux_(aux) {
   }
 
@@ -79,8 +78,8 @@ namespace edm {
 
   void
   RunPrincipal::checkProcessHistory() const {
-    if (processHistoryModified_) return;
-    ProcessHistory const& ph = processHistory();
+    ProcessHistory ph;
+    ProcessHistoryRegistry::instance()->getMapped(aux_->processHistoryID(), ph);
     std::string const& processName = processConfiguration().processName();
     for (ProcessHistory::const_iterator it = ph.begin(), itEnd = ph.end(); it != itEnd; ++it) {
       if (processName == it->processName()) {
@@ -93,7 +92,6 @@ namespace edm {
 
   void
   RunPrincipal::addToProcessHistory() {
-    if (processHistoryModified_) return;
     ProcessHistory& ph = processHistoryUpdate();
     ph.push_back(processConfiguration());
     //OPTIMIZATION NOTE:  As of 0_9_0_pre3
@@ -105,14 +103,12 @@ namespace edm {
     // which persists for longer than one Event
 
     ProcessHistoryRegistry::instance()->insertMapped(ph);
-    setProcessHistoryID(ph.id());
-    processHistoryModified_ = true;
+    setProcessHistory(*this);
   }
 
   void
   RunPrincipal::swap(RunPrincipal& iOther) {
     swapBase(iOther);
-    std::swap(processHistoryModified_,iOther.processHistoryModified_);
     std::swap(aux_, iOther.aux_);
   }
 }

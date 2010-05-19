@@ -119,6 +119,10 @@ namespace edm {
       return *processHistoryPtr_;
     }
 
+    ProcessHistoryID const& processHistoryID() const {
+      return processHistoryID_;
+    }
+
     ProcessConfiguration const& processConfiguration() const {return *processConfiguration_;}
 
     ProductRegistry const& productRegistry() const {return *preg_;}
@@ -186,8 +190,6 @@ namespace edm {
   private:
     virtual EDProduct const* getIt(ProductID const&) const;
 
-    virtual void setProcessHistoryID(ProcessHistoryID const& phid) const = 0;
-
     virtual bool unscheduledFill(std::string const& moduleLabel) const = 0;
 
     // Used for indices to find groups by type and process
@@ -216,6 +218,8 @@ namespace edm {
     virtual void resolveProduct_(Group const& g, bool fillOnDemand) const {}
 
     boost::shared_ptr<ProcessHistory> processHistoryPtr_;
+
+    ProcessHistoryID processHistoryID_;
 
     ProcessConfiguration const* processConfiguration_;
 

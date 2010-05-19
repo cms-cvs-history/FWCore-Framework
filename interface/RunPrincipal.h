@@ -82,17 +82,11 @@ namespace edm {
 
     void swap(RunPrincipal&);
 
-    ProcessHistoryID const& processHistoryID() const {return aux().processHistoryID();}
-
   private:
-
-    virtual void setProcessHistoryID(ProcessHistoryID const& phid) const {return aux().setProcessHistoryID(phid);}
 
     virtual bool unscheduledFill(std::string const&) const {return false;}
 
     void resolveProductImmediate(Group const& g) const;
-
-    bool processHistoryModified_;
 
     // A vector of groups.
     boost::shared_ptr<RunAuxiliary> aux_;

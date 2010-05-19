@@ -129,15 +129,11 @@ namespace edm {
 
     ProductID branchIDToProductID(BranchID const& bid) const;
 
-    ProcessHistoryID const& processHistoryID() const {return history().processHistoryID();}
-
     using Base::getProvenance;
 
   private:
 
     BranchID pidToBid(ProductID const& pid) const;
-
-    virtual void setProcessHistoryID(ProcessHistoryID const& phid) const {return history().setProcessHistoryID(phid);}
 
     virtual ProductID oldToNewProductID_(ProductID const& oldProductID) const;
 
