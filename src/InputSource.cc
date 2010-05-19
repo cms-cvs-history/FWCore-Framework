@@ -325,6 +325,7 @@ namespace edm {
     assert(!limitReached());
     doneReadAhead_ = false;
     --remainingLumis_;
+    assert(principalCache_->lumiPrincipal().luminosityBlock() == luminosityBlockAuxiliary()->luminosityBlock());
     return principalCache_->lumiPrincipal().luminosityBlock();
   }
 
@@ -563,6 +564,12 @@ namespace edm {
   InputSource::preForkReleaseResources() {}
   void
   InputSource::postForkReacquireResources(unsigned int iChildIndex, unsigned int iNumberOfChildren, unsigned int iNumberOfSequentialChildren) {}
+
+  ProcessHistoryID const&
+  InputSource::processHistoryID() const {
+    assert(runAuxiliary());
+    return runAuxiliary()->processHistoryID();
+  }
 
   RunNumber_t
   InputSource::run() const {

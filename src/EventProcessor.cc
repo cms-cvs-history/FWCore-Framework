@@ -1592,8 +1592,7 @@ namespace edm {
           machine_->process_event(statemachine::File());
         }
         else if (itemType == InputSource::IsRun) {
-          // WMTANPH next line needs a ProcessHistoryID from the input source
-          machine_->process_event(statemachine::Run(ProcessHistoryID(), input_->run()));
+          machine_->process_event(statemachine::Run(input_->processHistoryID(), input_->run()));
         }
         else if (itemType == InputSource::IsLumi) {
           machine_->process_event(statemachine::Lumi(input_->luminosityBlock()));
@@ -1900,14 +1899,14 @@ namespace edm {
   statemachine::Run EventProcessor::readAndCacheRun() {
 
     input_->readAndCacheRun();
-    int run =  input_->markRun();
-    // WMTANPH
-    return statemachine::Run(ProcessHistoryID(), run);
+    input_->markRun();
+    return statemachine::Run(input_->processHistoryID(), input_->run());
   }
 
   int EventProcessor::readAndCacheLumi() {
     input_->readAndCacheLumi();
-    return input_->markLumi();
+    input_->markLumi();
+    return input_->luminosityBlock();
   }
 
   void EventProcessor::writeRun(statemachine::Run const& run) {

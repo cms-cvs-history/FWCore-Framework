@@ -170,9 +170,7 @@ namespace edm {
   }
 
   bool PrincipalCache::merge(boost::shared_ptr<RunAuxiliary> aux, boost::shared_ptr<ProductRegistry const> reg) {
-    //WMTANPH
-    //ProcessHistoryID phid = aux->processHistoryID();
-    ProcessHistoryID phid = ProcessHistoryID();
+    ProcessHistoryID phid = aux->processHistoryID();
     std::map<ProcessHistoryID, int>::const_iterator iphid = processHistoryIDsMap_.find(phid);
     RunIterator iter;
     if (iphid != processHistoryIDsMap_.end()) {
@@ -191,9 +189,7 @@ namespace edm {
   }
 
   bool PrincipalCache::merge(boost::shared_ptr<LuminosityBlockAuxiliary> aux, boost::shared_ptr<ProductRegistry const> reg) {
-    //WMTANPH
-    //ProcessHistoryID phid = aux->processHistoryID();
-    ProcessHistoryID phid = ProcessHistoryID();
+    ProcessHistoryID phid = aux->processHistoryID();
     std::map<ProcessHistoryID, int>::const_iterator iphid = processHistoryIDsMap_.find(phid);
     LumiIterator iter;
     if (iphid != processHistoryIDsMap_.end()) {
@@ -213,9 +209,7 @@ namespace edm {
   }
 
   bool PrincipalCache::insert(boost::shared_ptr<RunPrincipal> rp) {
-    //WMTANPHI
-    ProcessHistoryID phid = ProcessHistoryID();
-    //ProcessHistoryID phid = rp->aux().processHistoryID();
+    ProcessHistoryID phid = rp->aux().processHistoryID();
     int run = rp->run();
     std::map<ProcessHistoryID, int>::const_iterator iphid = processHistoryIDsMap_.find(phid);
     if (iphid == processHistoryIDsMap_.end()) {
@@ -231,9 +225,7 @@ namespace edm {
   }
 
   bool PrincipalCache::insert(boost::shared_ptr<LuminosityBlockPrincipal> lbp) {
-    //WMTANPHI
-    ProcessHistoryID phid = ProcessHistoryID();
-    //ProcessHistoryID phid = lbp->aux().processHistoryID();
+    ProcessHistoryID phid = lbp->aux().processHistoryID();
     int run = lbp->run();
     int lumi = lbp->luminosityBlock();
     std::map<ProcessHistoryID, int>::const_iterator iphid = processHistoryIDsMap_.find(phid);
