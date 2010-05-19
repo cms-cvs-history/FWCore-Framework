@@ -557,7 +557,6 @@ namespace edm {
 
   void
   InputSource::respondToClearingRunCache() {
-    if (runAuxiliary_) runAuxiliary_->setProcessHistoryID(deleteFromProcessHistory(runAuxiliary_->processHistoryID(), processConfiguration().processName()));
   }
 
   void
