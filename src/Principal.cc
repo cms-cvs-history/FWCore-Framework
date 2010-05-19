@@ -147,6 +147,7 @@ namespace edm {
       assert(history.notEmpty());
       bool found = history.getMapped(hist, *processHistoryPtr_);
       assert(found);
+      processHistoryID_ = processHistoryPtr_->id();
     }
     preg_->productLookup().reorderIfNecessary(branchType_, *processHistoryPtr_,
 					 processConfiguration_->processName());
