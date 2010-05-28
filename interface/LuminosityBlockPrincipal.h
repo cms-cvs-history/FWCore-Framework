@@ -77,7 +77,7 @@ namespace edm {
       return aux().run();
     }
 
-    bool mergeAuxiliary(LuminosityBlockAuxiliary const& aux) {
+    void mergeAuxiliary(LuminosityBlockAuxiliary const& aux) {
       return aux_->mergeAuxiliary(aux);
     }
 

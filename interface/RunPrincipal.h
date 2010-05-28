@@ -62,7 +62,7 @@ namespace edm {
       aux_->setEndTime(time);
     }
 
-    bool mergeAuxiliary(RunAuxiliary const& aux) {
+    void mergeAuxiliary(RunAuxiliary const& aux) {
       return aux_->mergeAuxiliary(aux);
     }
 
