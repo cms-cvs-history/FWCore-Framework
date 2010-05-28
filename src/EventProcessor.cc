@@ -609,8 +609,7 @@ namespace edm {
 
     ParameterSet optionsPset(parameterSet->getUntrackedParameter<ParameterSet>("options", ParameterSet()));
     fileMode_ = optionsPset.getUntrackedParameter<std::string>("fileMode", "");
-    handleEmptyRuns_ = optionsPset.getUntrackedParameter<bool>("handleEmptyRuns", true);
-    handleEmptyLumis_ = optionsPset.getUntrackedParameter<bool>("handleEmptyLumis", true);
+    emptyRunLumiMode_ = optionsPset.getUntrackedParameter<std::string>("emptyRunLumiMode", "");
     forceESCacheClearOnNewRun_ = optionsPset.getUntrackedParameter<bool>("forceEventSetupCacheClearOnNewRun",false);
     ParameterSet forking = optionsPset.getUntrackedParameter<ParameterSet>("multiProcesses", ParameterSet());
     numberOfForkedChildren_ = forking.getUntrackedParameter<int>("maxChildProcesses", 0);
@@ -1520,20 +1519,28 @@ namespace edm {
  
       statemachine::FileMode fileMode;
       if (fileMode_.empty()) fileMode = statemachine::FULLMERGE;
-      else if (fileMode_ == std::string("MERGE")) fileMode = statemachine::MERGE;
       else if (fileMode_ == std::string("NOMERGE")) fileMode = statemachine::NOMERGE;
       else if (fileMode_ == std::string("FULLMERGE")) fileMode = statemachine::FULLMERGE;
-      else if (fileMode_ == std::string("FULLLUMIMERGE")) fileMode = statemachine::FULLLUMIMERGE;
       else {
  	throw edm::Exception(errors::Configuration, "Illegal fileMode parameter value: ")
 	    << fileMode_ << ".\n"
-	    << "Legal values are 'MERGE', 'NOMERGE', 'FULLMERGE', and 'FULLLUMIMERGE'.\n";
+	    << "Legal values are 'NOMERGE' and 'FULLMERGE'.\n";
+      }
+
+      statemachine::EmptyRunLumiMode emptyRunLumiMode;
+      if (emptyRunLumiMode_.empty()) emptyRunLumiMode = statemachine::handleEmptyRunsAndLumis;
+      else if (emptyRunLumiMode_ == std::string("handleEmptyRunsAndLumis")) emptyRunLumiMode = statemachine::handleEmptyRunsAndLumis;
+      else if (emptyRunLumiMode_ == std::string("handleEmptyRuns")) emptyRunLumiMode = statemachine::handleEmptyRuns;
+      else if (emptyRunLumiMode_ == std::string("doNotHandleEmptyRunsAndLumis")) emptyRunLumiMode = statemachine::doNotHandleEmptyRunsAndLumis;
+      else {
+ 	throw edm::Exception(errors::Configuration, "Illegal emptyMode parameter value: ")
+	    << emptyRunLumiMode_ << ".\n"
+	    << "Legal values are 'handleEmptyRunsAndLumis', 'handleEmptyRuns', and 'doNotHandleEmptyRunsAndLumis'.\n";
       }
 
       machine_.reset(new statemachine::Machine(this,
                                                fileMode,
-                                               handleEmptyRuns_,
-                                               handleEmptyLumis_));
+                                               emptyRunLumiMode));
 
       machine_->initiate();
     }

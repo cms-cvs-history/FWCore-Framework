@@ -25,13 +25,11 @@ namespace edm {
   MockEventProcessor::MockEventProcessor(std::string const& mockData,
                                          std::ostream& output,
                                          statemachine::FileMode const& fileMode,
-                                         bool handleEmptyRuns,
-                                         bool handleEmptyLumis) :
+                                         statemachine::EmptyRunLumiMode const& emptyRunLumiMode) :
     mockData_(mockData),
     output_(output),
     fileMode_(fileMode),
-    handleEmptyRuns_(handleEmptyRuns),
-    handleEmptyLumis_(handleEmptyLumis),
+    emptyRunLumiMode_(emptyRunLumiMode),
     shouldWeCloseOutput_(true),
     shouldWeEndLoop_(true),
     shouldWeStop_(false)  {
@@ -41,8 +39,7 @@ namespace edm {
   MockEventProcessor::runToCompletion(bool onlineStateTransitions) {
     statemachine::Machine myMachine(this,
                                     fileMode_,
-                                    handleEmptyRuns_,
-                                    handleEmptyLumis_);
+                                    emptyRunLumiMode_);
 
   
     myMachine.initiate();
@@ -156,14 +153,6 @@ namespace edm {
 
   void MockEventProcessor::prepareForNextLoop() {
     output_ << "\tprepareForNextLoop\n";
-  }
-
-  void MockEventProcessor::writeLumiCache() {
-    output_ << "\twriteLumiCache\n";
-  }
-
-  void MockEventProcessor::writeRunCache() {
-    output_ << "\twriteRunCache\n";
   }
 
   bool MockEventProcessor::shouldWeCloseOutput() const {

@@ -54,8 +54,6 @@ namespace edm {
     virtual bool endOfLoop() = 0;
     virtual void rewindInput() = 0;
     virtual void prepareForNextLoop() = 0;
-    virtual void writeLumiCache() = 0;
-    virtual void writeRunCache() = 0;
     virtual bool shouldWeCloseOutput() const = 0;
 
     virtual void doErrorStuff() = 0;

@@ -15,10 +15,6 @@ Original Authors: W. David Dagenhart, Marc Paterno
 #include <iostream>
 #include <string>
 
-namespace statemachine {
-  class Run;
-}
-
 namespace edm {
   class MockEventProcessor : public IEventProcessor {
   public:
@@ -26,8 +22,7 @@ namespace edm {
     MockEventProcessor(std::string const& mockData,
                        std::ostream& output,
                        statemachine::FileMode const& fileMode,
-                       bool handleEmptyRuns,
-                       bool handleEmptyLumis);
+                       statemachine::EmptyRunLumiMode const& emptyRunLumiMode);
 
     virtual StatusCode runToCompletion(bool onlineStateTransitions);
     virtual StatusCode runEventCount(int numberOfEventsToProcess);
@@ -46,8 +41,6 @@ namespace edm {
     virtual bool endOfLoop();
     virtual void rewindInput();
     virtual void prepareForNextLoop();
-    virtual void writeLumiCache();
-    virtual void writeRunCache();
     virtual bool shouldWeCloseOutput() const;
 
     virtual void doErrorStuff();
@@ -78,8 +71,7 @@ namespace edm {
     std::string mockData_;
     mutable std::ostream & output_;
     statemachine::FileMode fileMode_;
-    bool handleEmptyRuns_;
-    bool handleEmptyLumis_;
+    statemachine::EmptyRunLumiMode emptyRunLumiMode_;
 
     int run_;
     int lumi_;

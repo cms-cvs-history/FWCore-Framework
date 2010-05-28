@@ -411,8 +411,7 @@ namespace edm {
     bool                                          shouldWeStop_;
     bool                                          stateMachineWasInErrorState_;
     std::string                                   fileMode_;
-    bool                                          handleEmptyRuns_;
-    bool                                          handleEmptyLumis_;
+    std::string                                   emptyRunLumiMode_;
     std::string                                   exceptionMessageFiles_;
     std::string                                   exceptionMessageRuns_;
     std::string                                   exceptionMessageLumis_;
