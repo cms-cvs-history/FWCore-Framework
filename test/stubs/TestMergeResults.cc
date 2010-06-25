@@ -1,5 +1,4 @@
 
-// $Id: TestMergeResults.cc,v 1.17 2009/10/09 14:54:02 wdd Exp $
 //
 // Reads some simple test objects in the event, run, and lumi
 // principals.  Then checks to see if the values in these

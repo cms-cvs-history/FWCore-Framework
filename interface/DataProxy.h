@@ -17,7 +17,6 @@
 //
 // Author:      Chris Jones
 // Created:     Thu Mar 31 12:43:01 EST 2005
-// $Id: DataProxy.h,v 1.11 2010/06/17 15:58:02 chrjones Exp $
 //
 
 // system include files

@@ -2,8 +2,6 @@
 
 Test of the statemachine classes.
 
-$Id: statemachine_t.cc,v 1.6 2008/07/29 03:56:13 wmtan Exp $
-
 ----------------------------------------------------------------------*/  
 
 #include "FWCore/Framework/src/EPStates.h"

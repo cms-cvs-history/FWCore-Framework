@@ -15,7 +15,6 @@
 //
 // Author:      Valentine Kouznetsov
 // Created:     Wed Apr 23 10:58:26 EDT 2003
-// $Id: NoProxyException.h,v 1.11 2010/06/17 16:01:07 chrjones Exp $
 //
 //
 
