@@ -12,8 +12,6 @@
 #include "DataFormats/Provenance/interface/ProcessConfiguration.h"
 #include "FWCore/Utilities/interface/EDMException.h"
 
-#include "boost/shared_ptr.hpp"
-
 typedef std::vector<edm::BranchDescription const*> VCBDP;
 
 void apply_gs(edm::GroupSelector const& gs,
