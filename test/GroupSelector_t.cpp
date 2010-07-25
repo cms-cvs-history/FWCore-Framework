@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 
+#include "boost/shared_ptr.hpp"
 
 #include "FWCore/Framework/interface/GroupSelectorRules.h"
 #include "FWCore/Framework/interface/GroupSelector.h"
