@@ -12,31 +12,32 @@
 #include "DataFormats/Provenance/interface/ModuleDescription.h"
 #include "DataFormats/Provenance/interface/ProcessConfiguration.h"
 #include "FWCore/Utilities/interface/EDMException.h"
+#include "FWCore/Utilities/interface/TypeID.h"
 
 typedef std::vector<edm::BranchDescription const*> VCBDP;
 
 void apply_gs(edm::GroupSelector const& gs,
-	      VCBDP const&  allbranches,
-	      std::vector<bool>& results)
-{
+              VCBDP const&  allbranches,
+              std::vector<bool>& results) {
+
   VCBDP::const_iterator it  = allbranches.begin();
   VCBDP::const_iterator end = allbranches.end();
   for (; it != end; ++it) results.push_back(gs.selected(**it));
 }
 
 int doTest(edm::ParameterSet const& params,
-	     char const* testname,
-	     VCBDP const&  allbranches,
-	     std::vector<bool>& expected)
-{
+             char const* testname,
+             VCBDP const&  allbranches,
+             std::vector<bool>& expected) {
+
   edm::GroupSelectorRules gsr(params, "outputCommands", testname);
   edm::GroupSelector gs;
   gs.initialize(gsr, allbranches);
   std::cout << "GroupSelector from "
-	    << testname
-	    << ": "
-	    << gs
-	    << std::endl;
+            << testname
+            << ": "
+            << gs
+            << std::endl;
 
   std::vector<bool> results;
   apply_gs(gs, allbranches, results);
@@ -48,8 +49,7 @@ int doTest(edm::ParameterSet const& params,
   return rc;
 }
 
-int work()
-{
+int work() {
   edm::ParameterSet dummyProcessPset;
   dummyProcessPset.registerIt();
   boost::shared_ptr<edm::ProcessConfiguration> processConfiguration(
@@ -60,6 +60,7 @@ int work()
   pset.registerIt();
   edm::ModuleDescription mod(pset.id(), "", "", processConfiguration);
 
+  edm::TypeID dummyTypeID;
   int rc = 0;
   // We pretend to have one module, with two products. The products
   // are of the same and, type differ in instance name.
@@ -70,12 +71,12 @@ int work()
   modAparams.registerIt();
   psetsA.insert(modAparams.id());
 
-  //edm::BranchDescription b1(edm::InEvent, "modA", "PROD", "UglyProdTypeA", "ProdTypeA", "i1", md, psetsA);
-  //edm::BranchDescription b2(edm::InEvent, "modA", "PROD", "UglyProdTypeA", "ProdTypeA", "i2", md, psetsA);
-  edm::BranchDescription b1(edm::InEvent, "modA", "PROD", "UglyProdTypeA", "ProdTypeA", "i1", 
-			    mod);
-  edm::BranchDescription b2(edm::InEvent, "modA", "PROD", "UglyProdTypeA", "ProdTypeA", "i2", 
-			    mod);
+  //edm::BranchDescription b1(edm::InEvent, "modA", "PROD", "UglyProdTypeA", "ProdTypeA", "i1", md, dummyTypeID, psetsA);
+  //edm::BranchDescription b2(edm::InEvent, "modA", "PROD", "UglyProdTypeA", "ProdTypeA", "i2", md, dummyTypeID, psetsA);
+  edm::BranchDescription b1(edm::InEvent, "modA", "PROD", "UglyProdTypeA", "ProdTypeA", "i1",
+                            mod, dummyTypeID);
+  edm::BranchDescription b2(edm::InEvent, "modA", "PROD", "UglyProdTypeA", "ProdTypeA", "i2",
+                            mod, dummyTypeID);
 
   // Our second pretend module has only one product, and gives it no
   // instance name.
@@ -85,20 +86,20 @@ int work()
   modBparams.registerIt();
   psetsB.insert(modBparams.id());
 
-  //edm::BranchDescription b3(edm::InEvent, "modB", "HLT", "UglyProdTypeB", "ProdTypeB", "", md, psetsB);
-  edm::BranchDescription b3(edm::InEvent, "modB", "HLT", "UglyProdTypeB", "ProdTypeB", "", 
-			    mod);
+  //edm::BranchDescription b3(edm::InEvent, "modB", "HLT", "UglyProdTypeB", "ProdTypeB", "", md, dummyTypeID, psetsB);
+  edm::BranchDescription b3(edm::InEvent, "modB", "HLT", "UglyProdTypeB", "ProdTypeB", "",
+                            mod, dummyTypeID);
 
   // Our third pretend is like modA, except it hass processName_ of
   // "USER"
 
-  //edm::BranchDescription b4(edm::InEvent, "modA", "USER", "UglyProdTypeA", "ProdTypeA", "i1", md, psetsA);
-  //edm::BranchDescription b5(edm::InEvent, "modA", "USER", "UglyProdTypeA", "ProdTypeA", "i2", md, psetsA);
+  //edm::BranchDescription b4(edm::InEvent, "modA", "USER", "UglyProdTypeA", "ProdTypeA", "i1", md, dummyTypeID, psetsA);
+  //edm::BranchDescription b5(edm::InEvent, "modA", "USER", "UglyProdTypeA", "ProdTypeA", "i2", md, dummyTypeID, psetsA);
 
-  edm::BranchDescription b4(edm::InEvent, "modA", "USER", "UglyProdTypeA", 
-			    "ProdTypeA", "i1", mod);
+  edm::BranchDescription b4(edm::InEvent, "modA", "USER", "UglyProdTypeA",
+                            "ProdTypeA", "i1", mod, dummyTypeID);
   edm::BranchDescription b5(edm::InEvent, "modA", "USER", "UglyProdTypeA",
-			    "ProdTypeA", "i2", mod);
+                            "ProdTypeA", "i2", mod, dummyTypeID);
 
   // These are pointers to all the branches that are available. In a
   // framework program, these would come from the ProductRegistry
@@ -184,8 +185,8 @@ int work()
     drop_ProdTypeA.registerIt();
 
     rc += doTest(drop_ProdTypeA,
-		 "drop_ProdTypeA",
-		 allbranches, expected);
+                 "drop_ProdTypeA",
+                 allbranches, expected);
   }
 
   // Keep only branches with instance name 'i1', from Production.
@@ -201,8 +202,8 @@ int work()
     keep_i1prod.registerIt();
 
     rc += doTest(keep_i1prod,
-		 "keep_i1prod",
-		 allbranches, expected);
+                 "keep_i1prod",
+                 allbranches, expected);
   }
 
   // First say to keep everything,  then  to drop everything, then  to
@@ -223,8 +224,8 @@ int work()
     indecisive.registerIt();
 
     rc += doTest(indecisive,
-		 "indecisive",
-		 allbranches, expected);
+                 "indecisive",
+                 allbranches, expected);
   }
 
   // Keep all things, bu drop all things from modA, but later keep all
@@ -245,8 +246,8 @@ int work()
     params.registerIt();
 
     rc += doTest(params,
-		 "drop_modA_keep_user",
-		 allbranches, expected);
+                 "drop_modA_keep_user",
+                 allbranches, expected);
   }
 
   // Exercise the wildcards * and ?
@@ -266,56 +267,49 @@ int work()
     params.registerIt();
 
     rc += doTest(params,
-		 "excercise wildcards1",
-		 allbranches, expected);
+                 "excercise wildcards1",
+                 allbranches, expected);
   }
 
   {
     // Now try an illegal specification: not starting with 'keep' or 'drop'
     try {
-	edm::ParameterSet bad;
-	std::string const bad_rule = "beep *_*_i2_*";
-	std::vector<std::string> cmds;
-	cmds.push_back(bad_rule);
-	bad.addUntrackedParameter<std::vector<std::string> >("outputCommands", cmds);
-	bad.registerIt();
-	edm::GroupSelectorRules gsr(bad, "outputCommands", "GroupSelectorTest");
-	edm::GroupSelector gs;
+        edm::ParameterSet bad;
+        std::string const bad_rule = "beep *_*_i2_*";
+        std::vector<std::string> cmds;
+        cmds.push_back(bad_rule);
+        bad.addUntrackedParameter<std::vector<std::string> >("outputCommands", cmds);
+        bad.registerIt();
+        edm::GroupSelectorRules gsr(bad, "outputCommands", "GroupSelectorTest");
+        edm::GroupSelector gs;
         gs.initialize(gsr, allbranches);
-	std::cerr << "Failed to throw required exception\n";
-	rc += 1;
+        std::cerr << "Failed to throw required exception\n";
+        rc += 1;
     }
     catch (edm::Exception const& x) {
-	// OK, we should be here... now check exception type
-	assert (x.categoryCode() == edm::errors::Configuration);
+        // OK, we should be here... now check exception type
+        assert (x.categoryCode() == edm::errors::Configuration);
     }
     catch (...) {
-	std::cerr << "Wrong exception type\n";
-	rc += 1;
+        std::cerr << "Wrong exception type\n";
+        rc += 1;
     }
   }
-
   return rc;
 }
 
-int main()
-{
+int main() {
   int rc = 0;
-  try
-    {
+  try {
       rc = work();
-    }
-  catch (edm::Exception& x)
-    {
+  }
+  catch (edm::Exception& x) {
       std::cerr << "edm::Exception caught:\n" << x << '\n';
       rc = 1;
-    }
-  catch (...)
-    {
+  }
+  catch (...) {
       std::cerr << "Unknown exception caught\n";
       rc = 2;
-    }
+  }
   return rc;
 }
-
-
