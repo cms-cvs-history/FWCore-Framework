@@ -94,7 +94,19 @@ namespace {
 
 int main(int argc, char* argv[])
 {
-  
+// NOTE: MacOs X has a lower rlimit for opened file descriptor than Linux (256
+// in Snow Leopard vs 512 in SLC5). This is a problem for some of the workflows
+// that open many small root datafiles.  Notice that this is safe to do also
+// for Linux, but we agreed not to change the behavior there for the moment.
+// Also the limits imposed by ulimit are not affected and still apply, if
+// there.
+#ifdef __APPLE__
+  struct rlimit limits;
+  getrlimit(RLIMIT_NOFILE, &limits);
+  limits.rlim_cur = (OPEN_MAX < limits.rlim_max) ? OPEN_MAX : limits.rlim_max;
+  setrlimit(RLIMIT_NOFILE, &limits);
+#endif
+
   // We must initialize the plug-in manager first
   try {
     edmplugin::PluginManager::configure(edmplugin::standard::config());
@@ -148,11 +160,11 @@ int main(int argc, char* argv[])
   std::vector<std::string> defaultServices;
   defaultServices.reserve(6);
   defaultServices.push_back("MessageLogger");
-#ifdef linux
   defaultServices.push_back("InitRootHandlers");
+#ifdef linux
   defaultServices.push_back("EnableFloatingPointExceptions");
-  defaultServices.push_back("UnixSignalService");
 #endif
+  defaultServices.push_back("UnixSignalService");
   defaultServices.push_back("AdaptorConfig");
   defaultServices.push_back("SiteLocalConfigService");
 
