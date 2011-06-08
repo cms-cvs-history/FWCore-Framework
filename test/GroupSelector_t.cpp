@@ -58,7 +58,7 @@ int work() {
 
   edm::ParameterSet pset;
   pset.registerIt();
-  edm::ModuleDescription mod(pset.id(), "", "", processConfiguration);
+  edm::ModuleDescription mod(pset.id(), "", "", processConfiguration.get());
 
   edm::TypeID dummyTypeID;
   int rc = 0;
