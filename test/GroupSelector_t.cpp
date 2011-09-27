@@ -58,7 +58,6 @@ int work() {
 
   edm::ParameterSet pset;
   pset.registerIt();
-  edm::ModuleDescription mod(pset.id(), "", "", processConfiguration.get());
 
   edm::TypeID dummyTypeID;
   int rc = 0;
@@ -71,12 +70,10 @@ int work() {
   modAparams.registerIt();
   psetsA.insert(modAparams.id());
 
-  //edm::BranchDescription b1(edm::InEvent, "modA", "PROD", "UglyProdTypeA", "ProdTypeA", "i1", md, dummyTypeID, psetsA);
-  //edm::BranchDescription b2(edm::InEvent, "modA", "PROD", "UglyProdTypeA", "ProdTypeA", "i2", md, dummyTypeID, psetsA);
   edm::BranchDescription b1(edm::InEvent, "modA", "PROD", "UglyProdTypeA", "ProdTypeA", "i1",
-                            mod, dummyTypeID);
+                            "", pset.id(), dummyTypeID);
   edm::BranchDescription b2(edm::InEvent, "modA", "PROD", "UglyProdTypeA", "ProdTypeA", "i2",
-                            mod, dummyTypeID);
+                            "", pset.id(), dummyTypeID);
 
   // Our second pretend module has only one product, and gives it no
   // instance name.
@@ -86,20 +83,16 @@ int work() {
   modBparams.registerIt();
   psetsB.insert(modBparams.id());
 
-  //edm::BranchDescription b3(edm::InEvent, "modB", "HLT", "UglyProdTypeB", "ProdTypeB", "", md, dummyTypeID, psetsB);
   edm::BranchDescription b3(edm::InEvent, "modB", "HLT", "UglyProdTypeB", "ProdTypeB", "",
-                            mod, dummyTypeID);
+                            "", pset.id(), dummyTypeID);
 
   // Our third pretend is like modA, except it hass processName_ of
   // "USER"
 
-  //edm::BranchDescription b4(edm::InEvent, "modA", "USER", "UglyProdTypeA", "ProdTypeA", "i1", md, dummyTypeID, psetsA);
-  //edm::BranchDescription b5(edm::InEvent, "modA", "USER", "UglyProdTypeA", "ProdTypeA", "i2", md, dummyTypeID, psetsA);
-
   edm::BranchDescription b4(edm::InEvent, "modA", "USER", "UglyProdTypeA",
-                            "ProdTypeA", "i1", mod, dummyTypeID);
+                            "ProdTypeA", "i1", "", pset.id(), dummyTypeID);
   edm::BranchDescription b5(edm::InEvent, "modA", "USER", "UglyProdTypeA",
-                            "ProdTypeA", "i2", mod, dummyTypeID);
+                            "ProdTypeA", "i2", "", pset.id(), dummyTypeID);
 
   // These are pointers to all the branches that are available. In a
   // framework program, these would come from the ProductRegistry
