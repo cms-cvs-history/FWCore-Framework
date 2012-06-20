@@ -1126,7 +1126,7 @@ namespace edm {
     childrenSocketsCopy.reserve(kMaxChildren);
     std::vector<int> childrenPipesCopy;
     childrenPipesCopy.reserve(kMaxChildren);
-    int pipes[] {0, 0};
+    int pipes[2];
 
     {
       // make the services available
