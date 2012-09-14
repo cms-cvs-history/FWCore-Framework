@@ -12,7 +12,7 @@
 #include "DataFormats/Provenance/interface/ModuleDescription.h"
 #include "DataFormats/Provenance/interface/ProcessConfiguration.h"
 #include "FWCore/Utilities/interface/EDMException.h"
-#include "FWCore/Utilities/interface/TypeID.h"
+#include "FWCore/Utilities/interface/TypeWithDict.h"
 
 typedef std::vector<edm::BranchDescription const*> VCBDP;
 
@@ -59,7 +59,7 @@ int work() {
   edm::ParameterSet pset;
   pset.registerIt();
 
-  edm::TypeID dummyTypeID;
+  edm::TypeWithDict dummyTypeWithDict;
   int rc = 0;
   // We pretend to have one module, with two products. The products
   // are of the same and, type differ in instance name.
@@ -71,9 +71,9 @@ int work() {
   psetsA.insert(modAparams.id());
 
   edm::BranchDescription b1(edm::InEvent, "modA", "PROD", "UglyProdTypeA", "ProdTypeA", "i1",
-                            "", pset.id(), dummyTypeID);
+                            "", pset.id(), dummyTypeWithDict);
   edm::BranchDescription b2(edm::InEvent, "modA", "PROD", "UglyProdTypeA", "ProdTypeA", "i2",
-                            "", pset.id(), dummyTypeID);
+                            "", pset.id(), dummyTypeWithDict);
 
   // Our second pretend module has only one product, and gives it no
   // instance name.
@@ -84,15 +84,15 @@ int work() {
   psetsB.insert(modBparams.id());
 
   edm::BranchDescription b3(edm::InEvent, "modB", "HLT", "UglyProdTypeB", "ProdTypeB", "",
-                            "", pset.id(), dummyTypeID);
+                            "", pset.id(), dummyTypeWithDict);
 
   // Our third pretend is like modA, except it hass processName_ of
   // "USER"
 
   edm::BranchDescription b4(edm::InEvent, "modA", "USER", "UglyProdTypeA",
-                            "ProdTypeA", "i1", "", pset.id(), dummyTypeID);
+                            "ProdTypeA", "i1", "", pset.id(), dummyTypeWithDict);
   edm::BranchDescription b5(edm::InEvent, "modA", "USER", "UglyProdTypeA",
-                            "ProdTypeA", "i2", "", pset.id(), dummyTypeID);
+                            "ProdTypeA", "i2", "", pset.id(), dummyTypeWithDict);
 
   // These are pointers to all the branches that are available. In a
   // framework program, these would come from the ProductRegistry
