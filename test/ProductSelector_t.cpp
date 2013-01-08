@@ -5,8 +5,8 @@
 
 #include "boost/shared_ptr.hpp"
 
-#include "FWCore/Framework/interface/GroupSelectorRules.h"
-#include "FWCore/Framework/interface/GroupSelector.h"
+#include "FWCore/Framework/interface/ProductSelectorRules.h"
+#include "FWCore/Framework/interface/ProductSelector.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "DataFormats/Provenance/interface/BranchDescription.h"
 #include "DataFormats/Provenance/interface/ModuleDescription.h"
@@ -16,7 +16,7 @@
 
 typedef std::vector<edm::BranchDescription const*> VCBDP;
 
-void apply_gs(edm::GroupSelector const& gs,
+void apply_gs(edm::ProductSelector const& gs,
               VCBDP const&  allbranches,
               std::vector<bool>& results) {
 
@@ -30,10 +30,10 @@ int doTest(edm::ParameterSet const& params,
              VCBDP const&  allbranches,
              std::vector<bool>& expected) {
 
-  edm::GroupSelectorRules gsr(params, "outputCommands", testname);
-  edm::GroupSelector gs;
+  edm::ProductSelectorRules gsr(params, "outputCommands", testname);
+  edm::ProductSelector gs;
   gs.initialize(gsr, allbranches);
-  std::cout << "GroupSelector from "
+  std::cout << "ProductSelector from "
             << testname
             << ": "
             << gs
@@ -273,8 +273,8 @@ int work() {
         cmds.push_back(bad_rule);
         bad.addUntrackedParameter<std::vector<std::string> >("outputCommands", cmds);
         bad.registerIt();
-        edm::GroupSelectorRules gsr(bad, "outputCommands", "GroupSelectorTest");
-        edm::GroupSelector gs;
+        edm::ProductSelectorRules gsr(bad, "outputCommands", "ProductSelectorTest");
+        edm::ProductSelector gs;
         gs.initialize(gsr, allbranches);
         std::cerr << "Failed to throw required exception\n";
         rc += 1;
